@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { OpenShiftService } from './openshift.service';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from './auth.service';
+import { UpdateService } from "./update.service";
 
 /**
  * Class used to log data conflicts in server
@@ -59,9 +60,15 @@ export class VoyagerService {
         }
       }
     };
+    const proxyUpdate = mutationName => {
+      if (mutationName === 'createTask') return UpdateService.updateCacheOnAdd;
+      if (mutationName === 'updateTask') return UpdateService.updateCacheOnEdit;
+      if (mutationName === 'deleteTask') return UpdateService.updateCacheOnDelete;
+    };
     const options: DataSyncConfig = {
       offlineQueueListener: numberOfOperationsProvider,
       conflictListener: new ConflictLogger(this.alertCtrl),
+      proxyUpdate,
     };
     if (!this.openShift.hasSyncConfig()) {
       // Use default localhost urls when OpenShift config is missing

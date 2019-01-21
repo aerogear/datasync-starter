@@ -54,7 +54,6 @@ export class ItemService {
       variables: item,
       optimisticResponse:
         createOptimisticResponse('createTask', 'Task', item),
-      update: this.updateCacheOnAdd
     });
   }
 
@@ -62,7 +61,6 @@ export class ItemService {
     return this.apollo.mutate<Task>({
       mutation: UPDATE_TASK,
       variables: item,
-      update: this.updateCacheOnEdit,
       optimisticResponse:
         createOptimisticResponse('updateTask', 'Task', item, false)
     });
@@ -72,7 +70,6 @@ export class ItemService {
     return this.apollo.mutate<Task>({
       mutation: DELETE_TASK,
       variables: { id: item.id },
-      update: this.updateCacheOnDelete,
       optimisticResponse:
         createOptimisticResponse('deleteTask', 'Task', { id: item.id }, false)
     });
@@ -93,54 +90,6 @@ export class ItemService {
   subscribeToNew() {
     return this.apollo.subscribe<any>({
       query: TASK_CREATED_SUBSCRIPTION
-    });
-  }
-
-  // Local cache updates for CRUD operations
-  updateCacheOnAdd(cache, { data: { createTask } }) {
-    const { allTasks } = cache.readQuery({ query: GET_TASKS });
-    cache.writeQuery({
-      query: GET_TASKS,
-      data: {
-        'allTasks': allTasks.concat([createTask])
-      }
-    });
-  }
-
-  updateCacheOnEdit(cache, { data: { updateTask } }) {
-    const { allTasks } = cache.readQuery({ query: GET_TASKS });
-    if (allTasks) {
-      const index = allTasks.findIndex((task) => {
-        return updateTask.id === task.id;
-      });
-      allTasks[index] = updateTask;
-    }
-    cache.writeQuery({
-      query: GET_TASKS,
-      data: {
-        'allTasks': allTasks
-      }
-    });
-  }
-
-  updateCacheOnDelete(cache, { data: { deleteTask } }) {
-    let deletedId;
-    if (deleteTask.optimisticResponse) {
-      // Map optimistic response field
-      deletedId = deleteTask.id;
-    } else {
-      deletedId = deleteTask;
-    }
-
-    const { allTasks } = cache.readQuery({ query: GET_TASKS });
-    const newData = allTasks.filter((item) => {
-      return deletedId !== item.id;
-    });
-    cache.writeQuery({
-      query: GET_TASKS,
-      data: {
-        'allTasks': newData
-      }
     });
   }
 }
