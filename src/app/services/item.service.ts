@@ -11,6 +11,7 @@ import {
 import { AllTasks, Task } from './types';
 import { VoyagerService } from './voyager.service';
 import { VoyagerClient, createOptimisticResponse } from '@aerogear/datasync-js';
+import { UpdateService } from './update.service';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class ItemService {
       variables: item,
       optimisticResponse:
         createOptimisticResponse('createTask', 'Task', item),
+      update: UpdateService.updateCacheOnAdd
     });
   }
 
@@ -62,7 +64,8 @@ export class ItemService {
       mutation: UPDATE_TASK,
       variables: item,
       optimisticResponse:
-        createOptimisticResponse('updateTask', 'Task', item, false)
+        createOptimisticResponse('updateTask', 'Task', item, false),
+      update: UpdateService.updateCacheOnEdit
     });
   }
 
@@ -71,7 +74,8 @@ export class ItemService {
       mutation: DELETE_TASK,
       variables: { id: item.id },
       optimisticResponse:
-        createOptimisticResponse('deleteTask', 'Task', { id: item.id }, false)
+        createOptimisticResponse('deleteTask', 'Task', { id: item.id }, false),
+      update: UpdateService.updateCacheOnDelete
     });
   }
 
