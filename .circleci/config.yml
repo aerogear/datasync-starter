@@ -59,10 +59,8 @@ jobs:
           version: 17.05.0-ce
           docker_layer_caching: true
       - run: |
-          cd server
-          [ -z "$DOCKERHUB_USERNAME" ] && echo "Undefined DOCKERHUB_USERNAME, skipping publish" && exit 0;
-          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-          TAG=$CIRCLE_TAG ./push-script.sh
+          cd server          
+          TAG=$CIRCLE_TAG ../scripts/publish_example_server_container.sh
 workflows:
   version: 2
   build_and_release:
