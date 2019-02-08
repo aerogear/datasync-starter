@@ -35,6 +35,7 @@ const routes: Routes = [
   { path: 'docs', loadChildren: './pages/docs/docs.module#DocsPageModule' },
   { path: 'profile', loadChildren: './pages/profile/profile.module#ProfilePageModule' },
   { path: 'security', loadChildren: './pages/security/security.module#SecurityPageModule' },
+  { path: 'security/deviceTrust', loadChildren: './pages/security/deviceTrust/deviceTrust.module#DeviceTrustPageModule' },
 ];
 @NgModule({
   imports: [
