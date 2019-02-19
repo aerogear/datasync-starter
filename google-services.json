@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "881192658444",
+    "firebase_url": "https://aerogearups.firebaseio.com",
+    "project_id": "aerogearups",
+    "storage_bucket": "aerogearups.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881192658444:android:31435d4554119e3b",
+        "android_client_info": {
+          "package_name": "com.redhat.maxupstest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881192658444-vsaa0cnqiisbjggpca3m6mkmataj0mqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6ETMMv_knFLdiW1OZaq1t9ig6c18u96E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

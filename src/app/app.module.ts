@@ -11,14 +11,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { PushService } from './services/push.service';
+import { Push } from '@ionic-native/push/ngx';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, GraphQLModule, HttpClientModule],
   providers: [
+    PushService,
     StatusBar,
     SplashScreen,
+    Push,
     Dialogs,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
