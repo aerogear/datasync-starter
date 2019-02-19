@@ -49,7 +49,8 @@ const taskResolvers = {
         version: 1
       }).returning('*').then((rows) => rows[0])
       // TODO context helper for publishing subscriptions in SDK?
-      publish('CREATED', result)
+      // TODO move from passing pushClient in context and use boolean to push or not here
+      publish('CREATED', result, context.pushClient)
       return result
     },
     updateTask: async (obj, clientData, context, info) => {
@@ -91,7 +92,16 @@ const taskResolvers = {
   }
 }
 
-function publish(actionType, data) {
+function publish(actionType, data, pushClient) {
+  if (pushClient) {
+    pushClient.sender.send({
+      alert: `${actionType} ${data.title}`
+    }).then((response) => {
+      console.log("Notification sent, response received ", response);
+    }).catch((error) => {
+      console.log("Notification not sent, error received ", error)
+    })
+  }
   pubSub.publish(TASKS_SUBSCRIPTION_KEY, {
     tasks: {
       action: actionType,
