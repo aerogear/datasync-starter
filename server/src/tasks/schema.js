@@ -48,7 +48,6 @@ const taskResolvers = {
       console.log("Create", args)
       const result = await context.db('tasks').insert({
         ...args,
-        version: 1
       }).returning('*').then((rows) => rows[0])
       // TODO context helper for publishing subscriptions in SDK?
       // TODO move from passing pushClient in context and use boolean to push or not here
