@@ -107,6 +107,7 @@ export class ItemService {
 
   // Local cache updates for CRUD operations
   updateCacheOnAdd(cache, { data }) {
+    data = data.createTask;
     let { allTasks } = cache.readQuery({ query: GET_TASKS });
     if (allTasks) {
       if (!allTasks.find((task) => task.id === data.id)) {
@@ -124,6 +125,7 @@ export class ItemService {
   }
 
   updateCacheOnEdit(cache, { data }) {
+    data = data.updateTask;
     const { allTasks } = cache.readQuery({ query: GET_TASKS });
     if (allTasks) {
       const index = allTasks.findIndex((task) => {
@@ -140,6 +142,7 @@ export class ItemService {
   }
 
   updateCacheOnDelete(cache, { data }) {
+    data = data.deleteTask;
     let deletedId;
     if (data.optimisticResponse) {
       // Map optimistic response field
