@@ -17,7 +17,7 @@ type Query {
 }
 
 type Mutation {
-  createTask(title: String!, description: String!, version: String!): Task
+  createTask(title: String!, description: String!): Task
   updateTask(id: ID!, title: String, description: String, version: Int!): Task
   deleteTask(id: ID!): ID
 }
@@ -48,6 +48,7 @@ const taskResolvers = {
       console.log("Create", args)
       const result = await context.db('tasks').insert({
         ...args,
+        version: 1
       }).returning('*').then((rows) => rows[0])
       // TODO context helper for publishing subscriptions in SDK?
       // TODO move from passing pushClient in context and use boolean to push or not here
@@ -103,13 +104,13 @@ function publish(actionType, data, pushClient) {
     },
       {
         criteria: {
-          alias: [ PUSH_ALIAS ]
+          alias: [PUSH_ALIAS]
         }
       }).then((response) => {
-      console.log("Notification sent, response received ", response);
-    }).catch((error) => {
-      console.log("Notification not sent, error received ", error)
-    })
+        console.log("Notification sent, response received ", response);
+      }).catch((error) => {
+        console.log("Notification not sent, error received ", error)
+      })
   }
   pubSub.publish(TASKS_SUBSCRIPTION_KEY, {
     tasks: {
