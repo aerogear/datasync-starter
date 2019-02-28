@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const ADD_TASK = gql`
 mutation createTask($description: String!, $title: String!){
-    createTask(description: $description, title: $title){
+    createTask(description: $description, title: $title, version: $version){
       id
       title
       description
