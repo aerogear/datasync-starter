@@ -106,14 +106,14 @@ export class ItemService {
   }
 
   // Local cache updates for CRUD operations
-  updateCacheOnAdd(cache, { data: { createTask } }) {
+  updateCacheOnAdd(cache, { data }) {
     let { allTasks } = cache.readQuery({ query: GET_TASKS });
     if (allTasks) {
-      if (!allTasks.find((task) => task.id === createTask.id)) {
-        allTasks.push(createTask);
+      if (!allTasks.find((task) => task.id === data.id)) {
+        allTasks.push(data);
       }
     } else {
-      allTasks = [createTask];
+      allTasks = [data];
     }
     cache.writeQuery({
       query: GET_TASKS,
@@ -123,13 +123,13 @@ export class ItemService {
     });
   }
 
-  updateCacheOnEdit(cache, { data: { updateTask } }) {
+  updateCacheOnEdit(cache, { data }) {
     const { allTasks } = cache.readQuery({ query: GET_TASKS });
     if (allTasks) {
       const index = allTasks.findIndex((task) => {
-        return updateTask.id === task.id;
+        return data.id === task.id;
       });
-      allTasks[index] = updateTask;
+      allTasks[index] = data;
     }
     cache.writeQuery({
       query: GET_TASKS,
@@ -139,13 +139,13 @@ export class ItemService {
     });
   }
 
-  updateCacheOnDelete(cache, { data: { deleteTask } }) {
+  updateCacheOnDelete(cache, { data }) {
     let deletedId;
-    if (deleteTask.optimisticResponse) {
+    if (data.optimisticResponse) {
       // Map optimistic response field
-      deletedId = deleteTask.id;
+      deletedId = data.id;
     } else {
-      deletedId = deleteTask;
+      deletedId = data;
     }
 
     const { allTasks } = cache.readQuery({ query: GET_TASKS });
