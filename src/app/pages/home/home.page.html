@@ -9,9 +9,20 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-img class="logo" src="assets/aerogear.png"></ion-img>
+<ion-content padding>
+    <div class="welcome-header">
+      <ion-img class="logo" src="assets/aerogear.png"></ion-img>
+    </div>
+    <ion-card>
+      <ion-card-content>
+        This app demonstrates how to use the AeroGear Mobile services, backed by OpenShift to perform a wide range of
+        common mobile tasks such as Data Synchronisation, Identity Management, Device Security, Metrics Capture, Push
+        Notifications and more.
+      </ion-card-content>
+      </ion-card>
+
   <ion-list lines="none" class="menu-container">
+
     <ion-item routerDirection='root' routerLink="about">
       <ion-icon slot="start" color="medium" name="book"></ion-icon>
       <ion-label>
@@ -19,6 +30,7 @@
         <p>Information about this application </p>
       </ion-label>
     </ion-item>
+    
     <ion-item routerDirection='root' routerLink="tasks">
       <ion-icon slot="start" color="medium" name="build"></ion-icon>
       <ion-label text-wrap>
