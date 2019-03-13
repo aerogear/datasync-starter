@@ -20,7 +20,7 @@ export class AuthService {
     constructor(private openShift: OpenShiftService, public platform: Platform, aerogear: VoyagerService) {
         if (this.isEnabled()) {
             this.auth = new Auth(this.openShift.getConfig());
-            this.aerogear = aerogear
+            this.aerogear = aerogear;
             this.initialized = platform.ready().then(() => {
                 const initOptions: KeycloakInitOptions = { onLoad: 'login-required' };
                 return this.auth.init(initOptions);
@@ -71,8 +71,8 @@ export class AuthService {
 
     logout() {
         if (this.isEnabled()) {
-            this.aerogear.apolloClient.clearStore()
-            this.aerogear.apolloClient.cache.reset()
+            this.aerogear.apolloClient.clearStore();
+            this.aerogear.apolloClient.cache.reset();
             window.localStorage.clear();
             return this.auth.logout();
         } else {

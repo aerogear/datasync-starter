@@ -69,7 +69,7 @@ export class VoyagerService {
       offlineQueueListener: numberOfOperationsProvider,
       conflictListener: new ConflictLogger(this.alertCtrl),
       fileUpload: true,
-      mutationCacheUpdates: mergedCacheUpdates
+      // mutationCacheUpdates: mergedCacheUpdates
     };
     if (!this.openShift.hasSyncConfig()) {
       // Use default localhost urls when OpenShift config is missing
@@ -78,7 +78,7 @@ export class VoyagerService {
     } else {
       options.openShiftConfig = this.openShift.getConfig();
     }
-    options.authContextProvider = this.injector.get(AuthService).auth.getAuthContextProvider()
+    options.authContextProvider = this.injector.get(AuthService).auth.getAuthContextProvider();
     this._apolloClient = await createClient(options);
   }
 }
