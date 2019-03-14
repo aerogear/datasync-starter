@@ -10,6 +10,7 @@ const connect = require('./db')
 const { subscriptionServer } = require('./subscriptions')
 const { appTypeDefs, appResolvers } = require('./schema')
 const agSender = require("unifiedpush-node-sender")
+const { altairExpress } = require('altair-express-middleware')
 
 let keycloakService = null
 let pushClient = null
@@ -45,6 +46,10 @@ async function start() {
   const { applyFileMiddelware } = require('./files');
   applyFileMiddelware(app);
   app.get('/health', (req, res) => res.sendStatus(200))
+
+  app.use('/graphql', altairExpress({
+    endpointURL: '/graphql'
+  }))
 
   // connect to db
   const client = await connect(config.db);
