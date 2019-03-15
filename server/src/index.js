@@ -55,6 +55,7 @@ async function start() {
   const apolloConfig = {
     typeDefs: appTypeDefs,
     resolvers: appResolvers,
+    playground: false,
     context: async ({
       req
     }) => {

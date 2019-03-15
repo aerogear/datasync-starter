@@ -20,20 +20,6 @@ class Config {
     this.pushConfigPath = process.env.PUSH_CONFIG || path.resolve(__dirname, './push-config.json')
     this.pushConfig = readConfig(this.pushConfigPath)
 
-    this.playgroundConfig = {
-      settings: {
-        'editor.theme': 'light',
-        'editor.cursorShape': 'block'
-      },
-      tabs: [
-        {
-          endpoint: `/graphql`,
-          variables: {},
-          query: fs.readFileSync(path.resolve(__dirname, './playground.gql'), 'utf8')
-        }
-      ]
-    }
-
     this.altairConfig = {
       endpointURL: '/graphql',
       initialQuery: fs.readFileSync(path.resolve(__dirname, './playground.gql'), 'utf8').replace(/\n/g, ' '),
