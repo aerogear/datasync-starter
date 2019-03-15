@@ -47,9 +47,7 @@ async function start() {
   applyFileMiddelware(app);
   app.get('/health', (req, res) => res.sendStatus(200))
 
-  app.use('/graphql', altairExpress({
-    endpointURL: '/graphql'
-  }))
+  app.use('/graphql', altairExpress(config.altairConfig))
 
   // connect to db
   const client = await connect(config.db);
@@ -57,7 +55,6 @@ async function start() {
   const apolloConfig = {
     typeDefs: appTypeDefs,
     resolvers: appResolvers,
-    playground: config.playgroundConfig,
     context: async ({
       req
     }) => {
