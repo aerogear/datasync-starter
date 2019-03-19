@@ -53,5 +53,8 @@
       <ion-badge color="secondary" *ngIf="online">Online</ion-badge>
       <ion-badge color="primary" *ngIf="!online">Offline</ion-badge>
     </ion-label>
+    <ion-button color="primary" fill="outline" (click)="restart()">
+      Toggle offline
+    </ion-button>
   </div>
 </ion-footer>

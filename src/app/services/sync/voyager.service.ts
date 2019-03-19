@@ -1,12 +1,36 @@
 import {
   createClient, VoyagerClient, DataSyncConfig,
-  OfflineQueueListener, ConflictListener, AuthContextProvider
+  OfflineQueueListener, ConflictListener, AuthContextProvider, NetworkStatus
 } from '@aerogear/voyager-client';
 import { Injectable, Injector } from '@angular/core';
 import { OpenShiftService } from '../openshift.service';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 import { taskCacheUpdates } from './cache.updates';
+
+export class ToggleableNetworkStatus implements NetworkStatus {
+
+  private online: boolean;
+  private callback: any;
+
+  constructor() {
+    this.online = true;
+  }
+
+  onStatusChangeListener(callback) {
+    this.callback = callback;
+  }
+
+  isOffline(): Promise<boolean> {
+    const online = this.online;
+    return new Promise(resolve => resolve(!online));
+  }
+
+  setOnline(online) {
+    this.online = online;
+    this.callback && this.callback.onStatusChange({ online });
+  }
+};
 
 /**
  * Class used to log data conflicts in server
@@ -35,6 +59,7 @@ export class VoyagerService {
 
   private _apolloClient: VoyagerClient;
   private listener: OfflineQueueListener;
+  private networkStatus: ToggleableNetworkStatus;
 
   constructor(private openShift: OpenShiftService, public alertCtrl: AlertController, public injector: Injector) {
   }
@@ -45,6 +70,11 @@ export class VoyagerService {
 
   get apolloClient(): VoyagerClient {
     return this._apolloClient;
+  }
+
+  public async toggleOnline() {
+    this.networkStatus.setOnline(await this.networkStatus.isOffline());
+    console.log("Offline: ", await this.networkStatus.isOffline());
   }
 
   public async createApolloClient() {
@@ -65,11 +95,14 @@ export class VoyagerService {
     };
     // Merget all cache updates functions (currently only single)
     const mergedCacheUpdates = taskCacheUpdates;
+    this.networkStatus = new ToggleableNetworkStatus();
+    this.networkStatus.setOnline(false);
     const options: DataSyncConfig = {
       offlineQueueListener: numberOfOperationsProvider,
       conflictListener: new ConflictLogger(this.alertCtrl),
       fileUpload: true,
-      mutationCacheUpdates: mergedCacheUpdates
+      mutationCacheUpdates: mergedCacheUpdates,
+      networkStatus: this.networkStatus
     };
     if (!this.openShift.hasSyncConfig()) {
       // Use default localhost urls when OpenShift config is missing

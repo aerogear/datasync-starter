@@ -108,5 +108,9 @@ export class TaskPage implements OnInit {
     });
     toast.present();
   }
+
+  restart() {
+    this.itemService.voyagerService.toggleOnline();
+  }
 }
 
