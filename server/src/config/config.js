@@ -22,6 +22,7 @@ class Config {
 
     this.altairConfig = {
       endpointURL: '/graphql',
+      subscriptionsEndpoint: 'ws://localhost:4000/graphql',
       initialQuery: fs.readFileSync(path.resolve(__dirname, './playground.gql'), 'utf8'),
     }
   }
