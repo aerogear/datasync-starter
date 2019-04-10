@@ -37,6 +37,10 @@
             <ion-note item-start> Id: {{ stagedItem.variables.id }} </ion-note>
             <br />
           </div>
+          <div *ngIf="stagedItem.variables.status">
+            <ion-note item-start> Status: {{ stagedItem.variables.status }} </ion-note>
+            <br />
+          </div>
         </ion-label>
       </ion-item>
     </ion-item-group>
