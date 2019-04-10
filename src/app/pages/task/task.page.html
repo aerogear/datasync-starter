@@ -13,41 +13,28 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="outer-content">
-  <div *ngIf="items">
+  <div *ngIf="items" class="item-container">
     <ion-list>
-      <ion-item-group *ngFor="let item of items; let last = last" 
-      [class.last-item]="last">
+      <ion-item-group *ngFor="let item of items; let last = last; let last = last" [class.last-item]="last"
+        [class.first-item]="first">
         <ion-item>
+          <ion-checkbox (click)="markItemStatus(item)" [checked]="item.status === 'COMPLETE'" class="ion-margin-end ion-align-items-start"></ion-checkbox>
           <ion-label>
             <h2>{{ item.title }}</h2>
-            <ion-note item-start>
+            <p>
               {{ item.description }}
-            </ion-note>
-            <br />
-            <ion-note>
+            </p>
+            <p>
               <ion-badge color="primary">
-                Server version: {{ item.version }}</ion-badge
-              >
-            </ion-note>
+                Server version: {{ item.version }}
+              </ion-badge>
+            </p>
           </ion-label>
-          <ion-button
-            item-start
-            class="create-button"
-            color="primary"
-            fill="outline"
-            (click)="goToItem(item)"
-          >
+          <ion-button item-start class="create-button" color="primary" fill="outline" (click)="goToItem(item)">
             <ion-icon name="create"></ion-icon>
           </ion-button>
-          <ion-button
-            item-end
-            class="trash-button"
-            color="primary"
-            fill="outline"
-            (click)="deleteItem(item)"
-          >
+          <ion-button item-end class="trash-button" color="primary" fill="outline" (click)="deleteItem(item)">
             <ion-icon name="trash"></ion-icon>
           </ion-button>
         </ion-item>
@@ -59,24 +46,14 @@
 <ion-footer>
   <div>
     <ion-label>
-      <ion-button
-        size="small"
-        color="primary"
-        fill="outline"
-        routerLink="/offline-queue"
-        class="offline-queue-button"
-      >
+      <ion-button size="small" color="primary" fill="outline" routerLink="/offline-queue" class="offline-queue-button">
         Offline changes
       </ion-button>
       <ion-badge color="primary" class="offline-queue-badge">{{
-        queue
-      }}</ion-badge>
+          queue
+        }}</ion-badge>
     </ion-label>
-    <ion-badge class="network-badge" color="secondary" *ngIf="online"
-      >Online</ion-badge
-    >
-    <ion-badge class="network-badge" color="primary" *ngIf="!online"
-      >Offline</ion-badge
-    >
+    <ion-badge class="network-badge" color="secondary" *ngIf="online">Online</ion-badge>
+    <ion-badge class="network-badge" color="primary" *ngIf="!online">Offline</ion-badge>
   </div>
 </ion-footer>
