@@ -16,8 +16,8 @@
 <ion-content class="outer-content">
   <div *ngIf="items" class="item-container">
     <ion-list>
-      <ion-item-group *ngFor="let item of items; let last = last; let last = last" [class.last-item]="last"
-        [class.first-item]="first">
+      <ion-item-group *ngFor="let item of items; let first = first; let last = last" [class.first-item]="first"
+        [class.last-item]="last">
         <ion-item>
           <ion-checkbox (click)="markItemStatus(item)" [checked]="item.status === 'COMPLETE'" class="ion-margin-end ion-align-items-start"></ion-checkbox>
           <ion-label>
