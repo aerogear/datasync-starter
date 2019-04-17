@@ -1,9 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-// import {CheckResultMetrics, DeviceCheckResult, DeviceCheckType, SecurityService} from '@aerogear/security';
-// import {Dialogs} from '@ionic-native/dialogs/ngx';
-// import {Platform} from '@ionic/angular';
-// import {MetricsService} from '@aerogear/core';
-// import {OpenShiftService, Service} from '../../services/openshift.service';
+import { AlertController } from '@ionic/angular';
+import { SecurityService } from '../../services/security.service';
 
 
 declare var navigator: any;
@@ -13,20 +10,57 @@ declare var navigator: any;
     styleUrls: ['./apptrust.page.scss'],
 })
 
-export class AppTrustPage implements OnInit {
-  private static readonly METRICS_KEY = 'security';
+export class AppTrustPage {
+  public serverUrl: any;
+  public message: any;
 
-  ngOnInit() {
-  }
-
-  public isAvailable() {
-      // return this.platform.is('cordova');
-      return true;
-  }
-
-
-  public ionViewWillEnter(): void {
-    if (this.isAvailable()) {
+  constructor(private securityService: SecurityService, private alertController: AlertController) {
+    if (this.securityService.getConfig() !== undefined) {
+      this.serverUrl = this.securityService.getConfig();
+    } else {
+      this.serverUrl = {url: '/apptrust'};
     }
+  }
+
+  public isDisabled() {
+    return !this.securityService.isEnabled();
+  }
+
+  public clientInit() {
+    this.securityService.clientInit()
+    .then(clientData => {
+      if (clientData.data.disabled) {
+        // tslint:disable-next-line: max-line-length
+        this.message = 'This is a demonstration of functionality, As a Developer this event must be used to close the Application and would typically be called on application initialization.<br> <br><strong>Disable Message</strong>:  ' + clientData.data.disabledMessage;
+        this.alert(this.message);
+      } else {
+        this.message = 'This application is currently enabled';
+        this.alert(this.message);
+      }
+    })
+    .catch(Error => {
+      this.message = 'Unable to connect to the Mobile Security Service, check your internet connection';
+      console.log(Error);
+      this.alert(this.message);
+    });
+  }
+
+  private async alert(message: string): Promise<any> {
+    const alert = await this.alertController.create({
+      header: 'Application Trust',
+      subHeader: 'Mobile Security Service',
+      message: message,
+      // Typically As a Developer you should close the application on a negative outcome at this point
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            console.log('Handle the exit of the application at this point');
+            // navigator['app'].exitApp();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
