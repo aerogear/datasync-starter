@@ -9,6 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "e2e:local": "ng e2e -c local",
     "ionic:android": "ionic cordova run android",
     "ionic:ios": "ionic cordova run ios -- --buildFlag='-UseModernBuildSystem=0'"
   },
