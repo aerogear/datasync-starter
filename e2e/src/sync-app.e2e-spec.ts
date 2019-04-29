@@ -1,5 +1,5 @@
 import { element, by } from 'protractor';
-import { GraphQLClient } from "graphql-request";
+import { GraphQLClient } from 'graphql-request';
 
 const createTask = `
   mutation createTask($title: String!) {
@@ -50,15 +50,15 @@ describe('Sync App', () => {
     expect(await findTasksTitles()).toEqual([]);
 
     // Create the test task directly on the backend
-    const task: any = await client.request(createTask, { title: "test" });
+    const task: any = await client.request(createTask, { title: 'test' });
 
-    // Assert that the test task appear  
-    expect(await findTasksTitles()).toEqual(["test"]);
+    // Assert that the test task appear
+    expect(await findTasksTitles()).toEqual(['test']);
 
-    // Delete the test task from the backend 
+    // Delete the test task from the backend
     await client.request(deleteTask, { id: task.createTask.id });
 
-    // Assert that the test task disappear 
+    // Assert that the test task disappear
     expect(await findTasksTitles()).toEqual([]);
 
   });
