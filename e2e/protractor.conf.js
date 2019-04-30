@@ -2,7 +2,9 @@
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 
 const { SpecReporter } = require('jasmine-spec-reporter');
-var browserstack = require('browserstack-local');
+var { Local: BrowserStackLocal } = require('browserstack-local');
+
+let browserStackLocal;
 
 exports.config = {
   seleniumAddress: 'http://hub.browserstack.com/wd/hub',
@@ -35,23 +37,28 @@ exports.config = {
   },
 
   // Code to start browserstack local before start of test
-  beforeLaunch: function(){
-    console.log("Connecting local");
-    return new Promise(function(resolve, reject){
-      exports.bs_local = new browserstack.Local();
-      exports.bs_local.start({'key': process.env.BROWSERSTACK_KEY }, function(error) {
-        if (error) return reject(error);
-        console.log('Connected. Now testing...');
-
-        resolve();
+  beforeLaunch: function () {
+    return new Promise(function (resolve, reject) {
+      browserStackLocal = new BrowserStackLocal();
+      browserStackLocal.start({
+        key: process.env.BROWSERSTACK_KEY,
+        force: true,
+        verbose: true,
+        logFile: '/tmp/bs-local.log'
+      }, function (error) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
       });
     });
   },
 
   // Code to stop browserstack local after end of test
-  afterLaunch: function(){
-    return new Promise(function(resolve, reject){
-      exports.bs_local.stop(resolve);
+  afterLaunch: function () {
+    return new Promise(function (resolve, reject) {
+      browserStackLocal.stop(resolve);
     });
   }
 };
