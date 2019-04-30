@@ -23,6 +23,7 @@ exports.config = {
     'browserstack.local': true,
     'browserstack.debug': true,
     'browserstack.networkLogs': true,
+    'browserstack.appium_version': '1.9.1',
   },
   framework: 'jasmine',
   jasmineNodeOpts: {
