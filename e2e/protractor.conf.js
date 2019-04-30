@@ -20,14 +20,14 @@ exports.config = {
     autoWebview: true,
     'browserstack.user': process.env.BROWSERSTACK_USER,
     'browserstack.key': process.env.BROWSERSTACK_KEY,
-    'browserstack.local' : true,
+    'browserstack.local': true,
     'browserstack.debug': true,
   },
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 30000,
-    print: function() {}
+    print: function () { }
   },
   onPrepare() {
     require('ts-node').register({
