@@ -1,6 +1,8 @@
 import { element, by } from 'protractor';
 import { GraphQLClient } from 'graphql-request';
 
+const SYNC_APP_URL = 'http://localhost:4000/graphql';
+
 const createTask = `
   mutation createTask($title: String!) {
     createTask(title: $title, description: "") {
@@ -39,8 +41,7 @@ function findTasksTitles() {
 describe('Sync App', () => {
   it('Subscription', async () => {
 
-    // TODO: Configurable
-    const client = new GraphQLClient('http://localhost:4000/graphql');
+    const client = new GraphQLClient(SYNC_APP_URL);
 
     // Open the Manage Tasks page
     await goToTasks();
