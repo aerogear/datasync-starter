@@ -28,14 +28,14 @@ function goToTasks() {
  * Find all tasks inside the tasks page
  */
 function findTasks() {
-  return element.all(by.id('e2e-tasks-list')).all(by.className('e2e-task-item'));
+  return element.all(by.css('#e2e-tasks-list .e2e-task-item'));
 }
 
 /**
  * Find only the title of all tasks inside the tasks page
  */
 function findTasksTitles() {
-  return findTasks().all(by.className('e2e-task-title')).getText();
+  return findTasks().all(by.css('.e2e-task-title')).getText();
 }
 
 describe('Sync App', () => {
