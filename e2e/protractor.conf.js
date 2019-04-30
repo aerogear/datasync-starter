@@ -22,6 +22,7 @@ exports.config = {
     'browserstack.key': process.env.BROWSERSTACK_KEY,
     'browserstack.local': true,
     'browserstack.debug': true,
+    'browserstack.networkLogs': true,
   },
   framework: 'jasmine',
   jasmineNodeOpts: {
