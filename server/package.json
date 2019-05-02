@@ -28,6 +28,8 @@
     "merge-graphql-schemas": "1.5.8",
     "nodemon": "1.19.0",
     "pg": "7.11.0",
+    "@aerogear/graphql-mqtt-subscriptions": "^1.1.0",
+    "mqtt": "^2.18.8",
     "shortid": "2.2.14",
     "unifiedpush-node-sender": "0.16.1"
   }
