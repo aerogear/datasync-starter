@@ -1,16 +1,18 @@
 const express = require('express')
-const http = require('http')
 const cors = require('cors')
+const agSender = require('unifiedpush-node-sender')
+const { altairExpress } = require('altair-express-middleware')
+
 const { VoyagerServer } = require('@aerogear/voyager-server')
 const { KeycloakSecurityService } = require('@aerogear/voyager-keycloak')
+const { createSubscriptionServer } = require('@aerogear/voyager-subscriptions')
 const metrics = require('@aerogear/voyager-metrics')
 const auditLogger = require('@aerogear/voyager-audit')
+
+
 const config = require('./config/config')
 const connect = require('./db')
-const { subscriptionServer } = require('./subscriptions')
 const { appTypeDefs, appResolvers } = require('./schema')
-const agSender = require("unifiedpush-node-sender")
-const { altairExpress } = require('altair-express-middleware')
 
 let keycloakService = null
 let pushClient = null
@@ -32,7 +34,6 @@ if(config.pushConfig) {
 async function start() {
 
   const app = express()
-  const httpServer = http.createServer(app)
 
   app.use(cors())
   metrics.applyMetricsMiddlewares(app, {
@@ -87,11 +88,15 @@ async function start() {
   apolloServer.applyMiddleware({
     app
   })
-  httpServer.listen({
-    port: config.port
-  }, () => {
+  const server = app.listen(config.port, () => {
     console.log(`🚀  Server ready at http://localhost:${config.port}/graphql`)
-    subscriptionServer(keycloakService, httpServer, apolloServer)
+    createSubscriptionServer({
+      securityService: keycloakService,
+      schema: apolloServer.schema
+    }, {
+      server,
+      path: '/graphql'
+    });
   })
 }
 

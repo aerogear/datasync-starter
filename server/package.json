@@ -13,6 +13,7 @@
     "@aerogear/voyager-conflicts": "0.5.1",
     "@aerogear/voyager-keycloak": "0.5.1",
     "@aerogear/voyager-metrics": "0.5.1",
+    "@aerogear/voyager-subscriptions": "0.5.1",
     "@aerogear/voyager-server": "0.5.1",
     "altair-express-middleware": "2.1.7",
     "apollo-server": "2.4.8",

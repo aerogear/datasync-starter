@@ -24,7 +24,9 @@ enum actionType {
 const subscriptionResolvers = {
   Subscription: {
     tasks: {
-      subscribe: () => pubSub.asyncIterator(TASKS_SUBSCRIPTION_KEY)
+      subscribe: (obj, args, context, info) => {
+        return pubSub.asyncIterator(TASKS_SUBSCRIPTION_KEY)
+      }
     }
   },
 }
