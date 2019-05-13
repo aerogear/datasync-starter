@@ -31,10 +31,10 @@ export class AppTrustPage {
     .then(clientData => {
       if (clientData.data.disabled) {
         // tslint:disable-next-line: max-line-length
-        this.message = 'This is a demonstration of functionality, As a Developer this event must be used to close the Application and would typically be called on application initialization.<br> <br><strong>Disable Message</strong>:  ' + clientData.data.disabledMessage;
+        this.message = 'This application version is currently disabled <br /><br /><strong>Disable Message from Server</strong>:  ' + clientData.data.disabledMessage;
         this.alert(this.message);
       } else {
-        this.message = 'This application is currently enabled';
+        this.message = 'This application version is currently enabled';
         this.alert(this.message);
       }
     })
@@ -48,7 +48,7 @@ export class AppTrustPage {
   private async alert(message: string): Promise<any> {
     const alert = await this.alertController.create({
       header: 'Application Trust',
-      subHeader: 'Mobile Security Service',
+      subHeader: 'Check for App Version Disablement',
       message: message,
       // Typically As a Developer you should close the application on a negative outcome at this point
       buttons: [

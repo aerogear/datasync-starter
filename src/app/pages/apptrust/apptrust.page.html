@@ -27,35 +27,41 @@
 
   <ion-card *ngIf="!isDisabled()">
     <ion-card-header>
-      <ion-card-title>Access the Mobile Security Service</ion-card-title>
+      <ion-card-title>Application Security Status </ion-card-title>
     </ion-card-header>
+    
     <ion-card-content>
-      <a href="{{serverUrl.url}}">Mobile Security Service</a>
+        This feature checks with the backend Mobile Security Service, 
+        to see whether the version of the App has been marked as disabled or not. 
+        Use the button below to invoke the check, 
+        which is normally performed on App initialisation.
+        <br /><br />
+      <ion-button size="default" (click)="this.clientInit()">
+        Check the Security Service
+      </ion-button>
+        <br /><br />
+        More details in the <a href="https://www.aerogear.org/aerogear/latest/app-security/">Application Trust Documentation</a>.
+
     </ion-card-content>
   </ion-card>
+
   <ion-card *ngIf="!isDisabled()">
     <ion-card-header>
-      <ion-card-title>Disable Application</ion-card-title>
+      <ion-card-title>Steps to Disable/Enable App Version</ion-card-title>
     </ion-card-header>
-    <ion-card-content>In the Mobile Security Service disable the following Application:
+    <ion-card-content>
+        Press the following link to access the Mobile Security Service backend 
+        <br />
+        <a href="{{serverUrl.url}}">Mobile Security Service</a>
+      <br /><br />
+
+      In the Mobile Security Service backend disable/enable the following Application:
       <br />
       <ion-text color="primary">
         org.aerogear.ionic.showcase
       </ion-text>
       <br /><br />
-      For usage Information visit:
-      <br />
-      <a href="https://www.aerogear.org/aerogear/latest/app-security/#monitoring">Application Trust Documentation</a>
     </ion-card-content>
   </ion-card>
-  <ion-card *ngIf="!isDisabled()">
-    <ion-card-header>
-      <ion-card-title>Application Security Status </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-button size="default" (click)="this.clientInit()">
-        Check the Security Service
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  
 </ion-content>
