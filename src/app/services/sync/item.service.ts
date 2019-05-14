@@ -11,6 +11,8 @@ import { VoyagerService } from './voyager.service';
 import { ApolloOfflineClient, createOptimisticResponse, OfflineStore } from '@aerogear/voyager-client';
 import { taskCacheUpdates } from './cache.updates';
 
+let started = false;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,6 +40,11 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
+    if (!started) {
+      this.test();
+      started = true;
+    }
+    
     const getTasks = this.apollo.watchQuery<AllTasks>({
       query: GET_TASKS,
       fetchPolicy: 'cache-first',
@@ -71,6 +78,23 @@ export class ItemService {
       }
     });
     return getTasks;
+  }
+
+  async test() {
+    window.voyagerClient.ns.setOnline(false);
+    const promises = [];
+    const p2 = [];
+    for (let i = 0; i < 100; i++) {
+      p2.push(this.createItem('test3', 'test3').catch(error => {
+        if (error.networkError && error.networkError.offline) {
+          const offlineError = error.networkError;
+          promises.push(offlineError.watchOfflineChange().then(console.log).catch(console.error));
+        }
+      }));
+    }
+    await Promise.all(p2);
+    window.voyagerClient.ns.setOnline(true);
+    await Promise.all(promises);
   }
 
   createItem(title, description) {

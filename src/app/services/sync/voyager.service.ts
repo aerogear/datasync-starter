@@ -1,12 +1,17 @@
 import {
   ApolloOfflineClient, DataSyncConfig,
-  OfflineQueueListener, ConflictListener, OfflineClient, OfflineStore
+  OfflineQueueListener, ConflictListener, OfflineClient, OfflineStore, NetworkStatus
 } from '@aerogear/voyager-client';
 import { Injectable, Injector } from '@angular/core';
 import { OpenShiftService } from '../openshift.service';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 import { taskCacheUpdates } from './cache.updates';
+import { ADD_TASK } from './graphql.queries';
+
+declare global {
+  interface Window { voyagerClient: any; }
+}
 
 /**
  * Class used to log data conflicts in server
@@ -24,6 +29,29 @@ class ConflictLogger implements ConflictListener {
     console.log(`data: ${JSON.stringify(resolvedData)}, server: ${JSON.stringify(server)} client: ${JSON.stringify(client)} `);
   }
 }
+
+export class ToggleableNetworkStatus implements NetworkStatus {
+  online: boolean;
+  callback: any;
+
+  constructor() {
+    this.online = true;
+  }
+
+  onStatusChangeListener(callback) {
+    this.callback = callback;
+  }
+
+  isOffline(): Promise<boolean> {
+    const online = this.online;
+    return new Promise(resolve => resolve(!online));
+  }
+
+  setOnline(online) {
+    this.online = online;
+    this.callback && this.callback.onStatusChange({ online });
+  }
+};
 
 @Injectable({
   providedIn: 'root'
@@ -48,12 +76,14 @@ export class VoyagerService {
   }
 
   public async createApolloClient() {
+    const ns = new ToggleableNetworkStatus();
     // Merge all cache updates functions (currently only single)
     const mergedCacheUpdates = taskCacheUpdates;
     const options: DataSyncConfig = {
       conflictListener: new ConflictLogger(this.alertCtrl),
       fileUpload: true,
-      mutationCacheUpdates: mergedCacheUpdates
+      mutationCacheUpdates: mergedCacheUpdates,
+      networkStatus: ns
     };
     if (!this.openShift.hasSyncConfig()) {
       // Use default localhost urls when OpenShift config is missing
@@ -70,5 +100,12 @@ export class VoyagerService {
     const offlineClient = new OfflineClient(options);
     this._offlineStore = offlineClient.offlineStore;
     this._apolloClient = await offlineClient.init();
+
+
+    window.voyagerClient = {
+      offlineClient,
+      ADD_TASK,
+      ns
+    };
   }
 }
