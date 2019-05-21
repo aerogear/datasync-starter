@@ -34,3 +34,4 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 package-lock.json 
 src/mobile-services.js
+server/src/config/keycloak.json
