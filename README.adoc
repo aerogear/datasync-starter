@@ -57,13 +57,6 @@ export NODE_TLS_REJECT_UNAUTHORIZED=0
 
 Follow these instructions to set up Keycloak for Authentication/Authorization.
 
-. Start the the Postgres database and the MQTT broker
-+
-```shell
-cd ./server
-docker-compose up
-```
-
 . Start Keycloak Server
 +
 ```shell
