@@ -1,29 +1,6 @@
-const {
-  execute,
-  subscribe
-} = require('graphql')
 const { PubSub } = require('apollo-server');
-const { SubscriptionServer } = require('subscriptions-transport-ws')
 const mqtt = require('mqtt')
 const { MQTTPubSub } = require('@aerogear/graphql-mqtt-subscriptions')
-
-function subscriptionServer (keycloakService, httpServer, apolloServer) {
-    return new SubscriptionServer({
-      execute,
-      subscribe,
-      onConnect: async connectionParams => {
-        if(keycloakService) {
-          return await keycloakService.validateToken(connectionParams)
-        } else {
-          return true;
-        }
-      },
-      schema: apolloServer.schema
-    }, {
-      server: httpServer,
-      path: '/graphql'
-    });
-}
 
 
 const host = process.env.MQTT_HOST || 'mqtt://localhost'
@@ -50,6 +27,5 @@ client.on('error', (error) => {
 })
 
 module.exports = {
-    subscriptionServer,
     pubSub: new MQTTPubSub({ client })
 }
