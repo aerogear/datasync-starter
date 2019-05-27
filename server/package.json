@@ -17,12 +17,8 @@
     "@aerogear/voyager-keycloak": "0.5.1",
     "@aerogear/voyager-metrics": "0.5.1",
     "@aerogear/voyager-server": "0.5.1",
-<<<<<<< HEAD
     "altair-express-middleware": "2.1.8",
-=======
     "@aerogear/voyager-subscriptions": "^0.6.1-dev-1",
-    "altair-express-middleware": "2.1.7",
->>>>>>> fix: ensure voyager-subscriptions dep in package.json
     "apollo-server": "2.5.0",
     "cors": "2.8.5",
     "deepmerge": "3.2.0",
