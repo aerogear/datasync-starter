@@ -2,7 +2,6 @@ const { PubSub } = require('apollo-server');
 const mqtt = require('mqtt')
 const { MQTTPubSub } = require('@aerogear/graphql-mqtt-subscriptions')
 
-
 const host = process.env.MQTT_HOST || 'localhost'
 
 const mqttOptions = {
@@ -18,7 +17,6 @@ const mqttOptions = {
 const client = mqtt.connect(host, mqttOptions)
 
 console.log(`attempting to connect to messaging service ${host}`)
-console.log(mqttOptions)
 
 client.on('connect', () => {
   console.log('connected to messaging service')
