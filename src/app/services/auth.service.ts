@@ -81,9 +81,9 @@ export class AuthService {
     }
 
     getAuthContextProvider(): AuthContextProvider | undefined {
-        if (this.isEnabled()) {
-            return this.auth.getAuthContextProvider();
-        }
+        // if (this.isEnabled()) {
+        //     return this.auth.getAuthContextProvider();
+        // }
         return undefined;
     }
 }
