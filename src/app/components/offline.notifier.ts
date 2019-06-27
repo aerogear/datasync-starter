@@ -21,7 +21,7 @@ export class OfflineNotifier {
       });
     }
   }
- 
+
   public async presentToast(message) {
     const toast = await this.toastController.create({
       message: message,
