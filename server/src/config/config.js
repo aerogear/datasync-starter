@@ -22,10 +22,6 @@ class Config {
 
 
     this.playgroundConfig = {
-      settings: {
-        'editor.theme': 'light',
-        'editor.cursorShape': 'block'
-      },
       tabs: [
         {
           endpoint: `/graphql`,
