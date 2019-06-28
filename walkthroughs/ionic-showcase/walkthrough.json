@@ -1,0 +1,61 @@
+{
+  "dependencies": {
+    "repos": [],
+    "serviceInstances": [
+      {
+        "metadata": { "name": "mobile-developer-console" },
+        "spec": {
+          "clusterServiceClassExternalName": "ag-mdc-mdc-server-apb",
+          "clusterServicePlanExternalName": "default"
+        }
+      },
+      {
+        "metadata": { "name": "mobile-idm-service" },
+        "spec": {
+          "clusterServiceClassExternalName": "ag-keycloak-keycloak-apb",
+          "clusterServicePlanExternalName": "default",
+          "parameters": {
+            "ADMIN_USERNAME": "admin",
+            "ADMIN_PASSWORD": "admin"
+          }
+        }
+      },
+      {
+        "metadata": { "name": "ag-metrics-apb" },
+        "spec": {
+          "clusterServiceClassExternalName": "ag-metrics-metrics-apb",
+          "clusterServicePlanExternalName": "default",
+          "parameters": {
+            "GRAFANA_STORAGE_SIZE": 10,
+            "PROMETHEUS_STORAGE_SIZE": 10,
+            "POSTGRES_STORAGE_SIZE": 10
+          }
+        }
+      },
+      {
+        "metadata": { "name": "ag-unifiedpush-apb" },
+        "spec": {
+          "clusterServiceClassExternalName": "ag-push-unifiedpush-apb",
+          "clusterServicePlanExternalName": "default"
+        }
+      },
+      {
+        "metadata": { "name": "postgresql" },
+        "spec": {
+          "clusterServiceClassExternalName": "postgresql-persistent",
+          "clusterServicePlanExternalName": "default",
+          "parameters": {
+            "DATABASE_SERVICE_NAME":"postgresql",
+            "MEMORY_LIMIT":"512Mi",
+            "NAMESPACE":"openshift",
+            "POSTGRESQL_DATABASE":"postgres",
+            "POSTGRESQL_PASSWORD":"postgres",
+            "POSTGRESQL_USER":"postgres",
+            "POSTGRESQL_VERSION":"9.6",
+            "VOLUME_CAPACITY":"1Gi"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,162 @@
+:sync-example-app-link: https://github.com/aerogear/ionic-showcase
+
+= Mobile Walkthrough
+
+In this walkthrough, we will deploy some mobile services, and run an app that can talk to these services.
+
+[type=walkthroughResource, serviceName=openshift]
+.OpenShift Project
+****
+* link:{openshift-host}/console/project/{walkthrough-namespace}/overview[OpenShift Project, window="_blank"]
+****
+
+
+[type=walkthroughResource, serviceName=openshift]
+.OpenShift Service Catalog
+****
+* link:{openshift-host}/console/project/{walkthrough-namespace}/catalog[OpenShift Service Catalog, window="_blank"]
+****
+
+
+[type=walkthroughResource]
+.Mobile Developer Console
+****
+* link:{route-mdc-server-host}[Mobile Developer Console, window="_blank"]
+****
+
+
+[time=5]
+== Explore the Mobile Developer Console
+
+The Mobile Developer Console is where mobile developers can view avaiable mobile services, bind them to their mobile apps and get the configurations for the bound mobile services.
+
+=== Steps
+
+. Go to the link:{openshift-host}/console/project/{walkthrough-namespace}/overview[OpenShift project overview page, window="_blank"] and wait for all the services to be deployed and running.
+. Go to link:{route-mdc-server-host}[Mobile Developer Console, window="_blank"], and you can login with your OpenShift credential.
+. There should be no apps initially. Click on the `Create Mobile App` button to create a new app. Let's call it `demo`.
+. When the app is created, click on it and it will bring you to the configure page. On the left hand side, you will see the instructions to add the SDKs to your client app. On the right hand side you will see the content of the configuration file to add to a client app. There should be no services listed in the configuration file.
+. Go to the `Mobile Services` tab, and you should see there are a few services listed in the `Unbound Services` section.
+. Bind the `Mobile Metrics` and `Identity Management` services to the app by clicking on the "Bind To App" buttons. Use the default binding options, and once the bindings are completed, you will see them in the `Bound Services` section. 
+. Now go back to the `Configuration` tab again, you will see the `mobile-services.json` file is updated with information about the bound services. If you expand the row for each service, you will see the links to each of the service. Feel free to click on the links and explore the dashboard for each of the service.
+
+[time=5]
+== Deploy a new sync backend server
+
+As part of the mobile services product, we also provide a set of libaries that will allow developers to easily create mobile apps that can sync data to the their backend. The libaries are based on the popular Apollo GraphQL server, with the following additional functionalities:
+
+. Offline Support
+. Conflict Resolution
+. Easy integration with other mobile services
+
+Let's try it out.
+
+=== Steps
+
+. Go the link:{openshift-host}/console/project/{walkthrough-namespace}/catalog[Service Catalog, window="_blank"] page of the OpenShift project, and click on the `Mobile` tab and choose `Sync App`.
+. Use the following configurations for the sync server, and leave the rest empty:
+.. Sync Application Name: `syncserver`
+.. Sync Application Docker image: `docker.io/aerogear/voyager-server-example-task`
+.. Sync Application health endpoint: `health`
+.. Sync Application Metrics endpoint: `/metrics`
+.. Sync App Port: `4000`
+.. Sync App GraphQL Endpoint: `graphql`
+.. SQL Server Hostname: `postgresql`
+.. SQL Server Port: `5432`
+.. SQL Server Username: `postgres`
+.. SQL Server Password: `postgres`
+.. Database name: `postgres`
+. Do not bind the service to any app yet. Complete the wizard and wait for the service to be deployed.
+. Try out the link:{route-sync-app-syncserver-host}/graphql[GraphQL playground, window="_blank"].
+. Paste in the following query/mutation into the text edit:
++
+.Sample GraphQL Queries
+----
+query listTasks {
+  allTasks {
+    title,
+    description,
+    id
+  }
+}
+
+mutation createTask {
+  createTask(title: "complete the walkthrough", description: "complete the mobile walk through") {
+    title,
+    description,
+    version,
+    id
+  }
+}
+----
++
+and try execute them. Feel free to explore the schema and add more queries and mutations.
+
+[time=10]
+== Run the sync client app
+
+In the previous task, we deployed the sync backend server, now let's run the sync client app and connect it to the backend.
+
+NOTE: You need to make sure you have `nodejs` installed locally.
+
+=== Steps
+
+. Go to link:{route-mdc-server-host}[Mobile Developer Console, window="_blank"] again, create a new app called `todoapp`, and bind the app to the newly created sync server. Make sure the `mobile-services.json` file is updated.
+. Clone the link:{sync-example-app-link}[Sync Example App, window="_blank"] to your local machine.
+. Cd into the app, checkout the `demo` branch and run `npm install`
+. Open `src/mobile-services.js` file in a editor, and replace the value for `config` with the content from `mobile-services.json` file in the Mobile Developer Console.
+. Start the app by running `npm run start`, it will open a browser tab automatically. Try create some tasks.
+. Open the app again in a new incognito tab, and try create tasks in both.
+
+[time=10]
+== [Optional] Check the audit logs
+
+You can use the OpenShift logging feature to see the audit logs that are generated by the syncserver app.
+
+=== Steps
+
+. Find out the URL of the Kibana dashboard of your OpenShift cluster:
+.. Run the following commands on the bastion server (as root user):
++
+----
+oc project openshift-logging
+oc get route
+----
++
+.. You should see there is a route called `logging-kibana`. Copy the `Host` value of that route and open it in your browser. You should see the Kibana dashboard page.
+. Filter out the audit log messages in Kibana. 
+.. On the `Discover` page, there should be a dropdown you can select on this page. Choose the namespace where the syncserver app is deployed to, and take a look at the messages.
+.. You should see a lot of messages, try expand one and see what the message looks like.
+.. In the `Search` field on the top, enter `tag:AUDIT` and you should be able to see the audit logs generated by the app. If you can't see any message, go to the GraphqQL playground page and execute some queries and then try search again.
+.. [Optional] Follow the steps descibed in link:https://github.com/aerogear/apollo-voyager-server/blob/master/doc/guides/metrics-and-audit-logs.md#importing-kibana-saved-objects:[Importing Kibana Saved Objects guide] and try importing a dashboard template for the sync app, and view the imported dashboard.
+
+
+[time=15]
+== [Optional] Protect the sync app by Keycloak
+
+The sync server app is not protected at the moment, let's bind it with Keycloak and protect the endpoints.
+
+=== Steps
+
+. Go to the link:{openshift-host}/console/project/{walkthrough-namespace}/overview[OpenShift conosle, window="_blank"], find `Identity Management` in the "Provisioned Services" section, and click on "Create Binding".
+. Use the following configurations for the binding parameters:
+.. Mobile client ID/Service ID: `syncserver`
+.. Keycloak client type: `bearer`
+. Once the binding is created, we can mount the secret that is being created to the sync app: 
+.. Click on the `View Secret` link of the created binding
+.. In the secret's view, click on `Add To Application`
+.. Select `sync-app-syncserver` as the target application
+.. Add secret as `Volume` and set the mount path to `/tmp/keycloak`
+. Update the `sync-app-syncserver` to use the mounted secret:
+.. Go to the link:{openshift-host}/console/project/{walkthrough-namespace}/browse/dc/sync-app-syncserver?tab=environment[Environment view] of the sync server deployment config, and add the following new environment variables and save.
+.. Name: `KEYCLOAK_CONFIG`, Value: `/tmp/keycloak/config`
+.. Name: `NODE_TLS_REJECT_UNAUTHORIZED`, Value: `0`
+. Wait for the sync server to be redeployed and starts up.
+. Now to go the link:{route-sync-app-syncserver-host}/graphql[GraphQL playground, window="_blank"] we have opened previously and refresh the page. This time you should get an `Access Denied` error. This is because the endpoint is now protected by Keycloak and requires user authentication. Let's add authentication to the client app.
+. Go to link:{route-mdc-server-host}[Mobile Developer Console, window="_blank"] and bind the `todoapp` to the `Identity Management` service. This time select `public` as the client type. When the binding is completed, you should see the `mobile-services.json` file is updated. Copy the content of the file.
+. Edit the `src/mobile-services.js` file in the client app, and paste in the new content. Build it and run it again. When you start it, you will be redirected to a login page. However, we don't have any users created yet, so let's do that:
+.. link:{openshift-host}/console/project/{walkthrough-namespace}/overview[OpenShift conosle, window="_blank"], find the url for Keycloak and open it. On the landing page, go to the `Administration Console` and login as the admin user (you can use `admin/admin` as the username and password).
+.. Select `Users` on the left menu, and click on `View all users`. You will see there are no users in this realm. Click on `Add user` to create new ones. Pick a username you like and save.
+.. Go to `Credentials` tab and set a password for the user. Set `Temporary` option to `OFF`.
+. Now the user is created, you can use this user to login from the client app. Try it and you should be able to view the tasks that are created previously, and create new ones again.
+. Go to link:{route-grafana-host}[Grafana dashboard, window="_blank"] to view the metrics dashboard.
