@@ -134,3 +134,10 @@ change [Client URL](https://github.com/aerogear/ionic-showcase/blob/master/src/a
 
 To integrate with OpenShift mobile config please paste your configuration into
 link:./src/mobile-services.js[mobile-services.js] file
+
+
+==== Community Walkthrough
+
+Showcase application is also available as solution explorer Walkthrough that can guide developers with every step of deployment.
+Walkthrough can be found in `./walkthroughs`folder
+Please see https://github.com/integr8ly/tutorial-web-app for more information.
