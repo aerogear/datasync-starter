@@ -174,10 +174,9 @@ showcase-app
 ----
 +
 After the mobile app is registered, it is displayed on the console.
-. When the app is created, click on it and it will bring you to the configure page. On the left hand side, 
-  you will see Wathe instructions to add the SDKs to your client app. On the right hand side you will see the content of the configuration file to add to a client app. There should be no services listed in the configuration file.
-. Go to the `Mobile Services` tab, and you should see there are a few services listed in the `Unbound Services` section.
-. From `Unbound Services` select `DataSync
+. Click on the *showcase-app* card to display the configuration screen.
+. Click the *Mobile Services* tab.
+. Click *Bind to App* for *Data Sync* in the *Unbound Services* section.
 . Skip binding
 . In Parameters Section provide {route-ionic-showcase-server-host} as `Server URL`
 // TODO - we doing this mostly to add datasync
