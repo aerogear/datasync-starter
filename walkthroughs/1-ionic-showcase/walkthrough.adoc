@@ -205,37 +205,85 @@ CodeReady will automatically set up a new workspace for you.
 . Showcase client should be running in your console and be ready to be used in your local browser and phone
 
 
-[time=1]
+[time=3]
 == Run application on your browser or phone
 
 // TODO. We might add QR code to showcase for people to scan it in order to 
 Showcase app can be launched on mobile phone or your browser. 
 Application will contain many views that are designed to showcase various functionalities or our services.
 For this showcase we going to focus exclusively on DataSync which is implemented inside `Manage Tasks` view.
-
+DataSync framework will offer cross device synchronization. 
+To visualize it properly we need to have application open in at least 2 different devices or browser windows.
 
 === Steps 
 
 . Open side panel 
-
 image::images/showcase.png[integration, role="integr8ly-img-responsive"]
+. Select `Manage Tasks`
+. Initially view will be empty. We can create task using `+` icon.
+. Put any information into new Task view and click on create button
+. Now we can mark task as `Done` using checkbox.
+. We can also edit Task and remove it afterwards
+. When doing all changes we should see them being automatically reflected in other aplication
 
-[time=10]
-== DataSync Offline and Conflict resolution functionalities
+All this functionalities will help us later to showcase various offline and conflict resolution capabilties 
+of Data Sync framework.
 
-To demo data sync functionalities, it’s best to run at least 2 instances of the showcase client app: 
-perhaps one in a normal browser tab, and one in the incognito/private tab. 
-Google Chrome is the recommended web browser for this. 
+[time=15]
+== DataSync Offline Features
+
+DataSync framework will offer fully featured offline data access capabilities for the mobile and web clients.
+Developers can utilize it to build applications that will work independent of the network state.
+Showcase application contains integration with all offline capabilities offered by Data Sync Framework.
+In footer we should see current network state and number of offline changes we currently have.
+
+image::images/offline-footer.png[integration, role="integr8ly-img-responsive"]
 
 === Steps
 
-- Use the “Manage Tasks” page in the showcase client app.
-- Try create one task in one device, and it should show up immediately in another.
-- Try bring one client offline (you can use the Network tab from Chrome Developer Tools to simulate offline mode - open them using F12, or using Command+Option+I on macOS), perform some actions, bring it online and you should see the changes synced to another app straight away.
-- To create conflicts, try bringing both clients offline, and modify the same item. The last instance of app that is online will receive conflicts.
+. Let's open create task view and fill all task details
+. Please do not press create yet
+. To leverage offline capabilities we need to make sure that our application looses conectivity with our server. 
+On the Mobile phone this can be done by turning on airplane mode. 
+In Chrome browser you can use the Network tab from Chrome Developer Tools to simulate offline mode. (open them using F12, or using Command+Option+I on macOS)
+. Make your device go offline
+. Press `Create` button to create an new task
+. We should see task created and our `Offline Changes` button in footer containing now one change.
+. Let's edit task multiple times
+. Each edit will create new Task
+. We can review all offline items directly by clicking on `Offline Changes` button.
+. Please restore connectivity (depending on your device)
+. We should see all `Offline Changes` reflected back to server and appearing in second instance of the application.
 
-[time=10]
-== [Optional] Check the audit logs
+[time=6]
+== Conflict resolution functionalities
+
+Data Conflicts can happen when resource we modified was also modified on server.
+DataSync Framework enables multiple strategies to deal with conflicts. 
+By default Showcase will resolve conflicts by applying all server side changes on top of the client.
+In case of direct conflicts client field value will be used. 
+To simulate conflict we need to go offline and make edits in two instance of the application at the same time.
+
+=== Steps
+
+. Use one of the existing task or create new one that will be visible on two devices.
+. Go offline 
+. Edit Task on first instance
+. Go to second instance of the application
+. Edit Task on second instance
+. At this point we should have server side updated by second instance of the application
+and first application not knowing about that change because it went offline.
+. This operation will result in conflict. 
+. Once we make first client online again - data conflict will occur.
+We should see popup and actuall server side data being replicated back to the client (conflict was resolved automatically)
+
+. Use the “Manage Tasks” page in the showcase client app.
+. Try create one task in one device, and it should show up immediately in another.
+. Try bring one client offline (, perform some actions, bring it online and you should see the changes synced to another app straight away.
+. To create conflicts, try bringing both clients offline, and modify the same item. The last instance of app that is online will receive conflicts.
+
+[time=35]
+== [Optional] Check the Data Synchonization Audit Logs
 
 You can use the OpenShift logging feature to see the audit logs that are generated by the syncserver app.
 
@@ -257,7 +305,7 @@ oc get route
 .. [Optional] Follow the steps descibed in link:https://github.com/aerogear/apollo-voyager-server/blob/master/doc/guides/metrics-and-audit-logs.md#importing-kibana-saved-objects:[Importing Kibana Saved Objects guide] and try importing a dashboard template for the sync app, and view the imported dashboard.
 
 
-[time=15]
+[time=50]
 == [Optional] Protect the sync app by Keycloak
 
 The sync server app is not protected at the moment, let's bind it with Keycloak and protect the endpoints.
