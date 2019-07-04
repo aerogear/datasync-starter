@@ -312,6 +312,9 @@ The sync server app is not protected at the moment, let's bind it with Keycloak 
 
 === Steps
 
+// TODO this is APB based. We need operator ones?
+// We need to figure out steps when keycloak operator will be ready
+
 . Go to the link:{openshift-host}/console/project/{walkthrough-namespace}/overview[OpenShift conosle, window="_blank"], find `Identity Management` in the "Provisioned Services" section, and click on "Create Binding".
 . Use the following configurations for the binding parameters:
 .. Mobile client ID/Service ID: `syncserver`
