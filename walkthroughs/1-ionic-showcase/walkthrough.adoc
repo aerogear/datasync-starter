@@ -4,11 +4,13 @@
 
 :context: mobile-developer-services
 
-Mobile Developer Services provids a suite of Mobile Services across a range of native and hybrid client SDKs 
-that will simplify your mobile and modern application development needs, leveraging OpenShift's Container technology to provide a secure, scalable backend platform.
+Mobile Developer Services simplifies and accelerates mobile app development on OpenShift.
+It will provide a suite of Mobile Services running on top of the OpenShift platform, working natively across various web and mobile clients.
+MDS will simplify your mobile and modern application development needs, leveraging OpenShift's Container technology to provide a secure, scalable backend platform.
+
 
 In this walkthrough we are going to focus on the process of deploying `ionic-showcase` demo application that is utilizing all available Mobile Developer Services 
-in form of Node.js based server docker image and docker container with Progressive Web Application that can be launched in browser or mobile device. 
+in form of Node.js based server and client side Progressive Web Application that can be launched in browser or mobile device. 
 Additionally we going to explore `Mobile Developer Console` that is going to help us to orchiestrate all services and obtain mobile client configuration.
 
 Our demo showcase application will consist of:
@@ -28,6 +30,9 @@ Adds authentication and authorization to your mobile app
 
 - Mobile Metrics
 Gather metrics on mobile apps, device versions, device security checks and back-end mobile service usage
+
+
+**Deployment diagram**
 
 image::images/artifacts.png[integration, role="integr8ly-img-responsive"]
 
@@ -81,6 +86,9 @@ DataSync framework is an set of libaries that will allow developers to easily cr
 This section describes how to deploy the example DataSync server in an Integreatly cluster from the OpenShift Service Catalog.
 
 * Create a new project or namespace in the OpenShift Web Console
+// TODO: DataSync templates were removed from integrately. 
+// It is not clear for the moment how they will be loaded into Walkthorugh
+// We are adding it here manually
 * Add DataSync template by executing:
 `oc create -f https://raw.githubusercontent.com/aerogear/datasync-deployment/master/openshift/datasync-showcase.yml`
 * In the new project use the 'Search Catalog' bar to search for 'Data
@@ -97,6 +105,8 @@ Sync Showcase'
 The hostname for the AMQ Online Broker, (needed by demo sever) is only made available after the resources from the the template have been provisioned. One more step is needed to update the ionic-showcase-server deployment with the correct
 `+MQTT_HOST+` environment variable.
 
+// TODO can this be an script it will run from CodeReady workspaces?
+// CodeReady workspace should have access to the project we are deploying to.
 * From the terminal, ensure you have the correct namespace selected.
 
 ....
@@ -114,7 +124,7 @@ At this point, the showcae server is provisioned and the logs from the
 ionic-showcase-server pod will include the output
 `+connected to messaging service+`.
 
-. Try out the link:{route-sync-app-syncserver-host}/graphql[GraphQL playground, window="_blank"].
+. Try out the link:{route-ionic-showcase-server-host}/graphql[GraphQL playground, window="_blank"].
 . Paste in the following query/mutation into the text edit:
 +
 .Sample GraphQL Queries
@@ -142,7 +152,12 @@ and try execute them. Feel free to explore the schema and add more queries and m
 [time=5]
 == Create Mobile Application in Mobile Developer Console
 
-The Mobile Developer Console is where mobile developers can view avaiable mobile services, bind them to their mobile apps and get the configurations for the bound mobile services. Developer Console is already available in cluster and accessible under following url: 
+The Mobile Developer Console (MDC) is the starting point for developing and managing mobile apps on Open Shift.
+Console will allow mobile developers to view avaiable mobile services, connect them them to their mobile apps and get the mobile app configurations.
+The MDC helps you represent and manage your apps in Open Shift, it shows you the services that are available to you, and it helps you integrate your apps with those services using a concept called service bindings. The end result is a configuration file that can be dropped into your project. 
+The client SDKs will use this configuration file to to talk to the all Mobile Services on OpenShift
+
+Developer Console is already available in cluster and accessible under following url: 
 
 link:{route-mdc-server-host}[Mobile Developer Console, window="_blank"]
 
@@ -155,56 +170,55 @@ MDC panel will allow us to create new Mobile Applications and connect (bind) the
 . When the app is created, click on it and it will bring you to the configure page. On the left hand side, 
   you will see Wathe instructions to add the SDKs to your client app. On the right hand side you will see the content of the configuration file to add to a client app. There should be no services listed in the configuration file.
 . Go to the `Mobile Services` tab, and you should see there are a few services listed in the `Unbound Services` section.
+. From `Unbound Services` select `DataSync
+. Skip binding
+. In Parameters Section provide {route-ionic-showcase-server-host} as `Server URL`
+// TODO - we doing this mostly to add datasync
+// Does it even make sense to bind anything else now. We can have them bound in optional steps after?
 . Bind the `Mobile Metrics` and `Identity Management` services to the app by clicking on the "Bind To App" buttons. Use the default binding options, and once the bindings are completed, you will see them in the `Bound Services` section. 
 . Now go back to the `Configuration` tab again, you will see the `mobile-services.json` file is updated with information about the bound services. If you expand the row for each service, you will see the links to each of the service. Feel free to click on the links and explore the dashboard for each of the service.
-. Copy `mobile-services.json`
-
-[time=2]
-== Apply Showcase URL to configuration
-
-Temporary until we figure out how to do it
-
-`mobile-services.json`
-
-=== Steps
-
-. Edit `mobile-services.json` and add another service
-
-------
-{
-      "id": "sync",
-      "name": "sync",
-      "type": "sync",
-      "url": "{showcase route url}",
-      "config": {}
-}
-------
+// TODO can we use config access instead of manualy getting config. 
+// See https://issues.jboss.org/browse/AEROGEAR-9124  
+// CMD `oc get mobileclient app1 -o json | jq .status` 
+. Copy `mobile-services.json` to some temporary location. We going to need it later
 
 
 [time=10]
 == Run the DataSync client PWA application in CodeReady workspace
 
-In the previous task, we deployed the sync backend server, now let's run the sync client app and connect it to the backend.
+The AeroGear showcase app demonstrates the capabilities provided by our Services and SDKs
+Starting with Data Sync, Data Sync is a set of Node.js and Client side modules that help you build apps with strong offline and realtime data sync capabilities using GraphQL.
+Showcase application can be run on both local machine and directly inside OpenShift thanks to `Code Ready` integration.
+In this step we going to utilize Code Ready to build mobile application that will connect to backend we run in previous steps.
 
 === Steps
 
-- TODO how to access code ready?
-- Login to CodeReady, and you don’t need to create a workspace.
-- Modify the url to something like this:
+// TODO how to Access Code Ready?
+// TODO Check if we really need that custom workspace config?
+. Login to CodeReady and you don’t need to create a workspace.
+. Modify the url to something like this:
 https://<codeready-host>/f?url=https://github.com/aerogear/ionic-showcase.git
 CodeReady will automatically set up a new workspace for you.
-- Next, you should be able to find a few prede-fined commands in the “Manage Commands” panel. Run the `build` command to install required dependencies, and then `serve` command to allow preview the app. When you run the `servce` command, it will print out a url in the console for preview.
-- Replace `mobile-services.json` created in previous steps located in `src/mobile-services.json`
-- Execute `serve` command
-- Showcase client should be running in your console and be ready to be used in your local browser and phone
+. Next, you should be able to find a few prede-fined commands in the “Manage Commands” panel. Run the `build` command to install required dependencies, and then `serve` command to allow preview the app. 
+. Replace `mobile-services.json` created in previous steps located in `src/mobile-services.json`
+. Execute `serve` command. It will print the URL in console that can be used to launch the application
+. Showcase client should be running in your console and be ready to be used in your local browser and phone
 
-[time=10]
-== Run application on your browser/phone
 
-TODO. 
-We might add QR code to showcase for people to scan it in order to 
-get url. Retyping URL to phone will be quite bad experience.
+[time=1]
+== Run application on your browser or phone
 
+// TODO. We might add QR code to showcase for people to scan it in order to 
+Showcase app can be launched on mobile phone or your browser. 
+Application will contain many views that are designed to showcase various functionalities or our services.
+For this showcase we going to focus exclusively on DataSync which is implemented inside `Manage Tasks` view.
+
+
+=== Steps 
+
+. Open side panel 
+
+image::images/showcase.png[integration, role="integr8ly-img-responsive"]
 
 [time=10]
 == DataSync Offline and Conflict resolution functionalities
