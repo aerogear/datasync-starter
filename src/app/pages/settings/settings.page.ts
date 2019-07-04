@@ -10,13 +10,16 @@ import { Events } from '@ionic/angular';
 })
 export class SettingsPage implements OnInit {
     pushEnabled: any;
+    appURL: string;
 
   constructor(private storage: Storage,
               public events: Events) {
-
   }
 
   async ngOnInit() {
+    if(window && window.location){
+      this.appURL = window.location.href
+    }
     await this.storage.ready();
     const pushEnabledInStorage = await this.storage.get('pushEnabled');
 

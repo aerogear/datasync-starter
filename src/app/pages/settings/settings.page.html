@@ -22,3 +22,12 @@
     </ion-item>
   </ion-list>
 </ion-content>
+
+<ion-content padding ng-if="location">
+    <ion-list>
+      <h4>Run on another device</h4>
+      <ion-item>
+          <qrcode [qrdata]="appURL" [size]="256" [level]="'M'"></qrcode>
+      </ion-item>
+    </ion-list>
+  </ion-content>

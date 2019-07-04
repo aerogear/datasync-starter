@@ -15,12 +15,12 @@ import { PushService } from './services/push.service';
 import { Push } from '@ionic-native/push/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { IonicStorageModule } from '@ionic/storage';
-
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule, GraphQLModule, HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), QRCodeModule, AppRoutingModule, GraphQLModule, HttpClientModule],
   providers: [
     PushService,
     StatusBar,
