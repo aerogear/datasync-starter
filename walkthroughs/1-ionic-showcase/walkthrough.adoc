@@ -14,7 +14,7 @@ The showcase app that you run in this walkthrough demonstrates:
 * creating a Data Sync service. 
 +
 The Data Sync framework allows you create apps that perform real-time data synchronization and have offline capabilities.
-In this walkthrough, you use the showcase app code which allows many users to create and edit a set of TODO items.
+In this walkthrough, you use the showcase app code which allows many users to create and edit a set of Tasks items.
 
 * adding authentication and authorization to your mobile app using the Identity Management service
 
@@ -67,7 +67,7 @@ image::images/artifacts.png[integration, role="integr8ly-img-responsive"]
 // To do that please follow README in https://github.com/aerogear/mobile-services-installer
 
 [time=20]
-== Deploying the TODO Data Sync server
+== Deploying the Showcase Data Sync server
 
 The Data Sync framework is a set of libaries (base on the popular Apollo GraphQL server) that allows you to easily create mobile apps that can sync data to the backend with the following features:
 
@@ -161,7 +161,7 @@ Verify that you followed each step in the procedure above.  If you are still hav
 
 
 [time=5]
-== Creating a mobile app
+== Creating a mobile app in Mobile Develope Console
 
 The Mobile Developer Console allows mobile developers to view avaiable mobile services, connect them them to their mobile apps and get the mobile app configurations.
 
@@ -177,7 +177,7 @@ After the mobile app is registered, it is displayed on the console.
 . Click on the *showcase-app* card to display the configuration screen.
 . Click the *Mobile Services* tab.
 . Click *Bind to App* for *Data Sync* in the *Unbound Services* section.
-. Skip binding
+. Click Next on Binding screen. 
 . In Parameters Section provide {route-ionic-showcase-server-host} as `Server URL`
 // TODO - we doing this mostly to add datasync
 // Does it even make sense to bind anything else now. We can have them bound in optional steps after?
@@ -190,7 +190,7 @@ After the mobile app is registered, it is displayed on the console.
 
 
 [time=10]
-== Run the DataSync client PWA application in CodeReady workspace
+== Run the DataSync Client Showcase PWA application in CodeReady workspace
 
 The AeroGear showcase app demonstrates the capabilities provided by our Services and SDKs
 Starting with Data Sync, Data Sync is a set of Node.js and Client side modules that help you build apps with strong offline and realtime data sync capabilities using GraphQL.
