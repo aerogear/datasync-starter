@@ -19,6 +19,7 @@
     "@aerogear/voyager-metrics": "0.6.1-dev-1",
     "@aerogear/voyager-server": "0.6.1-dev-1",
     "@aerogear/voyager-subscriptions": "0.6.1-dev-1",
+    "@aerogear/voyager-conflicts": "0.5.1",
     "apollo-server": "2.6.8",
     "cors": "2.8.5",
     "deepmerge": "4.0.0",
