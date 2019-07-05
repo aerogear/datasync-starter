@@ -17,6 +17,7 @@
     "@aerogear/voyager-metrics": "0.6.1-dev-1",
     "@aerogear/voyager-server": "0.6.1-dev-1",
     "@aerogear/voyager-subscriptions": "0.6.1-dev-1",
+    "@aerogear/voyager-conflicts": "0.5.1",
     "apollo-server": "2.6.7",
     "cors": "2.8.5",
     "deepmerge": "3.3.0",
@@ -28,7 +29,6 @@
     "merge-graphql-schemas": "1.5.8",
     "mqtt": "3.0.0",
     "nodemon": "1.19.1",
-    "offix-conflicts-server": "^0.6.1",
     "pg": "7.11.0",
     "shortid": "2.2.14",
     "unifiedpush-node-sender": "0.16.1"
