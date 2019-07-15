@@ -75,6 +75,7 @@ export class TaskPage implements OnInit {
     // Refresh cache first
     await this.itemService.refreshItems().catch(() => {
       this.presentToast('Cannot refresh items from server');
+      this.itemService.initCacheIfRequired();
     });
     // Subscribe to local cache changes
     this.itemService.getItems().subscribe(result => {

@@ -11,7 +11,6 @@ import {
   ApolloOfflineClient,
   OfflineStore,
   CacheOperation,
-  createMutationOptions,
   subscribeToMoreHelper
 } from '@aerogear/voyager-client';
 import { subscriptionOptions } from './cache.updates';
@@ -54,42 +53,54 @@ export class ItemService {
 
   createItem(title, description) {
     return this.apollo.offlineMutation<Task>({
-        mutation: ADD_TASK,
-        variables: {
-          'title': title,
-          'description': description,
-          'version': 1,
-          'status': 'OPEN'
-        },
-        updateQuery: GET_TASKS,
-        returnType: 'Task'
-      });
+      mutation: ADD_TASK,
+      variables: {
+        'title': title,
+        'description': description,
+        'version': 1,
+        'status': 'OPEN'
+      },
+      updateQuery: GET_TASKS,
+      returnType: 'Task'
+    });
   }
 
   updateItem(item) {
     return this.apollo.offlineMutation<Task>({
-        mutation: UPDATE_TASK,
-        variables: item,
-        updateQuery: GET_TASKS,
-        returnType: 'Task',
-        operationType: CacheOperation.REFRESH
-      }
+      mutation: UPDATE_TASK,
+      variables: item,
+      updateQuery: GET_TASKS,
+      returnType: 'Task',
+      operationType: CacheOperation.REFRESH
+    }
     );
   }
 
   deleteItem(item) {
     return this.apollo.offlineMutation<Task>({
-        mutation: DELETE_TASK,
-        variables: item,
-        updateQuery: GET_TASKS,
-        returnType: 'Task',
-        operationType: CacheOperation.DELETE
-      }
+      mutation: DELETE_TASK,
+      variables: item,
+      updateQuery: GET_TASKS,
+      returnType: 'Task',
+      operationType: CacheOperation.DELETE
+    }
     );
   }
 
   getOfflineItems() {
     return this.offlineStore.getOfflineData();
+  }
+
+  initCacheIfRequired() {
+    // Initialize cache with initial data
+    try {
+      this.apollo.cache.readQuery<AllTasks>({ query: GET_TASKS }, false);
+    } catch (err) {
+      this.apollo.cache.writeQuery({
+        query: GET_TASKS,
+        data: { allTasks: [] }
+      });
+    }
   }
 
   getClient() {
