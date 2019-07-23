@@ -12,9 +12,9 @@ import {
 
 
 export const taskCacheUpdates = {
-    createTask: getUpdateFunction('createTask', 'id', CacheOperation.ADD, GET_TASKS),
-    updateTask: getUpdateFunction('updateTask', 'id', CacheOperation.REFRESH, GET_TASKS),
-    deleteTask: getUpdateFunction('deleteTask', 'id', CacheOperation.DELETE, GET_TASKS)
+    createTask: getUpdateFunction({mutationName: 'createTask', idField: 'id', operationType: CacheOperation.ADD, updateQuery: GET_TASKS}),
+    updateTask: getUpdateFunction({mutationName: 'updateTask', idField: 'id', operationType: CacheOperation.REFRESH, updateQuery: GET_TASKS}),
+    deleteTask: getUpdateFunction({mutationName: 'deleteTask', idField: 'id', operationType: CacheOperation.DELETE, updateQuery: GET_TASKS})
 };
 
 export const taskAddedHelper: SubscriptionHelperOptions = {
