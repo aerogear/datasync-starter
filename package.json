@@ -20,7 +20,7 @@
     "@aerogear/cordova-plugin-iroot": "0.8.1",
     "@aerogear/push": "2.6.0-dev1",
     "@aerogear/security": "2.6.0-rc1",
-    "@aerogear/voyager-client": "2.6.0-dev1",
+    "@aerogear/voyager-client": "2.6.0",
     "@angular/common": "7.2.12",
     "@angular/core": "7.2.12",
     "@angular/forms": "7.2.12",
