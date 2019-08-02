@@ -44,6 +44,15 @@ export class OpenShiftConfigService {
       service.type === 'security'));
   }
 
+  getServerUrl() {
+    const syncConfig = (config.services.find((service) =>
+      service.type === 'sync-app'));
+    if (syncConfig) {
+      return syncConfig.url;
+    }
+    return this.getLocalServerUrl();
+  }
+
   getLocalServerUrl() {
     return 'http://localhost:4000/graphql';
   }
