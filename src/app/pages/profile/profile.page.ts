@@ -56,7 +56,7 @@ export class ProfilePage implements OnInit {
       };
     }).catch((err) => {
       this.alertCtrl.create({
-        message: `Cannot retrieve profile. Please review application configuration.`,
+        message: `Cannot retrieve profile. Please review keycloak client configuration.`,
         header: `Login failed`,
         buttons: ['OK']
       }).then((dialog) => {
