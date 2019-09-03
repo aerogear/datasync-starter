@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { OpenShiftConfigService } from './config.service';
 import { VoyagerService } from './sync/voyager.service';
 import { KeycloakInitOptions } from 'keycloak-js';
-import { AuthContextProvider } from '@aerogear/voyager-client';
+//import { AuthContextProvider } from '@aerogear/voyager-client';
 import { Platform } from '@ionic/angular';
 
 @Injectable({
@@ -84,10 +84,10 @@ and check if you have setup proper "Valid Redirect URIs" and "Web Origins" value
         }
     }
 
-    getAuthContextProvider(): AuthContextProvider | undefined {
-        if (this.isEnabled()) {
-            return this.auth.getAuthContextProvider();
-        }
+    getAuthContextProvider(): undefined {
+        // if (this.isEnabled()) {
+        //     // return this.auth.getAuthContextProvider();
+        // }
         return undefined;
     }
 }

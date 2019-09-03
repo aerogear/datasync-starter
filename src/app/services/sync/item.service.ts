@@ -13,7 +13,7 @@ import {
   CacheOperation,
   createMutationOptions,
   subscribeToMoreHelper
-} from '@aerogear/voyager-client';
+} from 'offix-client';
 import { subscriptionOptions } from './cache.updates';
 
 @Injectable({
@@ -53,7 +53,7 @@ export class ItemService {
   }
 
   createItem(title, description) {
-    return this.apollo.offlineMutate<Task>({
+    return this.apollo.offlineMutation<Task>({
         mutation: ADD_TASK,
         variables: {
           'title': title,
@@ -67,7 +67,7 @@ export class ItemService {
   }
 
   updateItem(item) {
-    return this.apollo.offlineMutate<Task>({
+    return this.apollo.offlineMutation<Task>({
         mutation: UPDATE_TASK,
         variables: item,
         updateQuery: GET_TASKS,
@@ -78,7 +78,7 @@ export class ItemService {
   }
 
   deleteItem(item) {
-    return this.apollo.offlineMutate<Task>({
+    return this.apollo.offlineMutation<Task>({
         mutation: DELETE_TASK,
         variables: item,
         updateQuery: GET_TASKS,

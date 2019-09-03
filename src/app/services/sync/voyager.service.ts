@@ -1,7 +1,7 @@
 import {
-  ApolloOfflineClient, DataSyncConfig,
+  ApolloOfflineClient,
   OfflineQueueListener, ConflictListener, OfflineClient, OfflineStore
-} from '@aerogear/voyager-client';
+} from 'offix-client';
 import { Injectable, Injector } from '@angular/core';
 import { OpenShiftConfigService } from '../config.service';
 import { AlertController } from '@ionic/angular';
@@ -60,7 +60,7 @@ export class VoyagerService {
   }
 
   public async createApolloClient() {
-    const options: DataSyncConfig = {
+    const options: any = {
       conflictListener: new ConflictLogger(this.alertCtrl),
       fileUpload: true,
       mutationCacheUpdates: taskCacheUpdates

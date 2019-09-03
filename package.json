@@ -20,7 +20,7 @@
     "@aerogear/cordova-plugin-iroot": "0.8.1",
     "@aerogear/push": "2.6.2",
     "@aerogear/security": "2.6.2",
-    "@aerogear/voyager-client": "2.6.2",
+    "offix-client": "0.8.2",
     "@angular/common": "7.2.12",
     "@angular/core": "7.2.12",
     "@angular/forms": "7.2.12",
@@ -88,7 +88,7 @@
     "ts-node": "8.0.3",
     "tslint": "5.18.0",
     "typescript": "3.2.4"
-  }, 
+  },
   "cordova": {
     "plugins": {
       "cordova-plugin-inappbrowser": {},
