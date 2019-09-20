@@ -70,6 +70,8 @@ jobs:
             # Install SDKMan - a package manager used to install gradle
             curl -s "https://get.sdkman.io" | bash && source ~/.sdkman/bin/sdkman-init.sh
             sdk install gradle 4.10.3
+            # use empty mobile-services.json
+            echo "{\"services\":[]}" > src/mobile-services.json
             # actually build the app
             npx ionic cordova build android
       - save_cache:
@@ -134,8 +136,8 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              only: master
+            # branches:
+            #   only: master
       - e2e-android:
           requires:
             - build-android
