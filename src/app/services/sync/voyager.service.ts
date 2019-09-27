@@ -10,6 +10,7 @@ import { AuthService } from '../auth.service';
 import { taskCacheUpdates } from './cache.updates';
 import { HttpLink } from "apollo-link-http";
 import { ApolloLink } from "apollo-link";
+import { MutationOptions } from 'apollo-client';
 
 /**
  * Class used to log data conflicts in server
@@ -49,7 +50,7 @@ class ConflictLogger implements ConflictListener {
 export class VoyagerService {
 
   private _apolloClient: ApolloOfflineClient;
-  private _offlineStore: OfflineStore;
+  private _offlineStore: OfflineStore<MutationOptions>;
 
   constructor(private openShift: OpenShiftConfigService, public alertCtrl: AlertController, public injector: Injector) {
   }
@@ -58,7 +59,7 @@ export class VoyagerService {
     return this._apolloClient;
   }
 
-  get offlineStore(): OfflineStore {
+  get offlineStore(): OfflineStore<MutationOptions> {
     return this._offlineStore;
   }
 

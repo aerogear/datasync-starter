@@ -1,6 +1,7 @@
 {
-  "version": 1,
-  "namespace": "voyager",
-  "clientId": "voyager-ionic-example",
-  "services": []
+  "clientId": "dhayes",
+  "namespace": "mobile-developer-console",
+  "services": [
+    
+  ]
 }

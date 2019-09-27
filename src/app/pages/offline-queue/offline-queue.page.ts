@@ -28,7 +28,7 @@ export class OfflineQueuePage implements OnInit {
   private async fetchData() {
     const tempItems = await this.itemService.getOfflineItems();
     if (tempItems.length > 0) {
-      this.stagedItems = tempItems.map(taskItem => taskItem.operation );
+      this.stagedItems = tempItems //.map(taskItem => taskItem.operation);
     } else {
       this.stagedItems = [];
     }

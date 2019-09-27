@@ -70,7 +70,7 @@ export class TaskPage implements OnInit {
       },
       onOperationFailure: (operation) => {
         this.alertCtrl.create({
-          message: `Failed to replicate offline change: ${operation.operationName}`
+          message: `Failed to replicate offline change: ${operation}`
         }).then((dialog) => {
           dialog.present();
         });

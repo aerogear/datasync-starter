@@ -15,6 +15,7 @@ import {
   subscribeToMoreHelper
 } from 'offix-client';
 import { subscriptionOptions } from './cache.updates';
+import { MutationOptions } from 'offix-client/node_modules/apollo-client';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ import { subscriptionOptions } from './cache.updates';
 export class ItemService {
 
   private readonly apollo: ApolloOfflineClient;
-  private offlineStore: OfflineStore;
+  private offlineStore: OfflineStore<MutationOptions>;
 
   constructor(aeroGear: VoyagerService) {
     this.apollo = aeroGear.apolloClient;
