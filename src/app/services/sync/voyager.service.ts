@@ -2,7 +2,7 @@ import {
   ApolloOfflineClient,
   OfflineQueueListener, ConflictListener, OfflineClient, OfflineStore, isSubscription
 } from 'offix-client';
-import { defaultWebSocketLink } from '@aerogear/voyager-client'
+// import { defaultWebSocketLink } from '@aerogear/voyager-client'
 import { Injectable, Injector } from '@angular/core';
 import { OpenShiftConfigService } from '../config.service';
 import { AlertController } from '@ionic/angular';
@@ -11,6 +11,8 @@ import { taskCacheUpdates } from './cache.updates';
 import { HttpLink } from "apollo-link-http";
 import { ApolloLink } from "apollo-link";
 import { MutationOptions } from 'apollo-client';
+import { WebSocketLink } from "apollo-link-ws";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 
 /**
  * Class used to log data conflicts in server
@@ -82,7 +84,14 @@ export class VoyagerService {
       options.authContextProvider = authService.getAuthContextProvider();
     }
 
-    const wsLink = defaultWebSocketLink(options, { uri: options.wsUrl })
+    const client = new SubscriptionClient(options.wsUrl, {
+      reconnect: true
+    });
+
+    const wsLink = new WebSocketLink(client);
+
+    // const wsLink = defaultWebSocketLink(options, { uri: options.wsUrl })
+
     const httpLink = new HttpLink({
       uri: options.httpUrl,
     }) as ApolloLink;
