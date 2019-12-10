@@ -1,0 +1,8 @@
+
+
+= About the Showcase App
+
+Showcase apps demonstrate many features of {product-name}.
+
+These mobile apps are ready to work with the mobile services, and present an easy
+starting point for the developers.

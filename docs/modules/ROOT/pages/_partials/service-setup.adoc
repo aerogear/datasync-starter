@@ -1,0 +1,264 @@
+
+= Introducing the Showcase App
+
+Showcase apps demonstrate many features of {product-name}. To see these features:
+
+. Set up the appropriate services as described in xref:setting-up-mobile-services-to-demonstrate-showcase-apps[].
+. Set up the showcase app as described in xref:app[].
+. Register your showcase app as described in link:{getting-started-guide-link}[Registering a Mobile App].
+. Bind your {mobile-client} to the appropriate services as described in xref:binding[]
+. Copy the `mobile-services.json` file to your IDE as described in xref:downloading-the-mobile-services-configuration-file[]
+. Build and run your showcase app  as described in xref:build[].
+
+[[setting-up-mobile-services-to-demonstrate-showcase-apps]]
+== Setting up mobile services to demonstrate Showcase App features
+
+// tag::excludeDownstream[]
+.Prerequisites
+
+* You are running OpenShift with {product-name} as described in xref:getting-started.adoc[Setting up AeroGear {product-name} on OpenShift].
+
+// end::excludeDownstream[]
+
+.Procedure
+
+// tag::excludeDownstream[]
+. To demonstrate {metrics-service}, xref:mobile-metrics.adoc#provisioning-metrics-service[Provision the {metrics-service} service] For more information about features, see xref:mobile-metrics.adoc[{metrics-service} Service]
+// end::excludeDownstream[]
+
+. To demonstrate {keycloak-service}:
+
+// tag::excludeDownstream[]
+.. xref:identity-management.adoc#provisioning-the-identity-management-service[Provision the {keycloak-service} service].
+// end::excludeDownstream[]
+
+.. link:{idm-guide-link}#configuring-the-service[Set up the {keycloak-service} service].
+
+.. Create a new user to authenticate using the link:{idm-docs-link}[{keycloak-service} documentation].
+
+.. Set credentials for the created user. Follow the steps link:{idm-docs-link}[documentation].
+
++
+For more information about features, see link:{idm-guide-link}[{keycloak-service} Service]
+
+// tag::excludeDownstream[]
+. To demonstrate {unifiedpush-service} xref:push-notifications.adoc#provisioning-push-notifications-service[Provision the {unifiedpush-service} service]. For more information about features, see the xref:push-notifications.adoc[{unifiedpush-service} Service]
+// end::excludeDownstream[]
+
+// tag::excludeUpstream[]
+. To demonstrate {unifiedpush-service}, see link:{push-guide-link}[{unifiedpush-service} Service]
+
+. To demonstrate {sync-service}, perform the Data Sync Solution Pattern available from the Solution Explorer.
+// end::excludeUpstream[]
+
+
+
+// tag::excludeDownstream[]
+== Demonstrating {sync-service}
+
+. Provision a PostgreSQL database.
+.. Log in to OpenShift and browse to an existing project, or create a new project.
+.. Click `Browse Catalog` and select `Databases` -> `Postgres` -> `PostgreSQL`, and complete the wizard to start the deployment of the database.
++
+NOTE: Record the value for `PostgreSQL Connection Username`, `PostgreSQL Connection Password`, and `PostgreSQL Database Name` as they are required when provisioning {sync-service}.
+.. Click `Browse Catalog` and select `Mobile` -> `Data Sync`.
+. Provision a new {sync-service} app from the catalog as described in xref:data-sync.adoc#sync-server-openshift[Running Data Sync in OpenShift] with the following parameters:
++
+[options="header"]
++
+|====
+|Field|Value
+|Sync Application Name| syncshowcase
+|Sync Application Docker image| docker.io/aerogear/voyager-server-example-task
+|Sync Application Docker image version| latest
+|Sync App Port| 4000
+|Sync Application metrics endpoint| /metrics
+|Sync App GraphQL Endpoint| /graphql
+|Database Server Hostname| Hostname of the PostgreSQL server, usually *postgresql*
+|Database Server Port| Port number of the PostgreSQL server, usually *5432*
+|Database Server Username| *Username of the PostgreSQL database connection*
+|Database Server Password| *Password of the PostgreSQL database connection*
+|Database name| *PostgreSQL database name*
+|====
++
+. Provision the Mobile Developer Console
+.. Click `Browse Catalog` and select `Mobile` -> `Mobile Developer Console`.
+.. Complete the wizard to start the deployment of the *Mobile Developer Console*.
+
+[[creating-the-data-sync-mobile-app-binding]]
+=== Creating the Data Sync Mobile App binding
+
+[discrete]
+.Prerequisites
+
+xref:setting-up-mobile-services-to-demonstrate-showcase-apps[Setting up Mobile Services to Demonstrate Showcase Apps]
+
+[discrete]
+.Procedure
+
+. Log in to the Mobile Developer Console by clicking on the Mobile Developer Console link in Openshift.
+. Click *Create Mobile App*, and complete the wizard to create a Mobile App.
+. Click on the newly created *Mobile App* and click *Mobile Services*.
+. The Data Sync provisioned service should be available under the _Unbound Services_ heading. Click *Bind to App* and follow the wizard.
+. When the binding completes, click on *configuration*. The configuration for the Data Sync Mobile App is displayed, for example:
++
+[source,json]
+----
+{
+	"version": 1,
+	"namespace": "voyager",
+	"clientId": "voyager-ionic-example",
+	"services": [{
+		"id": "8565c444-6bed-33e9-8616-0af08791569c",
+		"name": "sync-app-syncshowcase-test16",
+		"type": "sync-app",
+		"url": "https://sync-app-syncshowcase.testbed.com/graphql",
+		"config": {
+			"websocketUrl": "wss://sync-app-syncshowcasetestbed.com/graphql"
+		}
+	}]
+}
+----
++
+. Copy the content to your clipboard.
+
+[[configuring-the-showcase-app-to-point-at-the-provisioned-data-sync-service]]
+=== Configuring the Showcase App to point at the provisioned Data Sync service
+
+[discrete]
+.Prerequisites
+
+xref:creating-the-data-sync-mobile-app-binding[Creating the Data Sync Mobile App binding]
+
+[discrete]
+.Procedure
+
+1. Clone the showcase app
++
+include::../cloning-showcase-app.adoc[tags=!excludeAll]
+
+2. Paste the Data Sync Mobile App configuration content into the *mobile-services.json* file located within _src_.
+
+[[running-the-showcase-app-with-data-sync-configured]]
+=== Running the showcase app with Data Sync configured
+
+[discrete]
+.Prerequisites
+
+xref:configuring-the-showcase-app-to-point-at-the-provisioned-data-sync-service[Configuring the Showcase App to point at the provisioned Data Sync service]
+
+[discrete]
+.Procedure
+
+. Open a terminal and browse to the showcase app root folder.
+. Install Ionic 4:
++
+[source, bash]
+----
+npm install -g ionic@4
+----
++
+. Install dependencies:
++
+[source, bash]
+----
+npm install
+----
++
+. Run the showcase app with Data Sync configured:
++
+[source, bash]
+----
+npm run start
+----
++
+. Once the process has finished, the showcase app is displayed in a browser at _http://localhost:8100/_.
+
+
+// end::excludeDownstream[]
+
+
+[[setting-up-the-showcase-app]]
+[#app]
+== Setting Up the Showcase App
+
+[discrete]
+.Prerequisites
+
+xref:setting-up-mobile-services-to-demonstrate-showcase-apps[]
+
+[discrete]
+.Procedure
+
+1. Clone the showcase app and checkout the release tag {showcase-version}
++
+include::../cloning-showcase-app.adoc[tags=!excludeAll]
+
+// TODO: fix link and numbering
+[start=2]
+. The following steps will help you enable Push Notifications in a showcase application.
++
+[tabs]
+====
+Ionic::
++
+--
+. You will need to create a project on link:https://firebase.google.com/[Firebase^].
+. Follow steps outlined link:https://support.google.com/firebase/answer/7015592?hl=en[here^] to download `google-services.json` from your Firebase project.
+. Overwrite the file `app/google-services.json` with the `google-services.json` file you downloaded from
+Firebase Cloud Messaging console.
+--
+////
+Android::
++
+--
+. You will need to create a project on link:https://firebase.google.com/[Firebase^].
+. Follow steps outlined link:https://support.google.com/firebase/answer/7015592?hl=en[here^] to download `google-services.json` from your Firebase project.
+. Overwrite the file `app/google-services.json` with the `google-services.json` file you downloaded from
+Firebase Cloud Messaging console.
+--
+iOS::
++
+--
+. Follow the link:https://help.apple.com/xcode/mac/current/#/devdfd3d04a1[official guide^] to enable push notifications for your Xcode project.
+
+. Follow  the link:https://help.apple.com/developer-account/#/dev82a71386a[official guide^] to generate an APNs client TLS certificate and export the client TLS identity from your Mac.
++
+NOTE: Make sure to protect the p12 file with a password.
++
+NOTE: The exported p12 file with the password will be used later when binding your {mobile-client} to the {unifiedpush-service}.
+--
+Xamarin::
++
+--
+{unifiedpush-service} Service is not supported on Xamarin.
+--
+////
+====
+
+[#binding]
+== Binding the Showcase {mobile-client} to {product-name}
+
+// tag::excludeDownstream[]
+. xref:mobile-metrics.adoc#binding-a-mobile-client-with-the-metrics-service[Bind the {mobile-client} to the {metrics-service} service] if you want to demonstrate the {metrics-service} service.
+// end::excludeDownstream[]
+
+. link:{idm-guide-link}#binding-a-mobile-client-with-the-identity-management-service[Bind the {mobile-client} to the {keycloak-service} service] if you want to demonstrate authentication.
+. link:{push-guide-link}#binding-a-mobile-client-with-the-push-notifications-service[Bind the {mobile-client} to the {unifiedpush-service} service] if you want to demonstrate {unifiedpush-service}.
++
+NOTE: This step also creates a variant as described in link:{push-guide-link}[ {unifiedpush-service} Service] terminology.
+
+. link:{data-sync-guide-link}#sync-server-binding[Bind the {mobile-client} to the {sync-service} app] if you want to demonstrate {sync-service}.
+
+[[downloading-the-mobile-services-configuration-file]]
+= Downloading the Mobile Services Configuration File
+
+. Open your {mobile-client} in the Mobile Developer Console.
+. Copy the `mobile-services.json` configuration to your clipboard.
+ Save the contents of the clipboard to a new file called `mobile-services.json`.
++
+NOTE: The `mobile-services.json` file is the link between the mobile services running on OpenShift and the mobile app you are developing. The `mobile-services.json` file provides all required configurations to initialize the various SDKs and connect them to the back-end services.
++
+. Copy the contents of the `mobile-services.json` file into the `mobile-services.json` file located in `src`.
+
+include::../build-and-deploy.adoc[tags=!excludeAll]

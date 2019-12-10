@@ -1,0 +1,30 @@
+
+
+include::_partials/attributes.adoc[]
+
+:toc:
+
+= Using the Showcase Mobile App
+:page-partial:
+
+
+include::_partials/service-setup.adoc[leveloffset=1,tags={include-tags}]
+
+
+// tag::excludeDownstream[]
+[#certs]
+
+include::_partials/proc_self-signed-certs.adoc[leveloffset=1,tags={include-tags}]
+// end::excludeDownstream[]
+
+[#features]
+== Demonstrating the ShowCase App features
+
+include::_partials/identity-management-demo.adoc[leveloffset=2,tags={include-tags}]
+
+include::_partials/sync.adoc[leveloffset=2,tags={include-tags}]
+
+include::_partials/security.adoc[leveloffset=2},tags={include-tags}]
+
+include::_partials/push-notifications.adoc[leveloffset=2},tags={include-tags}]
+
