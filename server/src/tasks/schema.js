@@ -89,15 +89,15 @@ const taskResolvers = {
     },
     updateTask: async (obj, clientData, context, info) => {
       console.log("Update", clientData)
-      const task = await context.db.collection('tasks').
-        findOneAndUpdate({ _id: ObjectID(clientData.id) }, { $set: clientData, $currentDate: { "_lastModified": true } })
-      if (!task.value) {
+      const result = await context.db.collection('tasks').
+        update({ _id: ObjectID(clientData.id) }, { $set: clientData, $currentDate: { "_lastModified": true } })
+      if (!result.result.ok) {
         throw new Error(`Invalid ID for task object: ${clientData.id}`);
       }
-      task.value.id = clientData.id
-      publishAndSaveDiff(TASK_UPDATED, task.value, undefined, context.db)
-      console.log("Update made", task.value)
-      return task.value;
+      const task = await context.db.collection('tasks').findOne({ _id: ObjectID(clientData.id) })
+      publishAndSaveDiff(TASK_UPDATED, task, undefined, context.db)
+      console.log("Update made", task)
+      return task;
     },
     deleteTask: async (obj, args, context, info) => {
       console.log("Delete", args)
@@ -107,6 +107,7 @@ const taskResolvers = {
         throw new Error("not deleted", result);
       }
       const deletedId = result.value._id
+      result.value.id = result.value._id;
       console.log(result.value);
       publishAndSaveDiff(TASK_DELETED, result.value, undefined, context.db)
       return deletedId;
@@ -193,7 +194,7 @@ function createDiffEntry(entryName, data, actionType, db) {
  * @param {*} lastSync sort key for fetching data
  */
 function getResultsFromDiffTable(entryName, limit, lastSync, db) {
-  if (!limit) limit = 100; 
+  if (!limit) limit = 100;
   console.log("Using lastsync data", lastSync, limit);
   return db.collection(`${entryName}_delta`).find({ _sortKey: { $gt: Number(lastSync) } }).toArray();
 }
