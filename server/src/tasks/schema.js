@@ -1,6 +1,7 @@
 const { pubSub } = require('../subscriptions')
 const { conflictHandler } = require("@aerogear/voyager-conflicts")
 const { TASK_ADDED, TASK_DELETED, TASK_UPDATED } = require("./subscriptions")
+const { ObjectID } = require("mongodb");
 
 const typeDefs = `
 type Task {
@@ -34,74 +35,85 @@ const PUSH_ALIAS = 'cordova';
 const taskResolvers = {
   Query: {
     allTasks: async (obj, args, context) => {
-      const result = context.db.select().from('tasks')
-      if (args.first && args.after) {
-        result.limit(args.first)
-        result.offset(args.after)
-      } else if (args.first) {
-        result.limit(args.first)
+      if (args.startedAt) {
+        return [{
+          "id": "5e29872a529accf649bf6951",
+          "version": 1,
+          "title": "Task1",
+          "description": "test",
+          "status": "OPEN",
+          '__deleted': false,
+        },
+        {
+          "id": "5e29872a529accf649bf6951",
+          "version": 1,
+          "title": "Task1",
+          "description": "test",
+          "status": "OPEN",
+          '__deleted': true,
+        }]
       }
-      return result
+      const result = await context.db.collection('tasks').find({}).limit(args.limit || 50).toArray()
+      const idresult = result.map(item => Object.assign({ id: item._id }, item));
+      console.log(idresult);
+      return idresult
     },
     getTask: async (obj, args, context, info) => {
-      const result = await context.db.select().from('tasks').where('id', args.id).then((rows) => rows[0])
-      return result
+      // TODO
+      return {}
     }
   },
 
   Mutation: {
     createTask: async (obj, args, context, info) => {
-      console.log("Create", args)
-      const result = await context.db('tasks').insert({
+      const result = await context.db.collection('tasks').insertOne({
         ...args,
         version: 1,
         status: 'OPEN'
-      }).returning('*').then((rows) => rows[0])
-      console.log("TASK CREATED", result)
-      // TODO context helper for publishing subscriptions in SDK?
-      // TODO move from passing pushClient in context and use boolean to push or not here
-      publish(TASK_ADDED, result, context.pushClient)
-      return result
+      })
+      console.log(result);
+      const item = await context.db.collection('tasks').findOne({ _id: ObjectID(result.insertedId) })
+      item.id = item._id;
+      console.log("TASK CREATED", item)
+      publish(TASK_ADDED, item, context.pushClient, context.db)
+      return item
     },
     updateTask: async (obj, clientData, context, info) => {
+      // TODO
       console.log("Update", clientData)
-      const task = await context.db('tasks').select()
-        .where('id', clientData.id).then((rows) => rows[0])
+      const task = await context.db.collection('tasks').
+        findOneAndUpdate({ _id: ObjectID(clientData.id) }, { $set: clientData })
       if (!task) {
         throw new Error(`Invalid ID for task object: ${clientData.id}`);
       }
 
-      const conflictError = conflictHandler.checkForConflict(task, clientData);
-      if(conflictError){
-        throw conflictError;
-      }
 
-      const update = await context.db('tasks').update(clientData)
-        .where({
-          'id': clientData.id
-        }).returning('*').then((rows) => rows[0])
-
-      publish(TASK_UPDATED, update)
-      return update;
+      publish(TASK_UPDATED, task.value, undefined, context.db)
+      console.log("Update made", task.value)
+      return task.value;
     },
     deleteTask: async (obj, args, context, info) => {
       console.log("Delete", args)
-      const result = await context.db('tasks').delete()
-        .where('id', args.id).returning('*').then((rows) => {
-          if (rows[0]) {
-            const deletedId = rows[0].id
-            publish(TASK_DELETED, rows[0])
-            return deletedId;
-          } else {
-            throw new Error(`Cannot delete object ${args.id}`);
-          }
-        })
-      return result
+      const result = await context.db.collection('tasks').findOneAndDelete({ _id: ObjectID(args.id) })
+      console.log(result);
+      if (!result.value) {
+        throw new Error("not deleted", result);
+      }
+      const deletedId = result.value._id
+      console.log(result.value);
+      publish(TASK_DELETED, result.value, undefined, context.db)
+      return deletedId;
+
     }
   }
 }
 
-function publish(actionType, data, pushClient) {
+function publish(actionType, data, pushClient, db) {
+  // Save data to diff table
+  // TODO timestamp is not enough to determine as there could be two writes happening in the same millisecond. 
+  // We need to probably use ID+timestamp
+  db.collection("tasks_delta").insertOne({ ...data, _id: undefined, timestamp: new Date().getTime(), deleted: actionType === TASK_DELETED })
+
   if (pushClient) {
     pushClient.sender.send({
       alert: `New task: ${data.title}`,
@@ -120,15 +132,15 @@ function publish(actionType, data, pushClient) {
         console.log("Notification not sent, error received ", error)
       })
   }
-  switch(actionType){
-    case(TASK_ADDED):
-      pubSub.publish(actionType, { taskAdded: data});
+  switch (actionType) {
+    case (TASK_ADDED):
+      pubSub.publish(actionType, { taskAdded: data });
       break;
-    case(TASK_DELETED):
-      pubSub.publish(actionType, { taskDeleted: data});
+    case (TASK_DELETED):
+      pubSub.publish(actionType, { taskDeleted: data });
       break;
-    case(TASK_UPDATED):
-      pubSub.publish(actionType, { taskUpdated: data});
+    case (TASK_UPDATED):
+      pubSub.publish(actionType, { taskUpdated: data });
       break;
   }
 }

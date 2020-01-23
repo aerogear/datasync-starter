@@ -1,15 +1,14 @@
-const knex = require('knex')
-const createTasksTables = require("./tasks/ddl")
-const createFileTables = require("./files/ddl")
+const MongoClient = require('mongodb').MongoClient;
 
 async function connect(options) {
-  const db = knex({
-    client: 'pg',
-    connection: options
-  })
+  const url = 'mongodb://localhost:27017';
 
-  await createTasksTables(db);
-  await createFileTables(db);
+  // Database Name
+  const dbName = 'showcase';
+
+  // Use connect method to connect to the server
+  const client = await MongoClient.connect(url)
+  const db = client.db(dbName);
   return db
 }
 
