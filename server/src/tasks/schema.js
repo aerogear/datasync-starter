@@ -3,13 +3,26 @@ const { conflictHandler } = require("@aerogear/voyager-conflicts")
 const { TASK_ADDED, TASK_DELETED, TASK_UPDATED } = require("./subscriptions")
 const { ObjectID } = require("mongodb");
 
+
 const typeDefs = `
+
 type Task {
   id: ID!
-  version: Int
   title: String!
   description: String!
   status: TaskStatus
+  version: Int
+  _deleted: Boolean
+  _lastModified: GraphQLDateTime!
+}
+
+interface Connection {
+  startedAt: GraphQLDateTime!
+}
+
+type TaskConnection implements Connection {
+  items: [Task!]!
+  startedAt: GraphQLDateTime!
 }
 
 enum TaskStatus {
@@ -19,8 +32,8 @@ enum TaskStatus {
 }
 
 type Query {
-  allTasks(first: Int, after: String): [Task],
   getTask(id: ID!): Task
+  allTasks(lastSync: GraphQLDateTime): TaskConnection!,
 }
 
 type Mutation {
@@ -32,17 +45,25 @@ type Mutation {
 
 const PUSH_ALIAS = 'cordova';
 
+
+function Connection(items) {
+  return {
+    items,
+    startedAt: new Date()
+  }
+}
+
 const taskResolvers = {
   Query: {
     allTasks: async (obj, args, context) => {
-      if (args.startedAt) {
-        return [{
+      if (args.lastSync) {
+        return Connection([{
           "id": "5e29872a529accf649bf6951",
           "version": 1,
           "title": "Task1",
           "description": "test",
           "status": "OPEN",
-          '__deleted': false,
+          '_deleted': false,
         },
         {
           "id": "5e29872a529accf649bf6951",
@@ -50,13 +71,13 @@ const taskResolvers = {
           "title": "Task1",
           "description": "test",
           "status": "OPEN",
-          '__deleted': true,
-        }]
+          '_deleted': true,
+        }])
       }
       const result = await context.db.collection('tasks').find({}).limit(args.limit || 50).toArray()
-      const idresult = result.map(item => Object.assign({ id: item._id }, item));
+      const idresult = result.map(item => Object.assign({ id: item._id.toString() }, item));
       console.log(idresult);
-      return idresult
+      return Connection(idresult)
     },
     getTask: async (obj, args, context, info) => {
       // TODO

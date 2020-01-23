@@ -13,6 +13,7 @@ const path = require('path')
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', error.message);
+  console.error(error.stack)
   process.exit(1);
 });
 
@@ -81,8 +82,8 @@ async function start() {
 
   const voyagerConfig = {
     securityService: keycloakService,
-    metrics,
-    auditLogger
+    // metrics,
+    // auditLogger
   }
 
   const apolloServer = VoyagerServer(apolloConfig, voyagerConfig)
