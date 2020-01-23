@@ -10,6 +10,7 @@ const { createSubscriptionServer } = require('@aerogear/voyager-subscriptions')
 const { appTypeDefs, appResolvers } = require('./schema')
 const agSender = require('unifiedpush-node-sender')
 const path = require('path')
+const makeExecutableSchema = require("apollo-server").makeExecutableSchema
 
 process.on('unhandledRejection', error => {
   console.error('unhandledRejection', error.message);
@@ -54,10 +55,12 @@ async function start() {
 
   // connect to db
   const client = await connect(config.db);
-
-  const apolloConfig = {
+  const schema = makeExecutableSchema({
     typeDefs: appTypeDefs,
     resolvers: appResolvers,
+  });
+  const apolloConfig = {
+    schema,
     playground: config.playgroundConfig,
     introspection: true,
     context: async ({
@@ -91,8 +94,8 @@ async function start() {
   apolloServer.applyMiddleware({ app })
 
   app.use('/', express.static('website'))
-  app.get('*', (req, res) => {                       
-    res.sendFile(path.resolve('website', 'index.html'));                               
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve('website', 'index.html'));
   });
 
   const server = app.listen(config.port, () => {

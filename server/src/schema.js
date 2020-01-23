@@ -1,6 +1,6 @@
 const mergeResolvers = require("deepmerge").all
 const mergeTypes = require('merge-graphql-schemas').mergeTypes;
-const { GraphQLDateTime } = require('graphql-iso-date')
+const { LongResolver } = require('graphql-scalars')
 
 const {
     taskTypeDefs,
@@ -10,22 +10,19 @@ const {
 } = require('./tasks')
 
 
-const {
-    fileTypeDefs,
-    fileResolvers,
-} = require('./files')
-// TODO Replace with GraphQL-modules once Voyager will allow for that
-
-const dateTypeDefs = `
-scalar GraphQLDateTime
+// Doesn't work
+const timestampTypedef = `
+scalar Long
 `
 
-const dateResolvers = {
-    GraphQLDateTime: GraphQLDateTime
+// Using large number as we might use nanoseconds that do not fit to timestamp format
+const timestampResolver = {
+    Long: LongResolver
 }
 
-const appResolvers = mergeResolvers([dateResolvers, taskResolvers, subscriptionResolvers])
-const appTypeDefs = mergeTypes([dateTypeDefs, taskTypeDefs, subscriptionTypeDefs],
+const appResolvers = mergeResolvers([timestampResolver, taskResolvers, subscriptionResolvers])
+console.log(Object.keys(appResolvers))
+const appTypeDefs = mergeTypes([timestampTypedef, taskTypeDefs, subscriptionTypeDefs],
     { all: true })
 
 module.exports = {

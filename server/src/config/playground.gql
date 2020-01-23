@@ -1,11 +1,19 @@
 fragment TaskFields on Task { 
     id
-    version
-    title
+    version 
+    title 
     description
     status
+    _deleted
+    _lastModified
 }
 
+fragment TaskConnectionFields on TaskConnection{
+  items{
+    ...TaskFields
+  }
+  startedAt
+}
 
 mutation createTask {
   createTask(title: "Task1", description: "test", status: OPEN) {
@@ -14,23 +22,23 @@ mutation createTask {
 }
 
 mutation updateTask {
-  updateTask(id: "1", title: "Task2", version: 1) {
+  updateTask(id: "5e29da2de4fa0030b90a58d9", title: "Task2", version: 1) {
     ...TaskFields
   }
 }
 
 mutation deleteTask {
-  deleteTask(id: "1")
+  deleteTask(id: "5e29da5f78d59530f4284a34")
 }
 
 query getTask {
-  getTask(id: "1") {
+  getTask(id: "5e29da5f78d59530f4284a34") {
     ...TaskFields
   }
 }
 
 query allTasks {
-  allTasks{
-    ...TaskFields
+  allTasks(lastSync:"157980147900"){
+    ...TaskConnectionFields
   }
 }

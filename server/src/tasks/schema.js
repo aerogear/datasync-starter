@@ -1,8 +1,6 @@
 const { pubSub } = require('../subscriptions')
-const { conflictHandler } = require("@aerogear/voyager-conflicts")
 const { TASK_ADDED, TASK_DELETED, TASK_UPDATED } = require("./subscriptions")
 const { ObjectID } = require("mongodb");
-
 
 const typeDefs = `
 
@@ -13,16 +11,16 @@ type Task {
   status: TaskStatus
   version: Int
   _deleted: Boolean
-  _lastModified: GraphQLDateTime!
+  _lastModified: String!
 }
 
 interface Connection {
-  startedAt: GraphQLDateTime!
+  startedAt: String!
 }
 
 type TaskConnection implements Connection {
   items: [Task!]!
-  startedAt: GraphQLDateTime!
+  startedAt: String!
 }
 
 enum TaskStatus {
@@ -33,7 +31,7 @@ enum TaskStatus {
 
 type Query {
   getTask(id: ID!): Task
-  allTasks(lastSync: GraphQLDateTime): TaskConnection!,
+  allTasks(lastSync: String): TaskConnection!,
 }
 
 type Mutation {
@@ -45,11 +43,10 @@ type Mutation {
 
 const PUSH_ALIAS = 'cordova';
 
-
-function Connection(items) {
+function Connection(items, timestamp) {
   return {
     items,
-    startedAt: new Date()
+    startedAt: timestamp
   }
 }
 
@@ -57,27 +54,16 @@ const taskResolvers = {
   Query: {
     allTasks: async (obj, args, context) => {
       if (args.lastSync) {
-        return Connection([{
-          "id": "5e29872a529accf649bf6951",
-          "version": 1,
-          "title": "Task1",
-          "description": "test",
-          "status": "OPEN",
-          '_deleted': false,
-        },
-        {
-          "id": "5e29872a529accf649bf6951",
-          "version": 1,
-          "title": "Task1",
-          "description": "test",
-          "status": "OPEN",
-          '_deleted': true,
-        }])
+        const results = await getResultsFromDiffTable('task', args.limit, args.lastSync, context.db)
+        console.log(results);
+        // TODO eventual inconsistency - result need to be ordered
+        return Connection(results, new Date().getTime())
       }
       const result = await context.db.collection('tasks').find({}).limit(args.limit || 50).toArray()
       const idresult = result.map(item => Object.assign({ id: item._id.toString() }, item));
       console.log(idresult);
-      return Connection(idresult)
+      // TODO eventual inconsistency - result need to be ordered
+      return Connection(idresult, new Date().getTime())
     },
     getTask: async (obj, args, context, info) => {
       // TODO
@@ -90,26 +76,26 @@ const taskResolvers = {
       const result = await context.db.collection('tasks').insertOne({
         ...args,
         version: 1,
+        // This is optional but we keep it there for testing
+        _deleted: false,
+        _lastModified: new Date().getTime(),
         status: 'OPEN'
       })
-      console.log(result);
       const item = await context.db.collection('tasks').findOne({ _id: ObjectID(result.insertedId) })
       item.id = item._id;
       console.log("TASK CREATED", item)
-      publish(TASK_ADDED, item, context.pushClient, context.db)
+      publishAndSaveDiff(TASK_ADDED, item, context.pushClient, context.db)
       return item
     },
     updateTask: async (obj, clientData, context, info) => {
-      // TODO
       console.log("Update", clientData)
       const task = await context.db.collection('tasks').
-        findOneAndUpdate({ _id: ObjectID(clientData.id) }, { $set: clientData })
-      if (!task) {
+        findOneAndUpdate({ _id: ObjectID(clientData.id) }, { $set: clientData, $currentDate: { "_lastModified": true } })
+      if (!task.value) {
         throw new Error(`Invalid ID for task object: ${clientData.id}`);
       }
-
-
-      publish(TASK_UPDATED, task.value, undefined, context.db)
+      task.value.id = clientData.id
+      publishAndSaveDiff(TASK_UPDATED, task.value, undefined, context.db)
       console.log("Update made", task.value)
       return task.value;
     },
@@ -122,18 +108,15 @@ const taskResolvers = {
       }
       const deletedId = result.value._id
       console.log(result.value);
-      publish(TASK_DELETED, result.value, undefined, context.db)
+      publishAndSaveDiff(TASK_DELETED, result.value, undefined, context.db)
       return deletedId;
 
     }
   }
 }
 
-function publish(actionType, data, pushClient, db) {
-  // Save data to diff table
-  // TODO timestamp is not enough to determine as there could be two writes happening in the same millisecond. 
-  // We need to probably use ID+timestamp
-  db.collection("tasks_delta").insertOne({ ...data, _id: undefined, timestamp: new Date().getTime(), deleted: actionType === TASK_DELETED })
+function publishAndSaveDiff(actionType, data, pushClient, db) {
+  createDiffEntry('task', data, actionType, db);
 
   if (pushClient) {
     pushClient.sender.send({
@@ -169,4 +152,48 @@ function publish(actionType, data, pushClient, db) {
 module.exports = {
   taskResolvers: taskResolvers,
   taskTypeDefs: typeDefs
+}
+
+// 2 Days
+const defaultTTL = 2 * 24 * 60 * 60 * 1000;
+
+/**
+ * MAIN method for delta processing that creates table per entry name
+ * 
+ * @param {*} entryName name of the entity that is being processed
+ * @param {*} data - actual data that was modified
+ * @param {*} actionType - type of action 
+ * @param {*} db - mongo driver
+ */
+function createDiffEntry(entryName, data, actionType, db) {
+  const timestamp = new Date().getTime(); // For more precision use Number(process.hrtime().join(''));
+  const actionMetadata = {
+    _ttl: timestamp + defaultTTL,
+    // Key used to sort operations that happened used to fetch all entries
+    _sortKey: timestamp,
+    // Marker if field was deleted (we need it for soft delete feature to evit client data)
+    _deleted: actionType === TASK_DELETED
+  };
+
+  // Save data to diff table
+
+  // TODO for production usage we need to create indexes
+  // FIXME filtering to save only deleted operation can be applied. 
+  // This means that original table can be always query and we can query delta only for deletes that happend for some timestamp 
+  // This can be done only when it is possible to change order key in original table
+
+  db.collection(`${entryName}_delta`).insertOne({ ...data, _id: undefined, ...actionMetadata });
+}
+
+/**
+ * @param {*} entryName name of the entity that is being processed
+ * @param {*} db - mongo driver
+ * @param {*} entryName 
+ * @param {*} limit data limit
+ * @param {*} lastSync sort key for fetching data
+ */
+function getResultsFromDiffTable(entryName, limit, lastSync, db) {
+  if (!limit) limit = 100; 
+  console.log("Using lastsync data", lastSync, limit);
+  return db.collection(`${entryName}_delta`).find({ _sortKey: { $gt: Number(lastSync) } }).toArray();
 }
