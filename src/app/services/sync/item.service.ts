@@ -33,7 +33,7 @@ export class ItemService {
    */
   refreshItems() {
     // Force cache refresh by performing network
-    return this.apollo.query<AllTasks>({
+    return this.apollo.query({
       query: GET_TASKS,
       fetchPolicy: 'network-only',
       errorPolicy: 'none'
@@ -42,7 +42,7 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
-    const getTasks = this.apollo.watchQuery<AllTasks>({
+    const getTasks = this.apollo.watchQuery({
       query: GET_TASKS,
       fetchPolicy: 'cache-first',
       errorPolicy: 'none'

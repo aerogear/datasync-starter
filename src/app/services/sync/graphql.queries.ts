@@ -13,13 +13,25 @@ mutation createTask($description: String!, $title: String!, $status: TaskStatus)
 `;
 
 export const GET_TASKS = gql`
-  query allTasks($first: Int) {
-    allTasks(first: $first) {
-      id
-      title
-      description
-      version
-      status
+  fragment TaskFields on Task {
+    id
+    version
+    title
+    description
+    status
+    _deleted
+    _lastModified
+  }
+
+  fragment TaskConnectionFields on TaskConnection{
+    items{
+      ...TaskFields
+    }
+    startedAt
+  }
+  query allTasks($lastSync: String) {
+    allTasks(lastSync: $lastSync) {
+      ...TaskConnectionFields
     }
 }
 `;
