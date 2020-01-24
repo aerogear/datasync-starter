@@ -21,6 +21,7 @@ interface Connection {
 
 type TaskConnection implements Connection {
   items: [Task!]!
+  removedTasks: [String]
   lastSync: String!
 }
 
@@ -157,8 +158,8 @@ module.exports = {
   taskTypeDefs: typeDefs
 }
 
-// 2 Days
-const defaultTTL = 2 * 24 * 60 * 60 * 1000;
+// 10 Days
+const defaultTTL = 10 * 24 * 60 * 60 * 1000;
 
 /**
  * MAIN method for delta processing that creates table per entry name
@@ -169,7 +170,8 @@ const defaultTTL = 2 * 24 * 60 * 60 * 1000;
  * @param {*} db - mongo driver
  */
 function createDiffEntry(entryName, data, actionType, db) {
-  const timestamp = new Date().getTime(); // For more precision use Number(process.hrtime().join(''));
+  // With multiple node.js instances we should use Number(process.hrtime().join('')); for better precision
+  const timestamp = data.lastModified;
   const actionMetadata = {
     _ttl: timestamp + defaultTTL,
     // Key used to sort operations that happened used to fetch all entries
@@ -178,14 +180,9 @@ function createDiffEntry(entryName, data, actionType, db) {
     deleted: actionType === TASK_DELETED
   };
 
-  // Save data to diff table
+  // Save data to entry table
 
-  // TODO for production usage we need to create indexes
-  // FIXME filtering to save only deleted operation can be applied. 
-  // This means that original table can be always query and we can query delta only for deletes that happend for some timestamp 
-  // This can be done only when it is possible to change order key in original table
-
-  db.collection(`${entryName}_delta`).insertOne({ ...data, _id: undefined, ...actionMetadata });
+  db.collection(`${entryName}_entry`).save({ ...data, ...actionMetadata });
 }
 
 /**
@@ -199,7 +196,7 @@ function getResultsFromDiffTable(entryName, limit, lastSync, db) {
   if (!limit) limit = 100;
   console.log("Using lastsync data", lastSync, limit);
   const newSync = new Date().getTime()
-  const data = db.collection(`${entryName}_delta`)
+  const data = db.collection(`${entryName}_entry`)
     .find({ _sortKey: { $gt: Number(lastSync) } })
     .limit(limit)
     .sort({ _sortKey: -1 }).toArray();

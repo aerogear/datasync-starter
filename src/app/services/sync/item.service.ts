@@ -31,7 +31,7 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
-    const lastSync = undefined;
+    const lastSync = '1579866023984';
     const getTasks = this.apollo.watchQuery({
       query: GET_TASKS,
       variables: { lastSync },
