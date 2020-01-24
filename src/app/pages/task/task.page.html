@@ -7,6 +7,9 @@
       Manage Tasks
     </ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="sync()">
+        <ion-icon slot="icon-only" name="refresh"></ion-icon>
+      </ion-button>
       <ion-button (click)="openNewItemPage()">
         <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>

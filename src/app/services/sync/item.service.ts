@@ -31,14 +31,15 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
-    const lastSync = '1579866023984';
+    // TODO
+    // We should be able determine if there is a lastSync value at startup
+    // and provide it here. We can possibly get that from the cache without any special storage
     const getTasks = this.apollo.watchQuery({
       query: GET_TASKS,
-      variables: { lastSync },
       fetchPolicy: 'cache-and-network',
       errorPolicy: 'none'
     });
-    subscribeToMoreHelper(getTasks, subscriptionOptions);
+    // subscribeToMoreHelper(getTasks, subscriptionOptions);
     return getTasks;
   }
 

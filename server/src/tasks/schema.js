@@ -111,6 +111,7 @@ const taskResolvers = {
       }
       const deletedId = result.value._id
       result.value.id = result.value._id;
+      result.value.lastModified = new Date().getTime()
       console.log(result.value);
       publishAndSaveDiff(TASK_DELETED, result.value, undefined, context.db)
       return deletedId;

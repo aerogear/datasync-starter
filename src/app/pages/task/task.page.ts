@@ -7,6 +7,7 @@ import { NetworkService } from '../../services/network.service';
 import { VoyagerService } from '../../services/sync/voyager.service';
 import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+import { ObservableQuery } from 'apollo-client'
 
 
 @Component({
@@ -24,6 +25,12 @@ export class TaskPage implements OnInit {
   errors: any;
   cases: { case: string; }[];
   selectedSegment = 'all';
+  getTasksQuery: ObservableQuery
+  // todo where do we store this? Possibly don't need to because the value is cached.
+  // with cache persistence and using cache-and-network policy
+  // the query will first hit the cache which will give us back the previous value,
+  // then we can set lastSync again
+  lastSync?: string 
 
   constructor(
     private router: Router,
@@ -32,10 +39,11 @@ export class TaskPage implements OnInit {
     public aerogear: VoyagerService,
     public toastController: ToastController,
     public auth: AuthService,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
   ) {
     this.items = [];
     this.cases = [{ case: 'all' }, { case: 'open' }];
+    this.getTasksQuery = this.itemService.getItems() as any
   }
 
   async ngOnInit() {
@@ -81,9 +89,11 @@ export class TaskPage implements OnInit {
 
   private async loadData() {
     // Subscribe to local cache changes
-    this.itemService.getItems().subscribe(result => {
+    
+    this.getTasksQuery.subscribe(result => {
       if (result && !result.errors) {
         console.log('Result from query', result);
+        this.lastSync = result.data.allTasks.lastSync
         this.items = result.data && result.data.allTasks.items;
       } else {
         console.log('error from query', result);
@@ -93,6 +103,55 @@ export class TaskPage implements OnInit {
       console.log('error from query', error);
       this.presentToast('Problem with listening to cache changes.');
     });
+  }
+
+  sync() {
+    const lastSync = this.lastSync;
+    const queryName = this.getTasksQuery.queryName
+
+    // fetchmore lets you call the same query again with different params
+    // and have the results merged back under the same query within the cache
+    this.getTasksQuery.fetchMore({
+      variables: { lastSync },
+
+      // todo this should probably become a helper function in offix
+      updateQuery: (prev, { fetchMoreResult }) => {
+        const previous = prev[queryName]
+        const next = fetchMoreResult[queryName]
+        const newItems = this.mergeSyncResult(previous.items, next.items, "id")
+        return {
+          [queryName]: {
+            items: newItems,
+            lastSync: next.lastSync,
+            __typename: next.__typename
+          }
+        }
+      }
+    })
+  }
+
+  // TODO this should probably be in offix
+  // function that takes two arrays of objects
+  // merges nextItems on top of currentItems basing on a given idField,
+
+  // for each item in currentItems we loop through nextItems to find a match
+  // if there's a match we replace the original item with the newly updated one
+  // then we filter out deletes
+  // Complexity is roughly O(n^2) + n
+
+  mergeSyncResult(currentItems: any[], nextItems: any[], idField: string) {
+
+    const result = currentItems
+    .map((currentItem) => {
+      const nextItemIndex = nextItems.findIndex((nextItem) => { return currentItem[idField] === nextItem[idField] })
+      if (nextItemIndex != -1) {
+        return nextItems.splice(nextItemIndex, 1)[0]
+      }
+      return currentItem
+    })
+    .concat(nextItems)
+    .filter((item) => { return item.deleted != true})
+    return result
   }
 
   openNewItemPage() {
