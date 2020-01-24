@@ -80,10 +80,6 @@ export class TaskPage implements OnInit {
   }
 
   private async loadData() {
-    // Refresh cache first
-    await this.itemService.refreshItems().catch(() => {
-      this.presentToast('Cannot refresh items from server');
-    });
     // Subscribe to local cache changes
     this.itemService.getItems().subscribe(result => {
       if (result && !result.errors) {
@@ -91,7 +87,7 @@ export class TaskPage implements OnInit {
         this.items = result.data && result.data.allTasks;
       } else {
         console.log('error from query', result);
-        this.presentToast('Cannot load data from cache');
+        this.presentToast('Cannot load data');
       }
     }, error => {
       console.log('error from query', error);

@@ -19,8 +19,8 @@ export const GET_TASKS = gql`
     title
     description
     status
-    _deleted
-    _lastModified
+    deleted
+    lastModified
   }
 
   fragment TaskConnectionFields on TaskConnection{

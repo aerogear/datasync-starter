@@ -4,8 +4,8 @@ fragment TaskFields on Task {
     title 
     description
     status
-    _deleted
-    _lastModified
+    deleted
+    lastModified
 }
 
 fragment TaskConnectionFields on TaskConnection{

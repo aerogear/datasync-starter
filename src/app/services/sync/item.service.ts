@@ -27,24 +27,12 @@ export class ItemService {
     this.apollo = aeroGear.apolloClient;
     this.offlineStore = aeroGear.offlineStore;
   }
-
-  /**
-   * Force cache refresh to get recent data
-   */
-  refreshItems() {
-    // Force cache refresh by performing network
-    return this.apollo.query({
-      query: GET_TASKS,
-      fetchPolicy: 'network-only',
-      errorPolicy: 'none'
-    });
-  }
-
+ 
   // Watch local cache for updates
   getItems() {
     const getTasks = this.apollo.watchQuery({
       query: GET_TASKS,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: 'cache-and-network',
       errorPolicy: 'none'
     });
     subscribeToMoreHelper(getTasks, subscriptionOptions);

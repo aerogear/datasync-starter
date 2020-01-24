@@ -10,8 +10,9 @@ type Task {
   description: String!
   status: TaskStatus
   version: Int
-  _deleted: Boolean
-  _lastModified: String!
+  ## Metadata fields
+  deleted: Boolean
+  lastModified: String!
 }
 
 interface Connection {
@@ -56,8 +57,7 @@ const taskResolvers = {
       if (args.lastSync) {
         const results = await getResultsFromDiffTable('task', args.limit, args.lastSync, context.db)
         console.log(results);
-        // TODO eventual inconsistency - result need to be ordered
-        return Connection(results, new Date().getTime())
+        return Connection(results.data, results.lastSync)
       }
       const result = await context.db.collection('tasks').find({}).limit(args.limit || 50).toArray()
       const idresult = result.map(item => Object.assign({ id: item._id.toString() }, item));
@@ -76,9 +76,7 @@ const taskResolvers = {
       const result = await context.db.collection('tasks').insertOne({
         ...args,
         version: 1,
-        // This is optional but we keep it there for testing
-        _deleted: false,
-        _lastModified: new Date().getTime(),
+        lastModified: new Date().getTime(),
         status: 'OPEN'
       })
       const item = await context.db.collection('tasks').findOne({ _id: ObjectID(result.insertedId) })
@@ -89,8 +87,9 @@ const taskResolvers = {
     },
     updateTask: async (obj, clientData, context, info) => {
       console.log("Update", clientData)
+      clientData.lastModified = new Date().getTime();
       const result = await context.db.collection('tasks').
-        update({ _id: ObjectID(clientData.id) }, { $set: clientData, $currentDate: { "_lastModified": true } })
+        update({ _id: ObjectID(clientData.id) }, { $set: clientData })
       if (!result.result.ok) {
         throw new Error(`Invalid ID for task object: ${clientData.id}`);
       }
@@ -173,7 +172,7 @@ function createDiffEntry(entryName, data, actionType, db) {
     // Key used to sort operations that happened used to fetch all entries
     _sortKey: timestamp,
     // Marker if field was deleted (we need it for soft delete feature to evit client data)
-    _deleted: actionType === TASK_DELETED
+    deleted: actionType === TASK_DELETED
   };
 
   // Save data to diff table
@@ -196,5 +195,20 @@ function createDiffEntry(entryName, data, actionType, db) {
 function getResultsFromDiffTable(entryName, limit, lastSync, db) {
   if (!limit) limit = 100;
   console.log("Using lastsync data", lastSync, limit);
-  return db.collection(`${entryName}_delta`).find({ _sortKey: { $gt: Number(lastSync) } }).toArray();
+  const data = db.collection(`${entryName}_delta`)
+    .find({ _sortKey: { $gt: Number(lastSync) } })
+    .limit(limit)
+    .sort({ _sortKey: -1 }).toArray(); c
+
+  if (data && data.length === 0) {
+    return {
+      data,
+      lastSync: data[0]._sortKey
+    }
+  } else {
+    return {
+      data: [],
+      lastSync: new Date().getTime()
+    }
+  }
 }
