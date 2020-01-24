@@ -14,6 +14,7 @@ import {
   ApolloOfflineStore
 } from 'offix-client-boost';
 import { subscriptionOptions } from './cache.updates';
+import gql from 'graphql-tag';
 
 @Injectable({
   providedIn: 'root'
@@ -27,11 +28,13 @@ export class ItemService {
     this.apollo = aeroGear.apolloClient;
     this.offlineStore = aeroGear.offlineStore;
   }
- 
+
   // Watch local cache for updates
   getItems() {
+    const lastSync = undefined;
     const getTasks = this.apollo.watchQuery({
       query: GET_TASKS,
+      variables: { lastSync },
       fetchPolicy: 'cache-and-network',
       errorPolicy: 'none'
     });
@@ -41,37 +44,37 @@ export class ItemService {
 
   createItem(title, description) {
     return this.apollo.offlineMutate<Task>({
-        mutation: ADD_TASK,
-        variables: {
-          'title': title,
-          'description': description,
-          'version': 1,
-          'status': 'OPEN'
-        },
-        updateQuery: GET_TASKS,
-        returnType: 'Task'
-      });
+      mutation: ADD_TASK,
+      variables: {
+        'title': title,
+        'description': description,
+        'version': 1,
+        'status': 'OPEN'
+      },
+      updateQuery: GET_TASKS,
+      returnType: 'Task'
+    });
   }
 
   updateItem(item) {
     return this.apollo.offlineMutate<Task>({
-        mutation: UPDATE_TASK,
-        variables: item,
-        updateQuery: GET_TASKS,
-        returnType: 'Task',
-        operationType: CacheOperation.REFRESH
-      }
+      mutation: UPDATE_TASK,
+      variables: item,
+      updateQuery: GET_TASKS,
+      returnType: 'Task',
+      operationType: CacheOperation.REFRESH
+    }
     );
   }
 
   deleteItem(item) {
     return this.apollo.offlineMutate<Task>({
-        mutation: DELETE_TASK,
-        variables: item,
-        updateQuery: GET_TASKS,
-        returnType: 'Task',
-        operationType: CacheOperation.DELETE
-      }
+      mutation: DELETE_TASK,
+      variables: item,
+      updateQuery: GET_TASKS,
+      returnType: 'Task',
+      operationType: CacheOperation.DELETE
+    }
     );
   }
 

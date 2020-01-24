@@ -12,7 +12,7 @@ fragment TaskConnectionFields on TaskConnection{
   items{
     ...TaskFields
   }
-  startedAt
+  lastSync
 }
 
 mutation createTask {

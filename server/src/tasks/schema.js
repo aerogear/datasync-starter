@@ -16,12 +16,12 @@ type Task {
 }
 
 interface Connection {
-  startedAt: String!
+  lastSync: String!
 }
 
 type TaskConnection implements Connection {
   items: [Task!]!
-  startedAt: String!
+  lastSync: String!
 }
 
 enum TaskStatus {
@@ -47,23 +47,26 @@ const PUSH_ALIAS = 'cordova';
 function Connection(items, timestamp) {
   return {
     items,
-    startedAt: timestamp
+    lastSync: timestamp
   }
 }
 
 const taskResolvers = {
   Query: {
     allTasks: async (obj, args, context) => {
+      // Query diff table
+      // Note: Diff table can contain only deletes that can be merged with original data
       if (args.lastSync) {
         const results = await getResultsFromDiffTable('task', args.limit, args.lastSync, context.db)
         console.log(results);
         return Connection(results.data, results.lastSync)
       }
+      // Query original data
+      const lastSync = new Date().getTime();
       const result = await context.db.collection('tasks').find({}).limit(args.limit || 50).toArray()
-      const idresult = result.map(item => Object.assign({ id: item._id.toString() }, item));
-      console.log(idresult);
-      // TODO eventual inconsistency - result need to be ordered
-      return Connection(idresult, new Date().getTime())
+      result.forEach(item => item.id = item._id.toString());
+      console.log(result);
+      return Connection(result, lastSync)
     },
     getTask: async (obj, args, context, info) => {
       // TODO
@@ -195,20 +198,21 @@ function createDiffEntry(entryName, data, actionType, db) {
 function getResultsFromDiffTable(entryName, limit, lastSync, db) {
   if (!limit) limit = 100;
   console.log("Using lastsync data", lastSync, limit);
+  const newSync = new Date().getTime()
   const data = db.collection(`${entryName}_delta`)
     .find({ _sortKey: { $gt: Number(lastSync) } })
     .limit(limit)
-    .sort({ _sortKey: -1 }).toArray(); c
+    .sort({ _sortKey: -1 }).toArray();
 
-  if (data && data.length === 0) {
+  if (data && data.length !== 0) {
     return {
       data,
-      lastSync: data[0]._sortKey
+      lastSync: newSync
     }
   } else {
     return {
       data: [],
-      lastSync: new Date().getTime()
+      lastSync: newSync
     }
   }
 }

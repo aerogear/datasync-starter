@@ -27,7 +27,7 @@ export const GET_TASKS = gql`
     items{
       ...TaskFields
     }
-    startedAt
+    lastSync
   }
   query allTasks($lastSync: String) {
     allTasks(lastSync: $lastSync) {

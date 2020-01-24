@@ -84,7 +84,7 @@ export class TaskPage implements OnInit {
     this.itemService.getItems().subscribe(result => {
       if (result && !result.errors) {
         console.log('Result from query', result);
-        this.items = result.data && result.data.allTasks;
+        this.items = result.data && result.data.allTasks.items;
       } else {
         console.log('error from query', result);
         this.presentToast('Cannot load data');
