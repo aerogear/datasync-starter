@@ -64,6 +64,11 @@ export class TaskPage implements OnInit {
       onStatusChange: (networkInfo) => {
         console.log(`Network state changed. Online: ${networkInfo.online}`);
         this.online = networkInfo.online;
+
+        // sync when we come back online
+        if (this.online === true) {
+          this.sync()
+        }
       }
     });
     console.log(`Online: ${this.online}`);
