@@ -84,7 +84,8 @@ By default, two users that can log into the application are created.
 
 ==== Using the GraphQL playground with Keycloak
 
-> NOTE: this instruction can be applied only when running application code hosted from the server app.
+> NOTE: Integrated server playground will not work when server is protected by keycloak. 
+Please use any other client that can send GraphQL requests.
 
 The GraphQL playground needs to be configured in order to send the Keycloak `Authorization` header along with its requests to the GraphQL server.
 
