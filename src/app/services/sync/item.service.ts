@@ -106,11 +106,30 @@ export class ItemService {
     return this.apollo.offlineMutate<Task>({
       mutation: DELETE_TASK,
       variables: item,
-      updateQuery: GET_TASKS,
-      returnType: 'Task',
-      operationType: CacheOperation.DELETE
-    }
-    );
+      update: (cache, { data }) => {
+        if (data) {
+          try {
+            const queryResult = cache.readQuery({ query: GET_TASKS }) as any;
+            //@ts-ignore
+            const deletedId = data.deleteTask
+
+            if (queryResult.allTasks && queryResult.allTasks.items) {
+
+              const filteredItems = queryResult.allTasks.items.filter((item: any) => {
+                return item.id !== deletedId;
+              });
+
+              queryResult.allTasks.items = filteredItems;
+              cache.writeQuery({
+                query: GET_TASKS,
+                data: queryResult
+              });
+
+            }
+            } finally {}
+          }
+        }
+      });
   }
 
   getOfflineItems() {
