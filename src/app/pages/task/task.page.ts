@@ -94,7 +94,19 @@ export class TaskPage implements OnInit {
 
   private async loadData() {
     // Subscribe to local cache changes
+
+    // kinda hacky but before calling subscribe
+    // we get the last result
+    // if loading is true and fetch policy is 'cache-only'
+    // then we need to do a resync
+    // Again this behaviour (or similar) should be done by offix
+    const result = await this.getTasksQuery.result()
+    this.lastSync = result.data.allTasks.lastSync
+    if (result.loading && this.getTasksQuery.options.fetchPolicy === 'cache-only') {
+      await this.sync()
+    }
     
+
     this.getTasksQuery.subscribe(result => {
       if (result && !result.errors) {
         console.log('Result from query', result);
