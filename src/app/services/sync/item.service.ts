@@ -86,8 +86,36 @@ export class ItemService {
         'version': 1,
         'status': 'OPEN'
       },
-      updateQuery: GET_TASKS,
-      returnType: 'Task'
+      update: (cache, { data }) => {
+        let queryResult
+        if (data) {
+          //@ts-ignore
+          const newTask = data.createTask
+          try {
+            queryResult = cache.readQuery({ query: GET_TASKS }) as any;
+          } catch (e) {
+            queryResult = {};
+          }
+  
+          const allTasks = queryResult.allTasks
+          if (allTasks && allTasks.items && newTask) {
+            // FIXME deduplication should happen on subscriptions
+            // We do that every time no matter if we have subscription
+            if (!allTasks.items.find((task: any) => { return task.id === newTask.id })) {
+              allTasks.items.push(newTask);
+            }
+          }
+
+          try {
+            cache.writeQuery({
+              query: GET_TASKS,
+              data: queryResult
+            });
+            // tslint:disable-next-line: no-empty
+          } finally {
+          }
+        }
+      }
     });
   }
 
@@ -95,17 +123,15 @@ export class ItemService {
     return this.apollo.offlineMutate<Task>({
       mutation: UPDATE_TASK,
       variables: item,
-      updateQuery: GET_TASKS,
-      returnType: 'Task',
-      operationType: CacheOperation.REFRESH
-    }
-    );
+      update: (cache, { data }) => {}
+    });
   }
 
   deleteItem(item) {
     return this.apollo.offlineMutate<Task>({
       mutation: DELETE_TASK,
       variables: item,
+      // Offix should be able to do this
       update: (cache, { data }) => {
         if (data) {
           try {

@@ -8,6 +8,8 @@ mutation createTask($description: String!, $title: String!, $status: TaskStatus)
       description
       version
       status
+      deleted
+      lastModified
     }
   }
 `;
@@ -50,6 +52,8 @@ mutation updateTask($description: String, $id: ID!, $title: String, $version: In
     description
     version
     status
+    deleted
+    lastModified
   }
 }
 `;
