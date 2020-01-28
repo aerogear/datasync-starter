@@ -11,10 +11,13 @@ import {
   ApolloOfflineClient,
   CacheOperation,
   subscribeToMoreHelper,
-  ApolloOfflineStore
+  ApolloOfflineStore,
+  getOperationFieldName
 } from 'offix-client-boost';
 import { subscriptionOptions } from './cache.updates';
 import gql from 'graphql-tag';
+import { DocumentNode, OperationDefinitionNode } from 'graphql';
+import { OperationVariables } from 'apollo-client'
 
 @Injectable({
   providedIn: 'root'
@@ -31,17 +34,48 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
-    // TODO
-    // We should be able determine if there is a lastSync value at startup
-    // and provide it here. We can possibly get that from the cache without any special storage
-    const getTasks = this.apollo.watchQuery({
-      query: GET_TASKS,
-      fetchPolicy: 'cache-and-network',
+    return this.buildSyncQuery({
+      query: GET_TASKS
+    })
+  }
+
+  // This will also be a helper in offix
+  buildSyncQuery({ query, variables }: { query: DocumentNode, variables?: OperationVariables }) {
+    let cacheOnly = 'cache-only'
+    let cacheAndNetwork = 'cache-and-network'
+    let initialFetchPolicy = cacheAndNetwork
+
+    const operationName = this.getOperationName(query)
+
+    try {
+      const cachedResult = this.apollo.readQuery({
+        query,
+        variables
+      })
+  
+      if (cachedResult && cachedResult[operationName] && cachedResult[operationName].lastSync) {
+        initialFetchPolicy = cacheOnly 
+      }
+    } catch(e) {
+      console.log(`no results in cache for ${operationName}`)
+    }
+
+    const syncQuery = this.apollo.watchQuery({
+      query: query,
+      variables,
+      fetchPolicy: initialFetchPolicy as any,
       errorPolicy: 'none'
     });
-    // subscribeToMoreHelper(getTasks, subscriptionOptions);
-    return getTasks;
+
+    return syncQuery
   }
+
+  // This should be a helper in offix
+  getOperationName (query: DocumentNode) {
+    const definition = query.definitions.find(def => def.kind === "OperationDefinition");
+    const operationDefinition = definition && definition as OperationDefinitionNode;
+    return operationDefinition && operationDefinition.name && operationDefinition.name.value;
+  };
 
   createItem(title, description) {
     return this.apollo.offlineMutate<Task>({

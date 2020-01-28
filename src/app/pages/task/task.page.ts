@@ -110,15 +110,24 @@ export class TaskPage implements OnInit {
     });
   }
 
+  // This should probably be a helper in offix
+  // ideally we'll be able do define a query like
+  
+  // const getTasks = buildSyncQuery({ query: GET_TASKS, variables: {} ...})
+  // and then manually call getTasks.sync() or that it would be network aware and do things by itself.
   sync() {
     const lastSync = this.lastSync;
     const queryName = this.getTasksQuery.queryName
+    
+    // the first time we perform the query it might have been against the cache
+    // Then we set it back to 'cache-and-network' when we fetch additional data
+    // a little hacky but can be abstracted away in offix
+    this.getTasksQuery.options.fetchPolicy = 'cache-and-network'
 
     // fetchmore lets you call the same query again with different params
     // and have the results merged back under the same query within the cache
     this.getTasksQuery.fetchMore({
       variables: { lastSync },
-
       // todo this should probably become a helper function in offix
       updateQuery: (prev, { fetchMoreResult }) => {
         const previous = prev[queryName]
