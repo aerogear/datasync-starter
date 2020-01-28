@@ -10,7 +10,6 @@ import { VoyagerService } from './voyager.service';
 import {
   ApolloOfflineClient,
   CacheOperation,
-  subscribeToMoreHelper,
   ApolloOfflineStore,
   getOperationFieldName
 } from 'offix-client-boost';
@@ -18,7 +17,7 @@ import { subscriptionOptions } from './cache.updates';
 import gql from 'graphql-tag';
 import { DocumentNode, OperationDefinitionNode } from 'graphql';
 import { OperationVariables } from 'apollo-client'
-
+import { subscribeToMoreHelper } from './subscriptionHelpers'
 @Injectable({
   providedIn: 'root'
 })
@@ -34,9 +33,12 @@ export class ItemService {
 
   // Watch local cache for updates
   getItems() {
-    return this.buildSyncQuery({
+    const getTasksQuery = this.buildSyncQuery({
       query: GET_TASKS
     })
+    //@ts-ignore
+    subscribeToMoreHelper(getTasksQuery, subscriptionOptions);
+    return getTasksQuery;
   }
 
   // This will also be a helper in offix

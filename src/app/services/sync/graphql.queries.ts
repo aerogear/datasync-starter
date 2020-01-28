@@ -66,6 +66,8 @@ export const TASK_ADDED_SUBSCRIPTION = gql`
         description
         version
         status
+        deleted
+        lastModified
       }
   }
 `;
@@ -78,6 +80,8 @@ export const TASK_DELETED_SUBSCRIPTION = gql`
         description
         version
         status
+        deleted
+        lastModified
       }
   }
 `;
@@ -90,6 +94,8 @@ export const TASK_UPDATED_SUBSCRIPTION = gql`
         description
         version
         status
+        deleted
+        lastModified
       }
   }
 `;
