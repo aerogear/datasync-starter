@@ -51,8 +51,10 @@ const resolvers = {
       return result
     },
     getTask: async (obj, args, context, info) => {
-      const result = await context.db.select().from('tasks').where('id', args.id).then((rows) => rows[0])
-      return result
+      return await context.db.select()
+        .from('tasks')
+        .where('id', args.id)
+        .then((rows) => rows[0])
     }
   },
   Mutation: {
