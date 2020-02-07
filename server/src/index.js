@@ -1,6 +1,5 @@
 const express = require('express')
 const cors = require('cors')
-const unifiedPushSenderClient = require('unifiedpush-node-sender')
 const { VoyagerServer } = require('@aerogear/voyager-server')
 const { KeycloakSecurityService } = require('@aerogear/voyager-keycloak')
 const { createSubscriptionServer } = require('@aerogear/voyager-subscriptions')
@@ -22,15 +21,10 @@ async function start() {
   app.get('/health', (req, res) => res.sendStatus(200))
 
   let keycloakService = null
-  let pushClient = null
 
   if (config.keycloakConfig) {
     keycloakService = new KeycloakSecurityService(config.keycloakConfig)
     keycloakService.applyAuthMiddleware(app)
-  }
-
-  if (config.pushConfig) {
-    pushClient =  await unifiedPushSenderClient(config.pushConfig)
   }
 
   const db = await connect(config.db)
@@ -41,8 +35,7 @@ async function start() {
     playground: config.playgroundConfig,
     introspection: true,
     context: {
-      db,
-      pushClient
+      db
     }
   }
 
