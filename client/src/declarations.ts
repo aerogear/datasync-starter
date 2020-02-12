@@ -13,11 +13,11 @@ export enum TaskStatus {
 };
 
 export interface AllTasks {
-  allTasks: Task[];
-  task: Task;
-  taskAdded: Task;
-  taskDeleted: Task;
-  taskUpdated: Task;
+  allTasks: ITask[];
+  task: ITask;
+  taskAdded: ITask;
+  taskDeleted: ITask;
+  taskUpdated: ITask;
 };
 
 export enum MutationType {
@@ -27,6 +27,6 @@ export enum MutationType {
 };
 
 export interface TaskListProps {
-  tasks: [Task],
+  tasks: [ITask],
   // taskService: TaskService
 }

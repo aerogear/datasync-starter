@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { IonLoading } from '@ionic/react';
 import { ApolloOfflineClient } from 'offix-client';
-import { ApolloOfflineProvider } from 'react-offix-hooks';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloOfflineProvider } from 'react-offix-hooks';
 import App from './App';
 import { clientConfig } from './clientConfig';
 import * as serviceWorker from './serviceWorker';
-import { IonLoading } from '@ionic/react';
 
 const client = new ApolloOfflineClient(clientConfig);
 

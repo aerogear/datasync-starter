@@ -33,7 +33,11 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
   const [title, setTitle] = useState<string>(null!);
   const [loading, setLoading] = useState<boolean>(true);
   const [description, setDescription] = useState<string>(null!);
-  const { error, data } = useQuery(GET_TASK, { variables: { id }, fetchPolicy: "cache-first" });
+  const { error, data } = useQuery(GET_TASK, { 
+    variables: { id },
+    fetchPolicy: 'cache-first',
+    ssr: false
+  });
   const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
 
   useEffect(() => {
@@ -49,9 +53,7 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
     event.preventDefault();
     updateTask({
       variables: {
-        id: Number(task.id),
-        status: task.status,
-        version: Number(task.version),
+        ...task,
         title,
         description,
       },
