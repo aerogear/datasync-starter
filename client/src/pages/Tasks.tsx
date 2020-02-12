@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
+import { useNetworkStatus } from 'react-offix-hooks';
+import { add } from 'ionicons/icons';
+
 import { 
   IonContent, 
   IonHeader, 
@@ -17,13 +20,13 @@ import {
   IonBadge,
   IonLoading 
 } from '@ionic/react';
-import { add } from 'ionicons/icons'
+
+
 import TaskList from '../components/TaskList';
 import { GET_TASKS } from '../gql/queries';
-import { subscriptionOptions, useSubscribeToMore } from '../helpers';
+import { subscriptionOptions,  } from '../helpers';
+import { useSubscribeToMore, useOfflineQueueListener } from '../hooks';
 import { ITask } from '../declarations';
-import { useNetworkStatus } from 'react-offix-hooks';
-import { useOfflineQueueListener } from '../helpers/useQueueListener';
 
 const Task: React.FC = () => {
 

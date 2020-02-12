@@ -26,7 +26,20 @@ export enum MutationType {
   DELETED = 'DELETED',
 };
 
-export interface TaskListProps {
-  tasks: [ITask],
-  // taskService: TaskService
+export interface IOfflineStore {
+  offlineStore: [ITask]
 }
+
+export interface ITaskListProps {
+  tasks: [ITask]
+}
+
+export interface IOfflineListProps {
+  offlineStore: Array<ITask>
+};
+
+export interface ITaskProps {
+  task: ITask,
+  updateTask: Function,
+  deleteTask: Function
+};

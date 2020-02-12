@@ -8,7 +8,7 @@ import {
   IonBackButton,
 } from '@ionic/react';
 import { OfflineList } from '../components/OfflineList';
-import { useGetOfflineStore } from '../helpers/useGetOfflineStore';
+import { useGetOfflineStore } from '../hooks/useGetOfflineStore';
 
 const OfflineQueue: React.FC = () => {
 

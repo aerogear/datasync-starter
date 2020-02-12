@@ -8,7 +8,7 @@ import { useApolloOfflineClient } from "react-offix-hooks";
  * Usage: const isOnline = useNetworkStatus();
  *
  */
-export function useGetOfflineStore(){
+export const useGetOfflineStore = () => {
   const client = useApolloOfflineClient();
   const [offlineStore, setOfflineStore] = useState();
 

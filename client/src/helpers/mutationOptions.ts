@@ -2,29 +2,26 @@ import { getUpdateFunction, CacheOperation } from 'offix-cache';
 import { GET_TASKS } from '../gql/queries';
 
 
-// const options = {
-//   updateQuery: GET_TASKS,
-//   returnType: 'Task',
-// };
+const options = {
+  updateQuery: GET_TASKS,
+  returnType: 'Task',
+};
 
 export const mutationOptions = {
   add: {
-    updateQuery: GET_TASKS,
-    returnType: 'Task',
+    ...options,
     mutationName: 'createTask',
     operationType: CacheOperation.ADD,
   },
   
   edit: {
-    updateQuery: GET_TASKS,
-    returnType: 'Task',
+    ...options,
     mutationName: 'updateTask',
     operationType: CacheOperation.REFRESH,
   },
   
   remove: {
-    updateQuery: GET_TASKS,
-    returnType: 'Task',
+    ...options,
     mutationName: 'deleteTask',
     operationType: CacheOperation.DELETE,
   },

@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, SyntheticEvent } from 'react';
 import {
   IonItem,
   IonButton,
@@ -10,19 +10,23 @@ import {
   IonButtons
 } from '@ionic/react';
 import { create, trash } from 'ionicons/icons';
-import { ITask } from '../declarations';
+import { ITask, ITaskProps } from '../declarations';
 
-interface ITaskProps {
-  task: ITask,
-  deleteTask: Function
-};
-
-export const Task: React.FC<ITaskProps> = ({ task, deleteTask }) => {
+export const Task: React.FC<ITaskProps> = ({ task, updateTask, deleteTask }) => {
  
   const onDeleteClick = (event: MouseEvent) => {
     event.preventDefault();
     deleteTask(task);
   };
+
+  const check = (event: SyntheticEvent) => {
+    event.preventDefault();
+    let status = (task.status === 'COMPLETE') ? 'OPEN' : 'COMPLETE'; 
+    updateTask({
+      ...task,
+      status
+    });
+  }
 
   const isChecked = (task: ITask) => {
     if (task.status === 'COMPLETE') {
@@ -33,7 +37,7 @@ export const Task: React.FC<ITaskProps> = ({ task, deleteTask }) => {
 
   return (
     <IonItem>
-      <IonCheckbox checked={isChecked(task)} slot="start" className='ion-margin-end ion-align-items-start' />
+      <IonCheckbox checked={isChecked(task)} onClick={check} slot="start" className='ion-margin-end ion-align-items-start' />
       <IonLabel>
         <h2>{ task.title }</h2>
         <IonNote item-start>

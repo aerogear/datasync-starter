@@ -72,7 +72,6 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {/* {renderMutationInfo()} */}
         <IonCard>
           <IonCardHeader>Task</IonCardHeader>
           <IonCardContent>

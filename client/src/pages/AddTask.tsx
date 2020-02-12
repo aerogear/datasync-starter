@@ -35,26 +35,6 @@ const AddTask: React.FC<RouteComponentProps> = ({ history }) => {
     });
     history.push('/tasks');
   };
-
-  // function renderMutationInfo() {
-  //   return (
-  //     <IonCard>
-  //       <p>
-  //         {JSON.stringify({
-  //           called,
-  //           data,
-  //           error,
-  //           hasError,
-  //           loading,
-  //           mutationVariables,
-  //           calledWhileOffline,
-  //           offlineChangeReplicated,
-  //           offlineReplicationError
-  //         }, null, 2)}
-  //       </p>
-  //     </IonCard>
-  //   )
-  // }
   
   return (
     <>
@@ -67,7 +47,6 @@ const AddTask: React.FC<RouteComponentProps> = ({ history }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-      {/* {renderMutationInfo()} */}
         <form onSubmit={submit} style={{ padding: '0 16px' }}>
           <IonItem>
             <IonLabel color="primary" position="floating">Title</IonLabel>

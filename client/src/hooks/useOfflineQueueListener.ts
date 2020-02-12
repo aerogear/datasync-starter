@@ -26,5 +26,6 @@ export const useOfflineQueueListener = () => {
       }
     });
   }, [client, queue]);
+  
   return queue;
 };

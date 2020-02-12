@@ -2,22 +2,22 @@ import React from 'react';
 import { Task } from './Task';
 import { IonList, IonGrid, IonRow, IonCol, IonText } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
-import { DELETE_TASK } from '../gql/queries';
+import { DELETE_TASK, UPDATE_TASK } from '../gql/queries';
 import { mutationOptions } from '../helpers';
-import { ITask } from '../declarations';
-
-interface ITaskListProps {
-  tasks: [ITask]
-}
+import { ITask, ITaskListProps } from '../declarations';
 
 const TaskList: React.FC<ITaskListProps> = ({ tasks }) => {
 
+  const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
   const [deleteTask] = useOfflineMutation(DELETE_TASK, mutationOptions.remove);
   
   const handleDelete = (task: ITask) => {
     deleteTask({ variables: task });
   };
 
+  const handleUpdate = (task: ITask) => {
+    updateTask({variables: task});
+  }
   
   if(tasks.length < 1) return (
     <IonGrid className="queue-empty ion-justify-content-center">
@@ -35,7 +35,7 @@ const TaskList: React.FC<ITaskListProps> = ({ tasks }) => {
     <IonList>
       {
         tasks.map((task : ITask) => {
-          return <Task key={task.id} task={task} deleteTask={handleDelete} />;
+          return <Task key={task.id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
         })
       }
     </IonList>
