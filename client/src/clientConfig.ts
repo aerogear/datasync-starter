@@ -5,6 +5,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { ConflictListener } from 'offix-client';
 import { taskCacheUpdates } from './helpers';
+import { FRAGMENT } from './gql/queries';
 
 const wsLink = new WebSocketLink({
   uri: 'ws://localhost:4000/graphql',
@@ -42,6 +43,20 @@ const link = split(
 export const clientConfig = {
   link,
   cache: new InMemoryCache(),
+  resolvers: {
+    Query: {
+      // @ts-ignore
+      getTask: async (_, variables, { cache, getCacheKey }) => {
+        const id = getCacheKey({ __typename: 'Task', id: variables.id });
+        const data = cache.readFragment({ id, fragment: FRAGMENT });
+        console.log('here');
+        return {
+          ...data,
+          __typename: 'Task'
+        };
+      }
+    },
+  },
   conflictListener: new ConflictLogger(),
-  mutationCacheUpdates: taskCacheUpdates
+  mutationCacheUpdates: taskCacheUpdates,
 };

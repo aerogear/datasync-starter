@@ -24,11 +24,12 @@ import { UPDATE_TASK, GET_TASK } from '../gql/queries';
 import { ITask } from '../declarations';
 import { mutationOptions } from '../helpers';
 
+// @ts-ignore
 const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
 
   // @ts-ignore
   const { id } = match.params;
-
+  
   const [task, setTask] = useState<ITask>(null!);
   const [title, setTitle] = useState<string>(null!);
   const [loading, setLoading] = useState<boolean>(true);
