@@ -10,9 +10,9 @@ import {
   IonButtons
 } from '@ionic/react';
 import { create, trash } from 'ionicons/icons';
-import { ITask, ITaskProps } from '../declarations';
+import { ITask } from '../declarations';
 
-export const Task: React.FC<ITaskProps> = ({ task, updateTask, deleteTask }) => {
+export const Task: React.FC<any> = ({ task, updateTask, deleteTask }) => {
  
   const onDeleteClick = (event: MouseEvent) => {
     event.preventDefault();

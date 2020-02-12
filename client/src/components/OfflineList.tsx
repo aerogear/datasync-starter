@@ -1,8 +1,8 @@
 import React from 'react';
 import { IonItem, IonLabel, IonItemGroup, IonBadge, IonGrid, IonRow, IonCol, IonText, IonList } from '@ionic/react';
-import { IOfflineListProps } from '../declarations';
+// import { IOfflineListProps } from '../declarations';
 
-export const OfflineList: React.FC<IOfflineListProps> = ({ offlineStore }) => {
+export const OfflineList: React.FC<any> = ({ offlineStore }) => {
 
   console.log(typeof offlineStore);
 

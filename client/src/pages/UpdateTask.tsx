@@ -36,7 +36,6 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
   const { error, data } = useQuery(GET_TASK, { 
     variables: { id },
     fetchPolicy: 'cache-first',
-    ssr: false
   });
   const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
 

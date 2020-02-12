@@ -4,9 +4,9 @@ import { IonList, IonGrid, IonRow, IonCol, IonText } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { DELETE_TASK, UPDATE_TASK } from '../gql/queries';
 import { mutationOptions } from '../helpers';
-import { ITask, ITaskListProps } from '../declarations';
+import { ITask } from '../declarations';
 
-const TaskList: React.FC<ITaskListProps> = ({ tasks }) => {
+const TaskList: React.FC<any> = ({ tasks }) => {
 
   const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
   const [deleteTask] = useOfflineMutation(DELETE_TASK, mutationOptions.remove);
