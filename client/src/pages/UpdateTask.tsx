@@ -1,17 +1,12 @@
 import React, { useEffect, useState, SyntheticEvent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
-  IonButtons,
   IonContent,
-  IonHeader,
   IonCard,
-  IonTitle,
-  IonToolbar,
   IonButton,
   IonItem,
   IonLabel,
   IonInput,
-  IonBackButton,
   IonCardHeader,
   IonCardContent,
   IonNote,
@@ -23,8 +18,9 @@ import { useQuery } from '@apollo/react-hooks';
 import { UPDATE_TASK, GET_TASK } from '../gql/queries';
 import { ITask } from '../declarations';
 import { mutationOptions } from '../helpers';
+import { Header } from '../components/Header';
+import { Empty } from '../components/Empty';
 
-// @ts-ignore
 const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
 
   // @ts-ignore
@@ -32,11 +28,10 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
   
   const [task, setTask] = useState<ITask>(null!);
   const [title, setTitle] = useState<string>(null!);
-  const [loading, setLoading] = useState<boolean>(true);
   const [description, setDescription] = useState<string>(null!);
-  const { error, data } = useQuery(GET_TASK, { 
+  const { loading, error, data } = useQuery(GET_TASK, { 
     variables: { id },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-only',
   });
   const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
 
@@ -45,7 +40,6 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
       setTask(data.getTask);
       setTitle(data.getTask.title);
       setDescription(data.getTask.description);
-      setLoading(false);
     };
   }, [data]);
 
@@ -61,16 +55,16 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
     history.push('/tasks');
   }
 
+  if (error) return <pre>{JSON.stringify(error)}</pre>;
+
+  if (loading) return <IonLoading
+    isOpen={loading}
+    message={'Loading...'}
+  />;
+
   if (task) return (
     <>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/" />
-          </IonButtons>
-          <IonTitle>Update Task</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Update task" backHref="/tasks" />
       <IonContent>
         <IonCard>
           <IonCardHeader>Task</IonCardHeader>
@@ -104,12 +98,12 @@ const UpdateTask: React.FC<RouteComponentProps> = ({ history, match }) => {
     </>
   );
 
-  if (error) return <pre>{JSON.stringify(error)}</pre>;
-
-  return <IonLoading
-    isOpen={loading}
-    message={'Loading...'}
-  />;
+  return (
+    <>
+      <Header title="Update task" backHref="/tasks" />
+      <Empty message={<p>No task found</p>} />
+    </>
+  );
 
 }
 

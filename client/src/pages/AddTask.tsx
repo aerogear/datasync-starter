@@ -1,20 +1,16 @@
 import React, { useState, SyntheticEvent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
-  IonButtons,
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonButton,
   IonItem,
   IonLabel,
   IonInput,
-  IonBackButton,
 } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { ADD_TASK } from '../gql/queries';
 import { mutationOptions } from '../helpers';
+import { Header } from '../components/Header';
 
 const AddTask: React.FC<RouteComponentProps> = ({ history }) => {
 
@@ -38,14 +34,7 @@ const AddTask: React.FC<RouteComponentProps> = ({ history }) => {
   
   return (
     <>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/" />
-          </IonButtons>
-          <IonTitle>New Task</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Add task" backHref="/tasks" />
       <IonContent>
         <form onSubmit={submit} style={{ padding: '0 16px' }}>
           <IonItem>

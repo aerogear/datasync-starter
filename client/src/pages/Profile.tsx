@@ -1,11 +1,6 @@
 import React from 'react';
 import { 
-  IonContent, 
-  IonHeader,
-  IonTitle, 
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
+  IonContent,
   IonCard, 
   IonCardHeader,
   IonCardTitle,
@@ -18,19 +13,12 @@ import {
   IonIcon,
   IonLabel
 } from '@ionic/react';
+import { Header } from '../components/Header';
 
 const Profile: React.FC = () => {
   return (
     <>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/" />
-          </IonButtons>
-          <IonTitle>Profile</IonTitle>
-          
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Profile" backHref="/tasks" />
       <IonContent>
         <IonCard>
           <IonCardHeader>

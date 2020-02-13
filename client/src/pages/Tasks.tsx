@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { useNetworkStatus } from 'react-offix-hooks';
 import { add } from 'ionicons/icons';
-
 import { 
-  IonContent, 
   IonHeader, 
   IonPage, 
   IonTitle, 
@@ -20,33 +18,37 @@ import {
   IonBadge,
   IonLoading 
 } from '@ionic/react';
-
-
 import TaskList from '../components/TaskList';
 import { GET_TASKS } from '../gql/queries';
 import { subscriptionOptions,  } from '../helpers';
 import { useSubscribeToMore, useOfflineQueueListener } from '../hooks';
 import { ITask } from '../declarations';
+import { Empty } from '../components/Empty';
 
 const Task: React.FC = () => {
 
   const isOnline = useNetworkStatus();
   const offlineQueue = useOfflineQueueListener();
   const [tasks, setTasks] = useState<[ITask]>(null!);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { error, data, subscribeToMore } = useQuery(GET_TASKS);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_TASKS);
   useSubscribeToMore({ options: subscriptionOptions, subscribeToMore});
 
   useEffect(() => {
     if (data) {
       setTasks(data.allTasks);
-      setLoading(false);
     };
   }, [data]);
 
   const networkStateUI = (isOnline) 
     ?<IonBadge class="network-badge" color="secondary">Online</IonBadge>
     :<IonBadge class="network-badge" color="primary">Offline</IonBadge>;
+
+  if (error) return <pre>{ JSON.stringify(error) }</pre>;
+
+  if (loading) return <IonLoading
+    isOpen={loading}
+    message={'Loading...'}
+  />;
 
   if (tasks) return (
     <IonPage>
@@ -75,9 +77,7 @@ const Task: React.FC = () => {
           </IonSegmentButton> */}
         </IonSegment>
       </IonToolbar>
-      <IonContent className="ion-padding">
-        <TaskList tasks={tasks} />
-      </IonContent>
+      <TaskList tasks={tasks} />
       <IonFooter>
         <div>
           <IonLabel>
@@ -94,12 +94,7 @@ const Task: React.FC = () => {
     </IonPage>
   );
 
-  if (error) return <pre>{ JSON.stringify(error) }</pre>;
-
-  return <IonLoading
-    isOpen={loading}
-    message={'Loading...'}
-  />;
+  return <Empty message={<p>No tasks available</p>} />
   
 };
 

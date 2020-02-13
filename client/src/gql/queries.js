@@ -1,17 +1,7 @@
 import gql from 'graphql-tag';
 
-export const FRAGMENT = gql`
-  fragment TaskFields on Task { 
-    id
-    version
-    title
-    description
-    status
-  }
-`;
-
 export const ADD_TASK = gql`
-mutation createTask($description: String!, $title: String!, $status: TaskStatus){
+  mutation createTask($description: String!, $title: String!, $status: TaskStatus){
     createTask(description: $description, title: $title, status: $status){
       id
       title
@@ -24,7 +14,7 @@ mutation createTask($description: String!, $title: String!, $status: TaskStatus)
 
 export const GET_TASK = gql`
   query getTask($id: ID!) {
-    getTask(id: $id) @client {
+    getTask(id: $id) {
       id
       title
       description

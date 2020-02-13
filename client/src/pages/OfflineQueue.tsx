@@ -1,34 +1,15 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
-} from '@ionic/react';
 import { OfflineList } from '../components/OfflineList';
-import { useGetOfflineStore } from '../hooks/useGetOfflineStore';
+import { useGetOfflineStore } from '../hooks';
+import { Header } from '../components/Header';
 
 const OfflineQueue: React.FC = () => {
-
   const offlineStore = useGetOfflineStore();
 
   return (
     <>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/tasks" />
-          </IonButtons>
-          <IonTitle>Offline Queue</IonTitle>
-
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent className="ion-padding">
-        <OfflineList offlineStore={offlineStore} />
-      </IonContent>
+      <Header title="Offline Queue" backHref="/tasks" />
+      <OfflineList offlineStore={offlineStore} />
     </>
   );
 };

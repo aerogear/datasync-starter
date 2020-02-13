@@ -1,10 +1,11 @@
 import React from 'react';
 import { Task } from './Task';
-import { IonList, IonGrid, IonRow, IonCol, IonText } from '@ionic/react';
+import { IonList, IonContent } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { DELETE_TASK, UPDATE_TASK } from '../gql/queries';
 import { mutationOptions } from '../helpers';
 import { ITask } from '../declarations';
+import { Empty } from './Empty';
 
 const TaskList: React.FC<any> = ({ tasks }) => {
 
@@ -19,26 +20,21 @@ const TaskList: React.FC<any> = ({ tasks }) => {
     updateTask({variables: task});
   }
   
-  if(tasks.length < 1) return (
-    <IonGrid className="queue-empty ion-justify-content-center">
-      <IonRow className="ion-justify-content-center">
-        <IonCol>
-          <IonText color="medium">
-            <p>You currently have no tasks.</p>
-          </IonText>
-        </IonCol>
-      </IonRow>
-    </IonGrid>
-  );
+  if(tasks.length < 1) {
+    const message = (<p>You currently have no tasks.</p>);
+    return <Empty message={message} />
+  };
 
   return (
-    <IonList>
-      {
-        tasks.map((task : ITask) => {
-          return <Task key={task.id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
-        })
-      }
-    </IonList>
+    <IonContent className="ion-padding" >
+      <IonList>
+        {
+          tasks.map((task : ITask) => {
+            return <Task key={task.id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
+          })
+        }
+      </IonList>
+    </IonContent>
   );
 
 };
