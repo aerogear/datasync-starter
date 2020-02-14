@@ -3,14 +3,14 @@ import { Task } from './Task';
 import { IonList, IonContent } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { DELETE_TASK, UPDATE_TASK } from '../gql/queries';
-import { mutationOptions } from '../helpers';
 import { ITask } from '../declarations';
 import { Empty } from './Empty';
+import { mutationOptions } from '../helpers';
 
 const TaskList: React.FC<any> = ({ tasks }) => {
 
-  const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.edit);
-  const [deleteTask] = useOfflineMutation(DELETE_TASK, mutationOptions.remove);
+  const [updateTask] = useOfflineMutation(UPDATE_TASK, mutationOptions.updateTask);
+  const [deleteTask] = useOfflineMutation(DELETE_TASK, mutationOptions.deleteTask);
   
   const handleDelete = (task: ITask) => {
     deleteTask({ variables: task });

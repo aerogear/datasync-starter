@@ -4,7 +4,7 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { ConflictListener } from 'offix-client';
-import { taskCacheUpdates } from './helpers';
+import { globalCacheUpdates } from './helpers';
 
 const wsLink = new WebSocketLink({
   uri: 'ws://localhost:4000/graphql',
@@ -51,5 +51,5 @@ export const clientConfig = {
   link,
   cache: cache,
   conflictListener: new ConflictLogger(),
-  mutationCacheUpdates: taskCacheUpdates,
+  mutationCacheUpdates: globalCacheUpdates,
 };

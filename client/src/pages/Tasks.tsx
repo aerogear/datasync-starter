@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useNetworkStatus } from 'react-offix-hooks';
 import { add } from 'ionicons/icons';
 import { 
   IonHeader, 
@@ -15,33 +14,20 @@ import {
   IonButton, 
   IonMenuButton, 
   IonFooter, 
-  IonBadge,
   IonLoading 
 } from '@ionic/react';
 import TaskList from '../components/TaskList';
 import { GET_TASKS } from '../gql/queries';
 import { subscriptionOptions,  } from '../helpers';
-import { useSubscribeToMore, useOfflineQueueListener } from '../hooks';
-import { ITask } from '../declarations';
+import { useSubscribeToMore } from '../hooks';
 import { Empty } from '../components/Empty';
+import { NetworkBadge } from '../components/NetworkBadge';
+import { OfflineQueueBadge } from '../components/OfflineQueueBadge';
 
 const Task: React.FC = () => {
 
-  const isOnline = useNetworkStatus();
-  const offlineQueue = useOfflineQueueListener();
-  const [tasks, setTasks] = useState<[ITask]>(null!);
   const { loading, error, data, subscribeToMore } = useQuery(GET_TASKS);
-  useSubscribeToMore({ options: subscriptionOptions, subscribeToMore});
-
-  useEffect(() => {
-    if (data) {
-      setTasks(data.allTasks);
-    };
-  }, [data]);
-
-  const networkStateUI = (isOnline) 
-    ?<IonBadge class="network-badge" color="secondary">Online</IonBadge>
-    :<IonBadge class="network-badge" color="primary">Offline</IonBadge>;
+  useSubscribeToMore({ options: Object.values(subscriptionOptions), subscribeToMore});
 
   if (error) return <pre>{ JSON.stringify(error) }</pre>;
 
@@ -50,7 +36,7 @@ const Task: React.FC = () => {
     message={'Loading...'}
   />;
 
-  if (tasks) return (
+  if (data && data.allTasks) return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
@@ -77,18 +63,11 @@ const Task: React.FC = () => {
           </IonSegmentButton> */}
         </IonSegment>
       </IonToolbar>
-      <TaskList tasks={tasks} />
+      <TaskList tasks={data.allTasks} />
       <IonFooter>
         <div>
-          <IonLabel>
-            <IonButton size="small" color="primary" fill="outline" href="/offlineQueue" className="offline-queue-button">
-              Offline changes
-            </IonButton>
-            <IonBadge color="primary" class="offline-queue-badge">
-              { offlineQueue }
-            </IonBadge>
-          </IonLabel>
-          { networkStateUI }
+          <OfflineQueueBadge />
+          <NetworkBadge />
         </div>
       </IonFooter>
     </IonPage>

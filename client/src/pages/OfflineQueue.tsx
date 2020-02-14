@@ -1,15 +1,16 @@
 import React from 'react';
-import { OfflineList } from '../components/OfflineList';
-import { useGetOfflineStore } from '../hooks';
 import { Header } from '../components/Header';
+import { OfflineList } from '../components/OfflineList';
+import { useApolloOfflineClient } from 'react-offix-hooks';
 
 const OfflineQueue: React.FC = () => {
-  const offlineStore = useGetOfflineStore();
+
+  const { queue } = useApolloOfflineClient();
 
   return (
     <>
       <Header title="Offline Queue" backHref="/tasks" />
-      <OfflineList offlineStore={offlineStore} />
+      <OfflineList offlineStore={queue.queue} />
     </>
   );
 };

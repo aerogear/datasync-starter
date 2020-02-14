@@ -17,7 +17,7 @@ const AddTask: React.FC<RouteComponentProps> = ({ history }) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
-  const [addTask] = useOfflineMutation(ADD_TASK, mutationOptions.add);
+  const [addTask] = useOfflineMutation(ADD_TASK, mutationOptions.createTask);
 
   const submit = (event: SyntheticEvent) => {
     event.preventDefault();

@@ -1,4 +1,6 @@
-import { taskCacheUpdates, mutationOptions } from './mutationOptions';
+import * as mutationOptions from './mutationOptions';
 import * as subscriptionOptions from './subscriptionOptions';
 
-export { taskCacheUpdates, mutationOptions, subscriptionOptions };
+const { globalCacheUpdates } = mutationOptions;
+
+export { mutationOptions , globalCacheUpdates, subscriptionOptions };
