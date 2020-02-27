@@ -31,7 +31,7 @@ export function buildKeycloakApolloConfig(app: Express, apolloConfig: any) {
 
         return {
             typeDefs: [KeycloakTypeDefs, apolloConfig.typeDefs], // 1. Add the Keycloak Type Defs
-            schemaDirectives: KeycloakSchemaDirectives as any, // 2. Add the KeycloakSchemaDirectives
+            schemaDirectives: KeycloakSchemaDirectives, // 2. Add the KeycloakSchemaDirectives
             resolvers: apolloConfig.resolvers,
             playground: apolloConfig.playground,
             path: graphqlPath,
