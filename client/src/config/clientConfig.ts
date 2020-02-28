@@ -7,6 +7,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { globalCacheUpdates, ConflictLogger } from '../helpers';
 import { getAuthHeader } from '../auth/keycloakAuth';
 import { WebNetworkStatus } from './WebNetworkStatus';
+import { ApolloOfflineClientOptions, VersionedState, ConflictResolutionData } from 'offix-client';
 
 const httpUri = process.env.REACT_APP_SERVER_URL || 'http://localhost:4000/graphql';
 const httpsEnabled = httpUri.startsWith('https://')
@@ -29,7 +30,7 @@ const wsLink = new WebSocketLink({
     reconnect: true,
     lazy: true,
     // returns auth header or empty string
-    connectionParams: async () => (await getAuthHeader()), 
+    connectionParams: async () => (await getAuthHeader())
   },
 });
 
@@ -60,7 +61,7 @@ const authLink = setContext(async (_, { headers }) => {
  */
 const splitLink = ApolloLink.split(
   ({ query }) => {
-    const { kind, operation} : any = getMainDefinition(query);
+    const { kind, operation }: any = getMainDefinition(query);
     return kind === 'OperationDefinition' && operation === 'subscription';
   },
   wsLink,
@@ -72,7 +73,7 @@ const splitLink = ApolloLink.split(
  * and define cache redirect queries
  * 
  */
-const cache =  new InMemoryCache({
+const cache = new InMemoryCache({
   // cache redirects are used
   // to query the cache for individual Task item
   cacheRedirects: {
@@ -82,10 +83,32 @@ const cache =  new InMemoryCache({
   },
 });
 
-export const clientConfig = {
+// TODO remove this once we have
+class InputNamespacedVersionSpace extends VersionedState {
+  public assignServerState(client: any, server: any): void {
+    client.version = server.version;
+  }
+  public hasConflict(client: any, server: any): boolean {
+    return client.version !== server.version;
+  }
+  public getStateFields(): string[] {
+    // Id should be removed because we don't need to compare it for conflicts
+    return ["version", "id"];
+  }
+
+  public currentState(currentObjectState: ConflictResolutionData) {
+    return currentObjectState.input.version;
+  }
+
+}
+
+const offixState = new InputNamespacedVersionSpace();
+
+export const clientConfig: ApolloOfflineClientOptions = {
   link: authLink.concat(splitLink),
   cache: cache,
   conflictListener: new ConflictLogger(),
   mutationCacheUpdates: globalCacheUpdates,
-  networkStatus: new WebNetworkStatus()
+  networkStatus: new WebNetworkStatus(),
+  conflictProvider: offixState
 };
