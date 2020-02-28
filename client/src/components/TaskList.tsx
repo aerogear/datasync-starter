@@ -7,7 +7,7 @@ import { Empty } from './Empty';
 import { mutationOptions } from '../helpers';
 import { updateTask } from '../graphql/mutations/updateTask';
 import { deleteTask } from '../graphql/mutations/deleteTask';
-import { createOptimisticResponse } from '../helpers/optimisticResponse';
+import { createOptimisticResponse } from 'offix-client';
 
 export const TaskList: React.FC<any> = ({ tasks }) => {
 

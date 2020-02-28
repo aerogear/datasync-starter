@@ -12,7 +12,7 @@ import { useOfflineMutation } from 'react-offix-hooks';
 import { mutationOptions } from '../helpers';
 import { Header } from '../components/Header';
 import { createTask } from '../graphql/mutations/createTask';
-import { createOptimisticResponse } from '../helpers/optimisticResponse';
+import { createOptimisticResponse } from 'offix-client';
 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {
 
@@ -49,7 +49,7 @@ export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) =
       optimisticResponse: createOptimisticResponse({
         ...mutationOptions.createTask, 
         mutation: createTask,
-        variables,
+        variables: variables.input
       }),
     })
     .then(() => history.push('/'))

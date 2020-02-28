@@ -15,54 +15,6 @@ export interface OptimisticOptions {
   variables?: OperationVariables;
 }
 
-/**
- * Create optimistic response.
- * For example:
- *
-  optimisticResponse: {
-      __typename: "Mutation",
-      updateComment: {
-        id: commentId,
-        __typename: "Comment",
-        content: commentContent
-      }
-    }
- *
- * For more info and examples see:
- * https://www.apollographql.com/docs/react/features/optimistic-ui.html
- *
- * @param mutation operation that is being performed (update)
- * @param returnType type that is going to be returned
- * @param variables actual data passed to function
- * @param idField name of id field (default:id)
- * @param operationType the type of operation being returned
- */
-export const createOptimisticResponse = (options: OptimisticOptions) => {
-  const operation = getOperationFieldName(options.mutation);
-  // TODO things get really bad if returnType is not provided
-  const {
-    returnType,
-    variables,
-    idField = "id",
-    operationType
-  } = options;
-
-  const optimisticResponse: any = {
-    __typename: "Mutation"
-  };
-
-  optimisticResponse[operation] = {
-    __typename: returnType,
-    ...variables?.input,
-    optimisticResponse: true
-  };
-
-  if (operationType === CacheOperation.ADD) {
-    optimisticResponse[operation][idField] = generateClientId();
-  }
-
-  return optimisticResponse;
-};
 
 export function replaceClientGeneratedIDsInQueue(queue: ApolloQueueEntry[], operation: ApolloQueueEntryOperation, result: FetchResult) {
   if (!operation.op) {

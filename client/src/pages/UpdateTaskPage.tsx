@@ -22,7 +22,7 @@ import { mutationOptions } from '../helpers';
 import { IUpdateMatchParams } from '../declarations';
 import { updateTask } from '../graphql/mutations/updateTask';
 import { findTasks } from '../graphql/queries/findTasks';
-import { createOptimisticResponse } from '../helpers/optimisticResponse';
+import { createOptimisticResponse } from 'offix-client';
 
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
@@ -68,7 +68,7 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
       optimisticResponse: createOptimisticResponse({
         ...mutationOptions.updateTask, 
         mutation: updateTask,
-        variables,
+        variables: variables.input
       }),
     })
     .then(() => history.push('/'))
