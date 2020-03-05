@@ -259,7 +259,7 @@ Verify that you followed each step in the procedure above.  If you are still hav
 ****
 
 [time=10]
-== Exploring data sync features using the Data Sync showcase application
+== Exploring Data Sync features using the Data Sync Starter application
 
 To explore data sync features, you should run multiple instances of the {data-sync-starter} using different browsers.
 For example, use the browser on your mobile device as well as using the browser on your laptop.
@@ -387,7 +387,7 @@ Roles can be also applied in generation process by utilizing graphback plugin
 to any new mutation or query created by users.
 We going to verify this directive in next steps
 
-=== Configuring Authentication for Keycloak (SSO) (Local setup)
+=== Configuring Authentication for Keycloak (SSO)
 
 DataSync starter provides out of the box support for keycloak
 when keycloak.json file is provided.
