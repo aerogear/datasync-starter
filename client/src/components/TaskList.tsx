@@ -17,7 +17,9 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
     if(error.offline) {
       error.watchOfflineChange();
     }
-    console.log(error.graphQLErrors);
+    if (error.graphQLErrors) {
+      console.log(error.graphQLErrors);
+    }
   }
   
   const handleDelete = (task: ITask) => {
