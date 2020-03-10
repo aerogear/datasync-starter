@@ -15,6 +15,8 @@ async function start() {
   const httpServer = http.createServer(app)
   apolloServer.installSubscriptionHandlers(httpServer)
 
+  app.get('/', (req, res) => { res.redirect('/app') });
+
   httpServer.listen(config.port, () => {
     console.log(`\n    ***********************************************************
     🎮 Ionic PWA application available at http://localhost:${config.port}/app
