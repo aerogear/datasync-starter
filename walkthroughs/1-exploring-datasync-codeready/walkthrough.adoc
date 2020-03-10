@@ -130,10 +130,8 @@ Currently Postres and MongoDB are supported.
 
 . Open new terminal window
 . Execute `start app` command in the new terminal
-. Client side application will be build and started
-. Open Application URL in the new window
-
-. Open `PWA application URL` printed in terminal
+. Client side application will be build and started. This can take up to couple minutes
+. Application should be opened in preview window after build is finished
 
 [type=verification]
 ****
