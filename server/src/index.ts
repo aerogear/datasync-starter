@@ -8,7 +8,7 @@ async function start() {
   const app = express();
 
   app.use(cors());
-  app.use('/', express.static('website'))
+  app.use('/app', express.static('website'))
   app.get('/health', (req, res) => res.sendStatus(200));
 
   const apolloServer = await createApolloServer(app, config);
