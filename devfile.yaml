@@ -15,7 +15,7 @@ components:
     endpoints:
       - name: server
         port: 4000
-      - name: client
+      - name: devclient
         port: 3333
     memoryLimit: 1500Mi
     type: dockerimage
