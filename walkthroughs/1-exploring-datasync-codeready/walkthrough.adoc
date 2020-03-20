@@ -118,7 +118,7 @@ type Task {
 }
 ----
 
-=== Generating your DataSync Node.JS server and React app
+=== Generating your DataSync Node.JS server and React App
 
 DataSync provides code generation capabilities that transform your model into a fully functional client and server application.
 The datasync-starter template contains the following folders:
