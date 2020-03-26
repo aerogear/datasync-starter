@@ -7,6 +7,7 @@
   "devDependencies": {
     "del-cli": "3.0.0",
     "@graphback/codegen-offix": "0.11.2",
+    "@graphback/codegen-odata": "0.11.3",
     "graphback-cli": "0.11.2"
   },
   "scripts": {

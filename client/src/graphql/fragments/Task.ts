@@ -5,6 +5,8 @@ export const TaskFragment = gql`
    id
    title
    description
+   test
+   test2
    status
    version
 

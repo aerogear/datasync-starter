@@ -1,10 +1,13 @@
 """ 
 @model
+@odata
 """
 type Task {
-  id: ID!
-  title: String!
-  description: String!
+  id: ID
+  title: String 
+  description: String
+  test: String
+  test2: String
   status: TaskStatus
 }
 
@@ -13,3 +16,5 @@ enum TaskStatus {
   ASSIGNED
   COMPLETE
 }
+
+scalar JSON 

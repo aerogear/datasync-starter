@@ -1,0 +1,47 @@
+{
+  "$Version": "4.0",
+  "$Reference": {
+    "https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.json": {
+      "$Include": [
+        {
+          "$Namespace": "Org.OData.Core.V1",
+          "$Alias": "Core",
+          "@Core.DefaultNamespace": true
+        }
+      ]
+    }
+  },
+  "ODataDemo": {
+    "Task": {
+      "$Kind": "EntityType",
+      "$HasStream": true,
+      "$Key": [
+        "ID"
+      ],
+      "ID": {
+        "$Type": "Edm.Int32"
+      },
+      "id": {
+        "$Nullable": false
+      },
+      "title": {
+        "$Nullable": false
+      },
+      "description": {
+        "$Nullable": false
+      },
+      "test": {
+        "$Nullable": false
+      },
+      "test2": {
+        "$Nullable": false
+      },
+      "status": {
+        "$Nullable": false
+      },
+      "version": {
+        "$Nullable": false
+      }
+    }
+  }
+}

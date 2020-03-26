@@ -26,3 +26,5 @@ extensions:
         outputPath: ./client/src/graphql
       graphback-offix:
         outputPath: ./server/src/resolvers
+      graphback-odata:
+        outputPath: ./server/schema.odata
