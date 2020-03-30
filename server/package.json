@@ -1,5 +1,5 @@
 {
-  "name": "shocase-datasync-server",
+  "name": "datasync-server-starter",
   "version": "1.0.0",
   "private": true,
   "scripts": {

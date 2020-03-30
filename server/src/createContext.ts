@@ -8,7 +8,8 @@ import { GraphbackOperationType } from '@graphback/core'
 class AMQCRUDService extends CRUDService {
     protected subscriptionTopicMapping(triggerType: GraphbackOperationType, objectName: string) {
         // Support AMQ topic creation format
-        return `graphql/${objectName}/${triggerType}`
+        // return `graphql/${objectName}/${triggerType}`
+        return `${objectName}_${triggerType}`.toUpperCase();
     }
 }
 
