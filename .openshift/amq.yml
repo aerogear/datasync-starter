@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: amq-online-topic
+metadata:
+  name: amq-online-topic
+objects:
+- apiVersion: enmasse.io/v1beta1
+  kind: Address
+  metadata:
+      name: datasync.${AMQ_ADDRESS} # must have be in format <address space name>.<queuename>
+  spec:
+      address: ${AMQ_ADDRESS}
+      type: topic
+      plan: brokered-topic
+- apiVersion: user.enmasse.io/v1beta1
+  kind: MessagingUser
+  metadata:
+    name: showcase.${AMQ_USERNAME}
+  spec:
+    username: ${AMQ_USERNAME}
+    authentication:
+      type: password
+      password: ${AMQ_USER_PASSWORD}
+    authorization:
+      - addresses: ["*"]
+        operations: ["send", "recv"]
+parameters:
+  - description: Messaging user created in AMQ Online. The showcase server will authenticate with AMQ as this user.
+    displayName: AMQ Messaging User Name
+    name: AMQ_USERNAME
+    value: showcase-messaging-user
+  - description: Create your own password with `$ echo <password> | base64` - the default password is Password1
+    displayName: AMQ Messaging User Password
+    name: AMQ_USER_PASSWORD
+    value: UGFzc3dvcmQx # (base64 encoded) Password1
+  - description: Topic 
+    displayName: AMQ Messaging Topic (namespace)
+    name: AMQ_NAMESPACE
+    value: tasks
