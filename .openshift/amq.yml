@@ -36,7 +36,7 @@ parameters:
   - description: Messaging user created in AMQ Online. The showcase server will authenticate with AMQ as this user.
     displayName: AMQ Messaging User Name
     name: AMQ_USERNAME
-    value: showcase-messaging-user
+    value: messaging-user
   - description: Create your own password with `$ echo <password> | base64` - the default password is Password1
     displayName: AMQ Messaging User Password
     name: AMQ_USER_PASSWORD

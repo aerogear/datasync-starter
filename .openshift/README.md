@@ -17,24 +17,24 @@ This template starts datasync container on top of the mongodb instances:
 2. Provide MongoDB connection details
 3. Wait for the pods to start
 
-# Deploying the Showcase Server with AMQ
+# Deploying Server with AMQ
 
 Prerequisites
 
 * AMQ Online is installed in the cluster
 
-This section describes how to deploy the showcase in an OpenShift cluster from the supplied `amq.yml` template file.
-* Add template to your openshift instance: `oc create -f amq.yml`
-* The form is already prefilled with all of the necessary values.
+
+This section describes how to deploy the application in an OpenShift cluster by using the supplied `amq.yml` template file.
+* The template is already prefilled with all of the necessary values that can be inspected
 * The only field you might want to change is `AMQ Messaging User Password`.
   * The default value is `Password1` in base64 encoding
   * The value *must* be base64 encoded
   * A custom value can be created in the terminal using `$ echo <password> | base64` 
-* When the create button is clicked, a warning message may be displayed
+* Execute template on your openshift instance by `oc process -f amq.yml | oc create -f -`
 
 > This will create resources that may have security or project behavior implications. Make sure you understand what they do before creating them. The resources being created are: address space, address, messaging user
 
-The hostname for the AMQ Online Broker is only made available after the resources from the the template have been provisioned. One more step is needed to supply `MQTT_HOST` environment variable to running server.
+The hostname for the AMQ Online Broker is only made available after the resources from the the template have been provisioned. One more step is needed to supply extra environment variables to running server.
 
 * From the terminal, ensure you have the correct namespace selected.
 
@@ -42,10 +42,24 @@ The hostname for the AMQ Online Broker is only made available after the resource
 oc project <project where template was provisioned>
 ```
 
-* Update the ionic-showcase-server deployment to add the `MQTT_HOST` variable. 
+* Update the deployment to add the `MQTT_HOST` variable. 
 
 ```
-oc set env dc/ionic-showcase-server MQTT_HOST="$(oc get addressspace showcase -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].serviceHost}')"
+oc get addressspace showcase -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].serviceHost}'
 ```
 
-At this point, the showcase server is provisioned and the logs from the ionic-showcase-server pod will include the output `connected to messaging service`.
+If you want to use service outside the OpenShift cluster please request external URL:
+```
+oc get addressspace showcase -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].externalHost}'
+``
+
+Provide set of the environment variables required to connect to the running AMQ
+For example:
+
+```
+MQTT_HOST=messaging-nj2y0929dk-redhat-rhmi-amq-online.apps.youropenshift.io 
+MQTT_PORT=443 
+MQTT_PASSWORD=Password1 
+MQTT_USERNAME=messaging-user 
+MQTT_PROTOCOL=tls 
+```
