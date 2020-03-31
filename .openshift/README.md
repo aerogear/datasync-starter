@@ -32,8 +32,6 @@ This section describes how to deploy the application in an OpenShift cluster by 
   * A custom value can be created in the terminal using `$ echo <password> | base64` 
 * Execute template on your openshift instance by `oc process -f amq.yml | oc create -f -`
 
-> This will create resources that may have security or project behavior implications. Make sure you understand what they do before creating them. The resources being created are: address space, address, messaging user
-
 The hostname for the AMQ Online Broker is only made available after the resources from the the template have been provisioned. One more step is needed to supply extra environment variables to running server.
 
 * From the terminal, ensure you have the correct namespace selected.
@@ -45,13 +43,13 @@ oc project <project where template was provisioned>
 * Update the deployment to add the `MQTT_HOST` variable. 
 
 ```
-oc get addressspace showcase -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].serviceHost}'
+oc get addressspace datasync -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].serviceHost}'
 ```
 
 If you want to use service outside the OpenShift cluster please request external URL:
 ```
-oc get addressspace showcase -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].externalHost}'
-``
+oc get addressspace datasync -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].externalHost}'
+```
 
 Provide set of the environment variables required to connect to the running AMQ
 For example:

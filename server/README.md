@@ -6,7 +6,7 @@ Node.js template using Graphback
 
 - Graphback (Apollo GraphQL template)
 - Keycloak (Authentication)
-- AMQ (MQTT)
+- AMQ Online (MQTT)
 - MongoDB
 
 ## Usage
