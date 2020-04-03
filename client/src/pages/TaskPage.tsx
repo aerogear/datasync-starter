@@ -45,7 +45,7 @@ export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
 
   return (
     <IonPage>
-      <Header title="Manage Tasks"  match={match}  />
+      <Header title="Manage Tasks"  match={match} isOnline={isOnline} />
       <IonContent className="ion-padding" >
         <IonSegment>
           <IonSegmentButton value="all">
