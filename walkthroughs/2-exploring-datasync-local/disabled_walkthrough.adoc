@@ -39,7 +39,7 @@ image::images/arch.png[architecture, role="integr8ly-img-responsive"]
 .Red Hat OpenShift
 ****
 * link:{openshift-console-url}[Console, window="_blank"]
-* link:https://docs.openshift.com/dedicated/4/welcome/index.html/[OpenShift Documentation, window="_blank"]
+* link:https://docs.openshift.com/dedicated/4/welcome/index.html[OpenShift Documentation, window="_blank"]
 * link:https://blog.openshift.com/[OpenShift Blog, window="_blank"]
 ****
 
