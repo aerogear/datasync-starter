@@ -54,7 +54,7 @@ cd ./server
 docker-compose up -d
 yarn start
 ```
-+
+
 
 === Running the Server with the Keycloak integration
 
