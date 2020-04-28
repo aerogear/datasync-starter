@@ -17,15 +17,13 @@ type Subscription {
   deletedTask(input: TaskInput): Task!
 }
 
-"""
-@model
-@datasync
-"""
+"""@model"""
 type Task {
   id: ID!
   title: String!
   description: String!
   status: TaskStatus
+  owner: String
   version: Int
 }
 
@@ -34,6 +32,7 @@ input TaskInput {
   title: String
   description: String
   status: TaskStatus
+  owner: String
   version: Int
 }
 

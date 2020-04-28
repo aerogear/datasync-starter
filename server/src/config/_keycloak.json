@@ -1,9 +1,9 @@
 {
   "realm": "voyager-testing",
+  "bearer-only": true,
   "auth-server-url": "http://localhost:8080/auth",
   "ssl-required": "none",
-  "resource": "voyager-testing-public",
-  "public-client": true,
+  "resource": "voyager-testing-bearer",
   "use-resource-role-mappings": true,
   "confidential-port": 0
 }

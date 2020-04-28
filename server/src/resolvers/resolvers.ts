@@ -5,7 +5,10 @@
  * outside generated file.
  */
 
-export default {
+import { models } from './models'
+import { wrapResolversWithAuth } from './wrapResolversWithAuth'
+
+const resolvers = {
   Query: {
     findTasks: (parent, args, context) => {
       const { fields, ...page } = args
@@ -46,3 +49,9 @@ export default {
     }
   }
 }
+
+// wrap the resolvers in a seamless way such that
+// no extra code needs to be written by the user
+// this would require a very small abount of codegen but I think 
+// it's worth it.
+export default wrapResolversWithAuth(resolvers, models) as any
