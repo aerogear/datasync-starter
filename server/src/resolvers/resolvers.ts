@@ -5,7 +5,7 @@
  * outside generated file.
  */
 
-const resolvers = {
+export default {
   Query: {
     findTasks: (parent, args, context) => {
       const { fields, ...page } = args
@@ -46,5 +46,3 @@ const resolvers = {
     }
   }
 }
-
-export default resolvers
