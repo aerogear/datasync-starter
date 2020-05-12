@@ -1,11 +1,13 @@
-import { GraphbackPubSubModel, OffixMongoDBDataProvider, CRUDService } from '@graphback/runtime-mongo'
+import { GraphbackPubSubModel, OffixMongoDBDataProvider } from '@graphback/runtime-mongo'
 import { GraphQLSchema, GraphQLObjectType } from 'graphql'
 import { Db } from 'mongodb'
 import { PubSubEngine } from 'apollo-server-express'
 import { GraphbackOperationType } from '@graphback/core'
+import { KeycloakCrudService, createCrudServiceAuthConfigs } from '@graphback/keycloak-authz'
+import { authConfig } from "./config/auth";
 
 
-class AMQCRUDService extends CRUDService {
+class AMQCRUDService extends KeycloakCrudService {
     protected subscriptionTopicMapping(triggerType: GraphbackOperationType, objectName: string) {
         // Support AMQ topic creation format
         return `graphql/${objectName}_${triggerType}`
@@ -27,6 +29,8 @@ export const createOffixMongoCRUDRuntimeContext = (
         throw new Error(`No models provided`)
     }
 
+    const serviceAuthConfigs = createCrudServiceAuthConfigs(authConfig);
+
     return models.reduce((services: any, model: GraphbackPubSubModel) => {
         const modelType = schema.getType(model.name) as GraphQLObjectType
         if (modelType === undefined) {
@@ -36,9 +40,15 @@ export const createOffixMongoCRUDRuntimeContext = (
         }
 
         const objectDB = new OffixMongoDBDataProvider(modelType, db)
-        services[model.name] = new AMQCRUDService(modelType, objectDB, {
-            pubSub,
-            ...model.pubSub
+
+        services[model.name] = new AMQCRUDService({
+            modelType,
+            db: objectDB,
+            subscriptionConfig: {
+                pubSub,
+                ...model.pubSub
+            },
+            authConfig: serviceAuthConfigs[model.name]
         })
 
         return services;

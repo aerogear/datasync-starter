@@ -6,11 +6,6 @@ export const authConfig: ModelAuthConfigs = [
     auth: {
       rules: [
         {
-          allow: 'owner',
-          operations: ['update', 'create', 'read', 'delete'],
-          ownerField: 'owner',
-        },
-        {
           allow: 'role',
           operations: ['update', 'delete'],
           roles: ["admin"]
