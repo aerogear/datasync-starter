@@ -10,6 +10,8 @@ import { ApolloServer } from "apollo-server-express";
 import { Express } from "express";
 import { buildKeycloakApolloConfig } from './auth';
 import { createOffixMongoCRUDRuntimeContext } from './createContext';
+import { applyAuthToResolvers } from "@graphback/keycloak-authz";
+import { authConfig } from "./config/auth";
 
 /**
  * Creates Apollo server
@@ -21,6 +23,8 @@ export const createApolloServer = async function (app: Express, config: Config) 
     const typeDefs = loadSchemaFiles(join(__dirname, '/schema/')).join('\n');
     const schema = buildSchema(typeDefs, { assumeValid: true });
     const context = createOffixMongoCRUDRuntimeContext(models, schema, db, pubSub);
+
+    applyAuthToResolvers(resolvers, authConfig)
 
     let apolloConfig = {
         typeDefs: typeDefs,
