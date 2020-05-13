@@ -3,7 +3,7 @@ import { GraphQLSchema, GraphQLObjectType } from 'graphql'
 import { Db } from 'mongodb'
 import { PubSubEngine } from 'apollo-server-express'
 import { GraphbackOperationType } from '@graphback/core'
-import { KeycloakCrudService, createCrudServiceAuthConfigs } from '@graphback/keycloak-authz'
+import { KeycloakCrudService } from '@graphback/keycloak-authz'
 import { authConfig } from "./config/auth";
 
 
@@ -29,8 +29,6 @@ export const createOffixMongoCRUDRuntimeContext = (
         throw new Error(`No models provided`)
     }
 
-    const serviceAuthConfigs = createCrudServiceAuthConfigs(authConfig);
-
     return models.reduce((services: any, model: GraphbackPubSubModel) => {
         const modelType = schema.getType(model.name) as GraphQLObjectType
         if (modelType === undefined) {
@@ -48,7 +46,7 @@ export const createOffixMongoCRUDRuntimeContext = (
                 pubSub,
                 ...model.pubSub
             },
-            authConfig: serviceAuthConfigs[model.name]
+            authConfig: authConfig[model.name]
         })
 
         return services;
