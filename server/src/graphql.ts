@@ -24,7 +24,6 @@ export const createApolloServer = async function (app: Express, config: Config) 
     const typeDefs = loadSchemaFiles(join(__dirname, '/schema/')).join('\n');
     const schema = buildSchema(typeDefs, { assumeValid: true });
 
-    debugger
     const context = createKeycloakRuntimeContext({ 
         models,
         schema,
