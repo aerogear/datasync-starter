@@ -97,6 +97,7 @@ async function prepareKeycloak() {
     console.log('creating client roles')
     for (let roleName of clientRoleNames) {
       await createClientRole(BEARER_CLIENT, roleName)
+      await createClientRole(PUBLIC_CLIENT, roleName)
     }
 
     console.log('creating realm roles')
@@ -107,7 +108,8 @@ async function prepareKeycloak() {
     // get the actual role objects from keycloak after creating them
     // need to get the ids that were created on them
     realmRoles = await getRealmRoles()
-    clientRoles = await getClientRoles(BEARER_CLIENT)
+    bearerClientRoles = await getClientRoles(BEARER_CLIENT)
+    publicClientRoles = await getClientRoles(PUBLIC_CLIENT)
 
     for (let user of users) {
       // Create a new user
@@ -116,7 +118,8 @@ async function prepareKeycloak() {
 
       // Assign roles to the user
       await assignRealmRolesToUser(user, userIdUrl)
-      await assignClientRolesToUser(user, BEARER_CLIENT, userIdUrl)
+      await assignClientRolesToUser(user, BEARER_CLIENT, bearerClientRoles, userIdUrl)
+      await assignClientRolesToUser(user, PUBLIC_CLIENT, publicClientRoles, userIdUrl)
     }
 
     const publicInstallation = await getClientInstallation(PUBLIC_CLIENT)
@@ -162,14 +165,14 @@ async function assignRealmRolesToUser(user, userIdUrl) {
   }
 }
 
-async function assignClientRolesToUser(user, client, userIdUrl) {
+async function assignClientRolesToUser(user, client, clientRoles, userIdUrl) {
   for (let roleToAssign of user.clientRoles) {
-    console.log(`assigning client role ${roleToAssign} from client ${PUBLIC_CLIENT_NAME} on user ${user.name}`)
+    console.log(`assigning client role ${roleToAssign} from client ${client.clientId} on user ${user.name}`)
     const selectedClientRole = clientRoles.find(clientRole => clientRole.name === roleToAssign)
     if (selectedClientRole) {
       await assignClientRoleToUser(userIdUrl, client, selectedClientRole)
     } else {
-      console.error(`client role ${roleToAssign} does not exist on client ${PUBLIC_CLIENT_NAME}`)
+      console.error(`client role ${roleToAssign} does not exist on client ${client.clientId}`)
     }
   }
 }
