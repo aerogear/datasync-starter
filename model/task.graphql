@@ -6,10 +6,6 @@ type Task {
   title: String!
   description: String!
   status: TaskStatus
-  # In this example it's added manually on the model
-  # but maybe the keycloak plugin could automatically add it to the schema
-  # if owner auth is being applied
-  owner: String 
 }
 
 enum TaskStatus {
