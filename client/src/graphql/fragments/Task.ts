@@ -6,7 +6,6 @@ export const TaskFragment = gql`
    title
    description
    status
-   owner
    version
 
 } 
