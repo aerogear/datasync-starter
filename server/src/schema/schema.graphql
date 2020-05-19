@@ -34,7 +34,6 @@ input TaskInput {
   title: String
   description: String
   status: TaskStatus
-  owner: String
   version: Int
 }
 
