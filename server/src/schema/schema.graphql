@@ -18,8 +18,8 @@ type Subscription {
 }
 
 """
-@model	
-@datasync	
+@model
+@datasync
 """
 type Task {
   id: ID!
