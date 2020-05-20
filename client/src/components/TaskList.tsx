@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Task } from './Task';
-import { IonList } from '@ionic/react';
+import { IonList, IonToast } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { ITask } from '../declarations';
 import { Empty } from './Empty';
@@ -13,12 +13,17 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
   const [updateTaskMutation] = useOfflineMutation(updateTask, mutationOptions.updateTask);
   const [deleteTaskMutation] = useOfflineMutation(deleteTask, mutationOptions.deleteTask);
 
+  const [ showToast, setShowToast ] = useState<boolean>(false);
+  const [ errorMessage, setErrorMessage ] = useState<string>('');
+
   const handleError = (error: any) => {
     if(error.offline) {
       error.watchOfflineChange();
     }
     if (error.graphQLErrors) {
       console.log(error.graphQLErrors);
+      setErrorMessage(error.message);
+      setShowToast(true);
     }
   }
   
@@ -54,6 +59,14 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
           })
         }
       </IonList>
+      <IonToast
+        isOpen={showToast}
+        onDidDismiss={() => setShowToast(false)}
+        message={errorMessage}
+        position="top"
+        color="danger"
+        duration={2000}
+      />
     </>
   );
 
