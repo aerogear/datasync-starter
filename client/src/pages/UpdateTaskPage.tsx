@@ -41,14 +41,17 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
       history.push('/');
       return;
     }
+    console.log(error);
     setErrorMessage(error.message);
     setShowToast(true);
   }
 
   const submit = (model: any) => {
-    delete model.__typename;
+    // remove `__typename` property without
+    // deleting from the model object (as this may be a state reference)
+    const { __typename, ...no__typename } = model;
     updateTaskMutation({
-      variables: { input: model }
+      variables: { input: no__typename }
     })
       .then(() => history.push('/'))
       .catch(handleError);
@@ -91,7 +94,7 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
             message={errorMessage}
             position="top"
             color="danger"
-            duration={20000}
+            duration={2000}
           />
         </IonContent>
       </>

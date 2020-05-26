@@ -26,7 +26,7 @@ export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) =
 
   const submit = (model: any) => {    
     createTaskMutation({
-      variables: {input: {...model},}
+      variables: {input: {...model}}
     })
       .then(() => history.push('/'))
       .catch(handleError);
