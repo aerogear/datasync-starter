@@ -13,7 +13,7 @@ export function TaskForm({model, handleSubmit}) {
           <TextField name="title" />
           <LongTextField name="description" />
           <HiddenField name="status" value="OPEN" />
-          <HiddenField name="version" value={1} />
+          <HiddenField name="version" value={model.version ?? 1} />
           <SubmitField />
       </AutoForm>
   )
