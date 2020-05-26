@@ -31,7 +31,10 @@
     "react-router-dom": "5.1.2",
     "react-scripts": "3.4.1",
     "subscriptions-transport-ws": "0.9.16",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "uniforms-ionic": "^0.0.11",
+    "uniforms": "3.0.0-alpha.3",
+    "uniforms-bridge-simple-schema-2": "3.0.0-alpha.3"
   },
   "scripts": {
     "start": "npm run build && cap serve",

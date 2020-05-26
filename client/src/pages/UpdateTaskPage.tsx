@@ -1,12 +1,9 @@
-import React, { useState, SyntheticEvent } from 'react'
+import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
   IonContent,
   IonCard,
-  IonButton,
-  IonItem,
   IonLabel,
-  IonInput,
   IonCardHeader,
   IonCardContent,
   IonNote,
@@ -22,13 +19,11 @@ import { mutationOptions } from '../helpers';
 import { IUpdateMatchParams } from '../declarations';
 import { updateTask } from '../graphql/mutations/updateTask';
 import { findTasks } from '../graphql/queries/findTasks';
+import { TaskForm } from '../forms/TaskForm';
 
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
   const { id } = match.params;
-
-  const [title, setTitle] = useState<string>(null!);
-  const [description, setDescription] = useState<string>(null!);
   const [ showToast, setShowToast ] = useState<boolean>(false);
   const [ errorMessage, setErrorMessage ] = useState<string>('');
   const { loading, error, data } = useQuery(findTasks, { 
@@ -46,27 +41,20 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
       history.push('/');
       return;
     }
+    console.log(error);
     setErrorMessage(error.message);
     setShowToast(true);
   }
 
-  const submit = (event: SyntheticEvent) => {
-    event.preventDefault();
-    const task = data.findTasks;
-    delete task.__typename;
-    const variables = { 
-      input: {
-        ...task,
-        title: title || task.title,
-        description: description || task.description,
-      }
-    };
-
+  const submit = (model: any) => {
+    // remove `__typename` property without
+    // deleting from the model object (as this may be a state reference)
+    const { __typename, ...no__typename } = model;
     updateTaskMutation({
-      variables
+      variables: { input: no__typename }
     })
-    .then(() => history.push('/'))
-    .catch(handleError);
+      .then(() => history.push('/'))
+      .catch(handleError);
   }
 
   if (error) return <pre>{JSON.stringify(error)}</pre>;
@@ -99,17 +87,7 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
               </IonLabel>
             </IonCardContent>
           </IonCard>
-          <form onSubmit={submit} style={{ padding: '0 16px' }}>
-            <IonItem>
-              <IonLabel color="primary" position="floating">Title</IonLabel>
-              <IonInput type="text" name="title" onInput={(e: any) => setTitle(e.target.value)} value={task.title} />
-            </IonItem>
-            <IonItem>
-              <IonLabel color="primary" position="floating">Description</IonLabel>
-              <IonInput type="text" name="description" onInput={(e: any) => setDescription(e.target.value)} value={task.description} />
-            </IonItem>
-            <IonButton className="submit-btn" expand="block" type="submit">Update</IonButton>
-          </form>
+          <TaskForm handleSubmit={submit} model={task} />
           <IonToast
             isOpen={showToast}
             onDidDismiss={() => setShowToast(false)}
