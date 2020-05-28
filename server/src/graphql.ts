@@ -8,6 +8,7 @@ import { getPubSub } from './pubsub'
 import { Config } from './config/config';
 import { ApolloServer } from "apollo-server-express";
 import { Express } from "express";
+import scalars from './resolvers/scalars';
 import { buildKeycloakApolloConfig } from './auth';
 import { createKeycloakRuntimeContext } from '@graphback/keycloak-authz';
 import { authConfig } from './config/auth';
@@ -47,6 +48,8 @@ export const createApolloServer = async function (app: Express, config: Config) 
             context: context
         }
     }
+
+    apolloConfig.resolvers = { ...apolloConfig.resolvers, ...scalars };
 
     const apolloServer = new ApolloServer(apolloConfig)
     apolloServer.applyMiddleware({ app });
