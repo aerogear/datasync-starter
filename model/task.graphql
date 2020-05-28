@@ -1,11 +1,40 @@
-""" 
+"""
 @model
 """
 type Task {
-  id: ID!
+  """
+  @db.primary
+  """
+  _id: ObjectID!
   title: String!
   description: String!
   status: TaskStatus
+  type: String
+  priority: Int
+  public: Boolean
+  status: TaskStatus
+  startDate: Date
+  payload: JSON
+
+  """
+  @oneToOne
+  """
+  location: [Address]
+}
+
+"""
+@model
+@crud.delete: false
+"""
+type Address {
+  """
+  @db.primary
+  """
+  _id: ObjectID!
+  address1: String!
+  address2: String
+  city: String!
+  postcode: String
 }
 
 enum TaskStatus {
@@ -13,3 +42,9 @@ enum TaskStatus {
   ASSIGNED
   COMPLETE
 }
+
+### Custom types used by model
+
+scalar DateTime
+scalar JSON
+scalar ObjectID
