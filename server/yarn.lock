@@ -2538,6 +2538,11 @@ keycloak-connect@6.0.1:
   dependencies:
     jwk-to-pem "^2.0.0"
 
+keycloak-request-token@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/keycloak-request-token/-/keycloak-request-token-0.1.0.tgz#919d1ac46237db568d4d45322a213cee2636e2a8"
+  integrity sha1-kZ0axGI321aNTUUyKiE87iY24qg=
+
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
