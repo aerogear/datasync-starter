@@ -17,24 +17,22 @@ type Task {
   payload: JSON
 
   """
-  @oneToOne
+  @oneToMany field: 'note'
   """
-  location: [Address]
+  comments: [Comment]!
 }
 
 """
 @model
 @crud.delete: false
 """
-type Address {
+type Comment {
   """
   @db.primary
   """
   _id: ObjectID!
-  address1: String!
-  address2: String
-  city: String!
-  postcode: String
+  message: String!
+  author: String!
 }
 
 enum TaskStatus {

@@ -34,6 +34,7 @@
     "express": "4.17.1",
     "express-session": "1.17.1",
     "graphql-tag": "2.10.3",
+    "graphql-scalars": "1.1.3",
     "keycloak-connect": "10.0.2",
     "keycloak-connect-graphql": "0.6.0",
     "@graphback/keycloak-authz": "0.12.0"
