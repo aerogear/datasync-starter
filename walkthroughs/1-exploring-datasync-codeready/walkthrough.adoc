@@ -267,7 +267,6 @@ Verify that you followed each step in the procedure above.  If you are still hav
 To explore data sync features, you should run multiple instances of the {data-sync-starter} using different browsers.
 For example, use the browser on your mobile device as well as using the browser on your laptop.
 
-
 === Exploring real-time sync
 
 . On your laptop:
@@ -382,21 +381,13 @@ and add required authorization rules to their model.
 
 == Add authorization rule for Task deletion
 
-. Go to your GraphQL Schema `./server/src/schema/schema.qraphql`. 
-Schema contains mutations section that is responsible for data modifications
-. In mutation section find `deleteTask(input: TaskInput): Task!`
-. Add GraphQL Directive on top of it `@hasRole(role: "admin")`
-This will only allow deletion for admin users.
-Roles can be also applied in generation process by utilizing graphback plugin
-. This directive is already defined in {data-sync-starter} and can be also applied 
-to any new mutation or query created by users.
-We going to verify this directive in next steps
+. Go to your GraphQL Schema `./server/src/config/auth.ts`. 
+This file contains auth rules for all the operations we support.
+. Change role from `delete: { roles: ['admin'] }` to delete: { roles: ['test'] },
+This will only allow deletion for test role that we haven't created.
+This operation will prevent us from deleting items from the list.
 
 === Configuring Authentication for Keycloak (SSO) 
-
-> NOTE: instructions here might be updated after next release of the RHMI
-
-Please skip this if you have keycloak configured in previous step
 
 . In solution explorer open the User SSO service.
 . Login using your own credentials (You might need to open this tab in incognito mode).
@@ -441,4 +432,4 @@ For example `https://routex9wvywuq-codeready-workspaces.apps.openshift.io*`
 . You should see admin user profile with his roles
 . Go back to the task screen
 . Try to delete one of the created tasks
-. User will not be permitted to delete task as it does not have admin role.
+. User will not be permitted to delete task as it does not have test role.
