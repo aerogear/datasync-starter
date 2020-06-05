@@ -1,9 +1,8 @@
 {
   "realm": "datasync-starter",
-  "auth-server-url": "http://localhost:8080/auth",
-  "ssl-required": "none",
-  "resource": "datasync-starter-client",
-  "public-client": true,
-  "use-resource-role-mappings": true,
+  "bearer-only": true,
+  "auth-server-url": "http://localhost:8080/auth/",
+  "ssl-required": "external",
+  "resource": "datasync-starter-server",
   "confidential-port": 0
 }
