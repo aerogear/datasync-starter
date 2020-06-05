@@ -11,7 +11,7 @@ import { Express } from "express";
 import { buildKeycloakApolloConfig } from './auth';
 import { createKeycloakRuntimeContext } from '@graphback/keycloak-authz';
 import { authConfig } from './config/auth';
-import { OffixMongoDBDataProvider } from '@graphback/runtime-mongo';
+import { OffixMongoDBDataProvider, createOffixMongoCRUDRuntimeContext } from '@graphback/runtime-mongo';
 import { AMQCRUDService } from './AMQCrudService'
 
 /**
@@ -23,25 +23,30 @@ export const createApolloServer = async function (app: Express, config: Config) 
 
     const typeDefs = loadSchemaFiles(join(__dirname, '/schema/')).join('\n');
     const schema = buildSchema(typeDefs, { assumeValid: true });
+    let context;
 
-    const context = createKeycloakRuntimeContext({ 
-        models,
-        schema,
-        db,
-        pubSub,
-        authConfig,
-        dataProvider: OffixMongoDBDataProvider,
-        crudService: AMQCRUDService
-    })
+    let apolloConfig;
 
-    let apolloConfig = {
-        typeDefs: typeDefs,
-        resolvers,
-        playground: true,
-        context: context
+    if (config.keycloakConfig) {
+        context = createKeycloakRuntimeContext({
+            models,
+            schema,
+            db,
+            pubSub,
+            authConfig,
+            dataProvider: OffixMongoDBDataProvider,
+            crudService: AMQCRUDService
+        })
+        apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
+    } else {
+        context = createOffixMongoCRUDRuntimeContext(models, schema, db, pubSub);
+        apolloConfig = {
+            typeDefs: typeDefs,
+            resolvers,
+            playground: true,
+            context: context
+        }
     }
-
-    apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
 
     const apolloServer = new ApolloServer(apolloConfig)
     apolloServer.applyMiddleware({ app });
