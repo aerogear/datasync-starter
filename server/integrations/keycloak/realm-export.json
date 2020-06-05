@@ -578,7 +578,7 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": ["http://localhost*"],
-      "webOrigins": [],
+      "webOrigins": ["*"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
