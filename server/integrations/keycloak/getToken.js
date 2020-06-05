@@ -8,8 +8,8 @@ const settings = {
     username: username || 'developer',
     password: password || 'developer',
     grant_type: 'password',
-    client_id: 'voyager-testing-public',
-    realmName: 'voyager-testing'
+    client_id: 'datasync-starter-client',
+    realmName: 'datasync-starter'
 }
 
 tokenRequester(baseUrl, settings)
