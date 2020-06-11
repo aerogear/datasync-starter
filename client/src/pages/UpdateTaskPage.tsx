@@ -24,14 +24,14 @@ import { TaskForm } from '../forms/TaskForm';
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
   const { id } = match.params;
-  const [ showToast, setShowToast ] = useState<boolean>(false);
-  const [ errorMessage, setErrorMessage ] = useState<string>('');
-  const { loading, error, data } = useQuery(findTasks, { 
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { loading, error, data } = useQuery(findTasks, {
     variables: { fields: { id } },
     fetchPolicy: 'cache-only',
   });
 
-  const [updateTaskMutation ] = useOfflineMutation(
+  const [updateTaskMutation] = useOfflineMutation(
     updateTask, mutationOptions.updateTask,
   );
 
@@ -49,7 +49,7 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
   const submit = (model: any) => {
     // remove `__typename` property without
     // deleting from the model object (as this may be a state reference)
-    const { __typename, ...no__typename } = model;
+    const { __typename, comments, ...no__typename } = model;
     updateTaskMutation({
       variables: { input: no__typename }
     })
@@ -70,23 +70,6 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
       <>
         <Header title="Update task" backHref="/tasks" match={match} />
         <IonContent>
-          <IonCard>
-            <IonCardHeader>Task</IonCardHeader>
-            <IonCardContent>
-              <IonLabel>
-                <h2>Title: {task.title}</h2>
-                <IonNote>
-                  Description: {task.description}
-                </IonNote>
-                <br />
-                <IonNote>
-                  <IonBadge color="primary">
-                    Version: {task.version}
-                  </IonBadge>
-                </IonNote>
-              </IonLabel>
-            </IonCardContent>
-          </IonCard>
           <TaskForm handleSubmit={submit} model={task} />
           <IonToast
             isOpen={showToast}

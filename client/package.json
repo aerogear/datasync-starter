@@ -30,11 +30,12 @@
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
+    "simpl-schema": "1.5.5",
     "subscriptions-transport-ws": "0.9.16",
     "typescript": "3.9.5",
-    "uniforms-ionic": "0.0.11",
     "uniforms": "3.0.0-alpha.4",
-    "uniforms-bridge-simple-schema-2": "3.0.0-alpha.4"
+    "uniforms-bridge-simple-schema-2": "3.0.0-alpha.4",
+    "uniforms-ionic": "0.0.11"
   },
   "scripts": {
     "start": "npm run build && cap serve",
@@ -61,7 +62,8 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "2.1.2"
+    "@capacitor/cli": "2.1.2",
+    "@types/simpl-schema": "^0.2.7"
   },
   "description": "An Ionic project"
 }

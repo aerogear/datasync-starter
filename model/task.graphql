@@ -5,7 +5,7 @@ type Task {
   """
   @db.primary
   """
-  _id: ObjectID!
+  id: ObjectID!
   title: String!
   description: String!
   version: Int
@@ -33,7 +33,7 @@ type Comment {
   """
   @db.primary
   """
-  _id: ObjectID!
+  id: ObjectID!
   message: String!
   version: Int
   author: String!

@@ -8,13 +8,13 @@
 export default {
   Task: {
     comments: (parent, args, context) => {
-      return context.Comment.batchLoadData("noteId", parent._id, context)
+      return context.Comment.batchLoadData("noteId", parent.id, context)
     },
   },
 
   Comment: {
     note: (parent, args, context) => {
-      return context.Task.findBy({ _id: parent.noteId }).then(
+      return context.Task.findBy({ id: parent.noteId }).then(
         (results) => results[0]
       )
     },

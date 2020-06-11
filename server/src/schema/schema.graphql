@@ -9,7 +9,7 @@
 """
 type Comment {
   """@db.primary"""
-  _id: ObjectID!
+  id: ObjectID!
   message: String!
   version: Int
   author: String!
@@ -19,7 +19,7 @@ type Comment {
 }
 
 input CommentInput {
-  _id: ObjectID
+  id: ObjectID
   message: String
   version: Int
   author: String
@@ -54,7 +54,7 @@ type Subscription {
 """@model"""
 type Task {
   """@db.primary"""
-  _id: ObjectID!
+  id: ObjectID!
   title: String!
   description: String!
   version: Int
@@ -70,7 +70,7 @@ type Task {
 }
 
 input TaskInput {
-  _id: ObjectID
+  id: ObjectID
   title: String
   description: String
   version: Int
