@@ -36,8 +36,9 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
   };
 
   const handleUpdate = (task: ITask) => {
-    const input = task;
+    const input: any = task;
     delete input.__typename;
+    delete input.comments;
     updateTaskMutation({
       variables: { input }
     })
