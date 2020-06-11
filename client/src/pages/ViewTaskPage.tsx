@@ -26,6 +26,10 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
   const submit = (model: any) => {
     createCommentMutation({
       variables: { input: { ...model, noteId: id } }
+    }).then((comment) => {
+      console.log("comment created")
+    }).catch((error) => {
+      console.log(error)
     })
   }
 
