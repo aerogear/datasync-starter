@@ -2,24 +2,22 @@ import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
   IonContent,
-  IonCard,
-  IonLabel,
-  IonCardHeader,
-  IonCardContent,
-  IonNote,
-  IonBadge,
   IonLoading,
   IonToast,
+  IonCard,
 } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
 import { mutationOptions } from '../helpers';
-import { IUpdateMatchParams } from '../declarations';
 import { updateTask } from '../graphql/mutations/updateTask';
 import { findTasks } from '../graphql/queries/findTasks';
 import { TaskForm } from '../forms/TaskForm';
+
+export interface IUpdateMatchParams {
+  id: string
+}
 
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
@@ -70,7 +68,9 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
       <>
         <Header title="Update task" backHref="/tasks" match={match} />
         <IonContent>
-          <TaskForm handleSubmit={submit} model={task} />
+          <IonCard>
+            <TaskForm handleSubmit={submit} model={task} />
+          </IonCard>
           <IonToast
             isOpen={showToast}
             onDidDismiss={() => setShowToast(false)}

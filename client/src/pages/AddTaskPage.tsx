@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { IonContent, IonToast } from '@ionic/react';
+import { IonContent, IonToast, IonCard } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { mutationOptions } from '../helpers';
 import { Header } from '../components/Header';
@@ -9,8 +9,8 @@ import { TaskForm } from '../forms/TaskForm';
 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {
 
-  const [ showToast, setShowToast ] = useState<boolean>(false);
-  const [ errorMessage, setErrorMessage ] = useState<string>('');
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const [createTaskMutation] = useOfflineMutation(createTask, mutationOptions.createTask);
 
@@ -24,19 +24,21 @@ export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) =
     setShowToast(true);
   };
 
-  const submit = (model: any) => {    
+  const submit = (model: any) => {
     createTaskMutation({
-      variables: {input: {...model}}
+      variables: { input: { ...model } }
     })
       .then(() => history.push('/'))
       .catch(handleError);
   };
-  
+
   return (
     <>
       <Header title="Add task" backHref="/tasks" match={match} />
       <IonContent>
-        <TaskForm handleSubmit={submit} model={{}} />
+        <IonCard>
+          <TaskForm handleSubmit={submit} model={{}} />
+        </IonCard>
         <IonToast
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
