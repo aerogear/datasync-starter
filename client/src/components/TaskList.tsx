@@ -13,11 +13,11 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
   const [updateTaskMutation] = useOfflineMutation(updateTask, mutationOptions.updateTask);
   const [deleteTaskMutation] = useOfflineMutation(deleteTask, mutationOptions.deleteTask);
 
-  const [ showToast, setShowToast ] = useState<boolean>(false);
-  const [ errorMessage, setErrorMessage ] = useState<string>('');
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleError = (error: any) => {
-    if(error.offline) {
+    if (error.offline) {
       error.watchOfflineChange();
     }
     if (error.graphQLErrors) {
@@ -26,14 +26,13 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
       setShowToast(true);
     }
   }
-  
+
   const handleDelete = (task: ITask) => {
-    const input = task;
-    delete input.__typename;
-    deleteTaskMutation({ 
+    const { comments, __typename, ...input } = task as any;
+    deleteTaskMutation({
       variables: { input }
     })
-    .catch(handleError);
+      .catch(handleError);
   };
 
   const handleUpdate = (task: ITask) => {
@@ -42,10 +41,10 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
     updateTaskMutation({
       variables: { input }
     })
-    .catch(handleError);
+      .catch(handleError);
   }
-  
-  if(tasks.length < 1) {
+
+  if (tasks.length < 1) {
     const message = (<p>You currently have no tasks.</p>);
     return <Empty message={message} />
   };
@@ -54,7 +53,7 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
     <>
       <IonList>
         {
-          tasks.map((task : ITask) => {
+          tasks.map((task: ITask) => {
             return <Task key={task.id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
           })
         }
