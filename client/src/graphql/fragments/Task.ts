@@ -5,8 +5,13 @@ export const TaskFragment = gql`
    id
    title
    description
-   status
    version
+   status
+   type
+   priority
+   public
+   startDate
+   payload
 
 } 
 `

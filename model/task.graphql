@@ -8,12 +8,12 @@ type Task {
   _id: ObjectID!
   title: String!
   description: String!
+  version: Int
   status: TaskStatus
   type: String
   priority: Int
   public: Boolean
-  status: TaskStatus
-  startDate: Date
+  startDate: DateTime
   payload: JSON
 
   """
@@ -25,6 +25,9 @@ type Task {
 """
 @model
 @crud.delete: false
+@crud.update: false
+@crud.findAll: false
+@crud.find: false
 """
 type Comment {
   """
@@ -32,6 +35,7 @@ type Comment {
   """
   _id: ObjectID!
   message: String!
+  version: Int
   author: String!
 }
 

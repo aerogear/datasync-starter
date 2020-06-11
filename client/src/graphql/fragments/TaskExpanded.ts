@@ -5,8 +5,18 @@ export const TaskExpandedFragment = gql`
    id
    title
    description
-   status
    version
-
+   status
+   type
+   priority
+   public
+   startDate
+   payload
+   comments {
+      id
+      message
+      version
+      author
+   }
 } 
 `

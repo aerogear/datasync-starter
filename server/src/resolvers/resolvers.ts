@@ -6,6 +6,20 @@
  */
 
 export default {
+  Task: {
+    comments: (parent, args, context) => {
+      return context.Comment.batchLoadData("noteId", parent._id, context)
+    },
+  },
+
+  Comment: {
+    note: (parent, args, context) => {
+      return context.Task.findBy({ _id: parent.noteId }).then(
+        (results) => results[0]
+      )
+    },
+  },
+
   Query: {
     findTasks: (parent, args, context) => {
       const { fields, ...page } = args
@@ -13,7 +27,7 @@ export default {
     },
     findAllTasks: (parent, args, context) => {
       return context.Task.findAll(args)
-    }
+    },
   },
 
   Mutation: {
@@ -25,24 +39,32 @@ export default {
     },
     deleteTask: (parent, args, context) => {
       return context.Task.delete(args.input, context)
-    }
+    },
+    createComment: (parent, args, context) => {
+      return context.Comment.create(args.input, context)
+    },
   },
 
   Subscription: {
     newTask: {
       subscribe: (parent, args, context) => {
         return context.Task.subscribeToCreate(args, context)
-      }
+      },
     },
     updatedTask: {
       subscribe: (parent, args, context) => {
         return context.Task.subscribeToUpdate(args, context)
-      }
+      },
     },
     deletedTask: {
       subscribe: (parent, args, context) => {
         return context.Task.subscribeToDelete(args, context)
-      }
-    }
-  }
+      },
+    },
+    newComment: {
+      subscribe: (parent, args, context) => {
+        return context.Comment.subscribeToCreate(args, context)
+      },
+    },
+  },
 }
