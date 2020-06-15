@@ -22,4 +22,4 @@ extensions:
       ## Client side queries
       graphback-client:
         format: 'ts'
-        outputPath: ./client/src/graphql
+        outputFile: ./client/src/graphql/generated.ts

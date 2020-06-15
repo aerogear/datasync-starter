@@ -4,7 +4,7 @@ import { IonContent, IonToast, IonCard } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { mutationOptions } from '../helpers';
 import { Header } from '../components/Header';
-import { createTask } from '../graphql/mutations/createTask';
+import { createTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {

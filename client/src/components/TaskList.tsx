@@ -5,8 +5,8 @@ import { useOfflineMutation } from 'react-offix-hooks';
 import { ITask } from '../declarations';
 import { Empty } from './Empty';
 import { mutationOptions } from '../helpers';
-import { updateTask } from '../graphql/mutations/updateTask';
-import { deleteTask } from '../graphql/mutations/deleteTask';
+import { updateTask } from '../graphql/generated';
+import { deleteTask } from '../graphql/generated';
 
 export const TaskList: React.FC<any> = ({ tasks }) => {
 

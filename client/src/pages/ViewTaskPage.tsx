@@ -3,13 +3,12 @@ import { RouteComponentProps } from 'react-router-dom'
 import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/react';
 import { Header } from '../components/Header';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { findTasks } from '../graphql/queries/findTasks';
 import { Empty } from '../components';
-import { createComment } from '../graphql/mutations/createComment';
+import { createComment } from '../graphql/generated';
 import { commentViewSchema } from '../forms/task';
 import { AutoForm } from "uniforms-ionic";
 import { TaskView } from '../forms/TaskForm';
-import { findAllTasks } from '../graphql/queries/findAllTasks';
+import { findTasks } from '../graphql/generated';
 
 export interface ViewMatchParams {
   id: string
@@ -19,7 +18,7 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
   const { id } = match.params;
 
   const [createCommentMutation] = useMutation(
-    createComment, { refetchQueries: [{ query: findAllTasks }] }
+    createComment, { refetchQueries: [{ query: findTasks }] }
   );
 
   const submit = (model: any) => {

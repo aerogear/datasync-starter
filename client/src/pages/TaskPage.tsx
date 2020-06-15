@@ -17,13 +17,13 @@ import { subscriptionOptions,  } from '../helpers';
 import { useSubscribeToMore } from '../hooks';
 import { Empty, TaskList, NetworkBadge, OfflineQueueBadge, Header } from '../components';
 import { RouteComponentProps } from 'react-router';
-import { findAllTasks } from '../graphql/queries/findAllTasks';
+import { findTasks } from '../graphql/generated';
 import { Link } from 'react-router-dom';
 import { useNetworkStatus } from 'react-offix-hooks';
 
 export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
 
-  const { loading, error, data, subscribeToMore } = useQuery(findAllTasks, {
+  const { loading, error, data, subscribeToMore } = useQuery(findTasks, {
     fetchPolicy: 'cache-and-network'
   });
   
@@ -39,8 +39,8 @@ export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
     message={'Loading...'}
   />;
 
-  const content = (data && data.findAllTasks) 
-    ? <TaskList tasks={data.findAllTasks} />
+  const content = (data && data.findTasks) 
+    ? <TaskList tasks={data.findTasks.items} />
     : <Empty message={<p>No tasks available</p>} />;
 
   return (

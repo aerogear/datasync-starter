@@ -11,8 +11,8 @@ import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
 import { mutationOptions } from '../helpers';
-import { updateTask } from '../graphql/mutations/updateTask';
-import { findTasks } from '../graphql/queries/findTasks';
+import { updateTask } from '../graphql/generated';
+import { findTasks } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 
 export interface IUpdateMatchParams {
