@@ -2,9 +2,7 @@
 @model
 """
 type Task {
-  """
-  @db.primary
-  """
+  """@id"""
   id: ObjectID!
   title: String!
   description: String!
@@ -30,9 +28,7 @@ type Task {
 @crud.find: false
 """
 type Comment {
-  """
-  @db.primary
-  """
+  """@id"""
   id: ObjectID!
   message: String!
   version: Int

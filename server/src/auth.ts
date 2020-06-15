@@ -39,10 +39,10 @@ export function buildKeycloakApolloConfig(app: Express, apolloConfig: any) {
         resolvers: apolloConfig.resolvers,
         playground: apolloConfig.playground,
         path: graphqlPath,
-        context: ({ req }) => {
+        context: (context) => {
             return {
                 ...apolloConfig.context,
-                kauth: new KeycloakContext({ req }) // 3. add the KeycloakContext to `kauth`
+                kauth: new KeycloakContext({ req: context.req }) // 3. add the KeycloakContext to `kauth`
             }
         },
         subscriptions: {
