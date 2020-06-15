@@ -1,5 +1,7 @@
 """
 @model
+@versioned
+@delta
 """
 type Task {
   """@id"""
@@ -24,8 +26,6 @@ type Task {
 @model
 @crud.delete: false
 @crud.update: false
-@crud.findAll: false
-@crud.find: false
 """
 type Comment {
   """@id"""
