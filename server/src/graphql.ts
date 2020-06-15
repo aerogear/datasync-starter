@@ -14,7 +14,7 @@ import { AMQCRUDService } from './AMQCrudService'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
-import { DataSyncPlugin, createDataSyncMongoDbProvider } from "@graphback/datasync"
+import { DataSyncPlugin, createDataSyncMongoDbProvider, createDatasyncCRUDservice } from "@graphback/datasync"
 /**
  * Creates Apollo server
  */
@@ -29,7 +29,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
     })
 
     const { typeDefs, resolvers, services } = buildGraphbackAPI(modelDefs, {
-        serviceCreator: createCRUDService({
+        serviceCreator: createDatasyncCRUDservice({
             pubSub: getPubSub()
         }),
         dataProviderCreator: createDataSyncMongoDbProvider(db),

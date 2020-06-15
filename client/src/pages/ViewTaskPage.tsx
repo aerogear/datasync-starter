@@ -1,11 +1,10 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent } from '@ionic/react';
+import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/react';
 import { Header } from '../components/Header';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { findTasks } from '../graphql/queries/findTasks';
 import { Empty } from '../components';
-import { useOfflineMutation } from 'react-offix-hooks';
 import { createComment } from '../graphql/mutations/createComment';
 import { commentViewSchema } from '../forms/task';
 import { AutoForm } from "uniforms-ionic";
