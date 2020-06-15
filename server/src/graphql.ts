@@ -14,7 +14,7 @@ import { AMQCRUDService } from './AMQCrudService'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
-import { DataSyncPlugin, createDataSyncMongoDbProvider, createDatasyncCRUDservice } from "@graphback/datasync"
+import { DataSyncPlugin, createDataSyncMongoDbProvider, createDataSyncCRUDService } from "@graphback/datasync"
 /**
  * Creates Apollo server
  */
@@ -28,13 +28,13 @@ export const createApolloServer = async function (app: Express, config: Config) 
         ]
     })
 
-    const { typeDefs, resolvers, services } = buildGraphbackAPI(modelDefs, {
-        serviceCreator: createDatasyncCRUDservice({
+    const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
+        serviceCreator: createDataSyncCRUDService({
             pubSub: getPubSub()
         }),
         dataProviderCreator: createDataSyncMongoDbProvider(db),
         plugins: [
-            new DataSyncPlugin({ outputPath: "willberemoved" })
+            new DataSyncPlugin()
         ]
     });
 
@@ -42,10 +42,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
         typeDefs: [typeDefs],
         resolvers,
         playground: true,
-        context: (context: any) => ({
-            ...context,
-            services
-        })
+        context: contextCreator
     }
 
     if (config.keycloakConfig) {
