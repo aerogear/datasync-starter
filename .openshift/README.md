@@ -24,13 +24,13 @@ Prerequisites
 * AMQ Online is installed in the cluster
 
 
-This section describes how to deploy the application in an OpenShift cluster by using the supplied `amq.yml` template file.
+This section describes how to deploy the application in an OpenShift cluster by using the supplied `amq-topics.yml` template file.
 * The template is already prefilled with all of the necessary values that can be inspected
 * The only field you might want to change is `AMQ Messaging User Password`.
   * The default value is `Password1` in base64 encoding
   * The value *must* be base64 encoded
   * A custom value can be created in the terminal using `$ echo <password> | base64` 
-* Execute template on your openshift instance by `oc process -f amq.yml | oc create -f -`
+* Execute template on your openshift instance by `oc process -f amq-topics.yml | oc create -f -`
 
 The hostname for the AMQ Online Broker is only made available after the resources from the the template have been provisioned. One more step is needed to supply extra environment variables to running server.
 
