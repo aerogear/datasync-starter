@@ -25,7 +25,12 @@ export const createApolloServer = async function (app: Express, config: Config) 
     const schema = buildSchema(typeDefs, { assumeValid: true });
     let context;
 
-    let apolloConfig;
+    let apolloConfig: any = {
+        typeDefs: typeDefs,
+        resolvers,
+        playground: true,
+        context: context
+    };
 
     if (config.keycloakConfig) {
         context = createKeycloakRuntimeContext({
@@ -39,13 +44,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
         })
         apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
     } else {
-        context = createOffixMongoCRUDRuntimeContext(models, schema, db, pubSub);
-        apolloConfig = {
-            typeDefs: typeDefs,
-            resolvers,
-            playground: true,
-            context: context
-        }
+        apolloConfig.context = createOffixMongoCRUDRuntimeContext(models, schema, db, pubSub);
     }
 
     const apolloServer = new ApolloServer(apolloConfig)
