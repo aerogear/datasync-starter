@@ -52,7 +52,6 @@ oc get addressspace datasync -o jsonpath='{.status.endpointStatuses[?(@.name=="m
 ```
 
 Provide set of the environment variables required to connect to the running AMQ
-For example:
 
 ```
 MQTT_HOST=messaging-nj2y0929dk-redhat-rhmi-amq-online.apps.youropenshift.io 
@@ -61,3 +60,5 @@ MQTT_PASSWORD=Password1
 MQTT_USERNAME=messaging-user 
 MQTT_PROTOCOL=tls 
 ```
+
+Check `../server/.env` file for all available variables
