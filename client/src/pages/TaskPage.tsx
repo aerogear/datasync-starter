@@ -40,7 +40,7 @@ export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
   />;
 
   const content = (data && data.findTasks) 
-    ? <TaskList tasks={data.findTasks.items} />
+    ? <TaskList tasks={data.findTasks} />
     : <Empty message={<p>No tasks available</p>} />;
 
   return (
