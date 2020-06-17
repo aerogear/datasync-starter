@@ -1,5 +1,5 @@
 import React from 'react';
-import {AutoForm, TextField, LongTextField, HiddenField, SubmitField, ErrorsField} from 'uniforms-ionic';
+import {AutoForm, AutoFields, HiddenField, SubmitField, ErrorsField} from 'uniforms-ionic';
 import {schema} from './schema';
 
 export function TaskForm({model, handleSubmit}) {
@@ -10,9 +10,7 @@ export function TaskForm({model, handleSubmit}) {
         model={model}
       >
           <ErrorsField />
-          <TextField name="title" />
-          <LongTextField name="description" />
-          <HiddenField name="status" value="OPEN" />
+          <AutoFields />
           <HiddenField name="version" value={model.version ?? 1} />
           <SubmitField />
       </AutoForm>

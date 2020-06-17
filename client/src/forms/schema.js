@@ -23,7 +23,11 @@ const s = new SimpleSchema({
   },
 
   version: {
-    type: Number
+    type: Number,
+    defaultValue: 1,
+    uniforms: {
+      readonly: true
+    }
   }
 });
 
