@@ -13,7 +13,7 @@ Please update your .env file with following config:
 MQTT_HOST = ${AMQURL}
 MQTT_PORT = 443
 MQTT_PASSWORD = Password1
-MQTT_USERNAME = messaging - user
+MQTT_USERNAME = messaging-user
 MQTT_PROTOCOL = tls
 `
 console.log(message);
