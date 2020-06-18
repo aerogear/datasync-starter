@@ -4,15 +4,28 @@ import { IonContent, IonToast, IonCard } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { mutationOptions } from '../helpers';
 import { Header } from '../components/Header';
-import { createTask } from '../graphql/generated';
+import { createTask, findTasks } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
+
+type PaginatedTasks = {
+  findTasks: {
+    items: [any]
+  }
+}
 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {
 
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const [createTaskMutation] = useOfflineMutation(createTask, mutationOptions.createTask);
+  const [createTaskMutation] = useOfflineMutation(createTask, {
+    update: (store, { data: op }) => {
+      const data: PaginatedTasks | null = store.readQuery({ query: findTasks });
+      // @ts-ignore
+      data?.findTasks.items.push(op.createTask);
+      store.writeQuery({ query: findTasks, data });
+    }
+  });
 
   const handleError = (error: any) => {
     if (error.offline) {
