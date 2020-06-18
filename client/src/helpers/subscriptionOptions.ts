@@ -1,28 +1,42 @@
-import { createSubscriptionOptions } from 'offix-client';
-import { CacheOperation } from 'offix-cache';
-import { findTasks } from '../graphql/generated';
-import { newTask } from '../graphql/generated';
-import { updatedTask } from '../graphql/generated';
-import { deletedTask } from '../graphql/generated';
+import { CacheItem } from 'offix-cache';
+import { newTask, updatedTask, deletedTask } from '../graphql/generated';
 
-// use offix-client helpers to create the required
-// subscription options for an `add` event
-export const add = createSubscriptionOptions({
-  subscriptionQuery: newTask,
-  cacheUpdateQuery: findTasks,
-  operationType: CacheOperation.ADD,
-});
+export const add = {
+  document: newTask,
+  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
+    if (!subscriptionData.data) return prev;
+    const op = subscriptionData.data;
+    return {
+      findTasks: {
+        ...prev.findTasks,
+        items: [
+          ...prev.findTasks.items.filter((item: CacheItem) => {
+          return item.id !== op.newTask.id;
+        }), op.newTask]
+      }
+    };
+  }
+}
 
-// use offix-client helpers to create the required
-// subscription options for an `update` event
-export const edit = createSubscriptionOptions({
-  subscriptionQuery: updatedTask,
-  cacheUpdateQuery: findTasks,
-  operationType: CacheOperation.REFRESH,
-});
+export const edit = {
+  document: updatedTask,
+  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
+    if (!subscriptionData.data) return prev;
+    // TODO
+  }
+};
 
-export const remove = createSubscriptionOptions({
-  subscriptionQuery: deletedTask,
-  cacheUpdateQuery: findTasks,
-  operationType: CacheOperation.DELETE,
-});
+export const remove = {
+  document: deletedTask,
+  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
+    if (!subscriptionData.data) return prev;
+    const op = subscriptionData.data;
+    const items = prev.findTasks.items.filter((item: CacheItem) => item.id !== op.deletedTask.id);
+    return {
+      findTasks: {
+        ...prev.findTasks,
+        items
+      }
+    };
+  }
+}
