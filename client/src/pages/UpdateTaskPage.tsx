@@ -11,8 +11,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
 import { mutationOptions } from '../helpers';
-import { updateTask } from '../graphql/generated';
-import { findTasks } from '../graphql/generated';
+import { getTask, findTasks, updateTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 
 export interface IUpdateMatchParams {
@@ -24,13 +23,26 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
   const { id } = match.params;
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { loading, error, data } = useQuery(findTasks, {
-    variables: { fields: { id } },
+  const { loading, error, data } = useQuery(getTask, {
+    variables: { id },
     fetchPolicy: 'cache-only',
   });
 
   const [updateTaskMutation] = useOfflineMutation(
-    updateTask, mutationOptions.updateTask,
+    updateTask, {
+      update: (store, { data: op }) => {
+        const data = store.readQuery({ query: findTasks });
+        const items = [
+          // @ts-ignore
+          ...data.findTasks.items,
+          // @ts-ignore
+          op.updateTask,
+        ];
+        // @ts-ignore
+        data.findTasks.items = items;
+        store.writeQuery({ query: findTasks, data});
+      }
+    },
   );
 
   const handleError = (error: any) => {
@@ -45,11 +57,9 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
   }
 
   const submit = (model: any) => {
-    // remove `__typename` property without
-    // deleting from the model object (as this may be a state reference)
-    const { __typename, comments, ...no__typename } = model;
+    const { __typename, comments, createdAt, updatedAt, ...input } = model;
     updateTaskMutation({
-      variables: { input: no__typename }
+      variables: { input: {...input, version: model.version + 1} }
     })
       .then(() => history.push('/'))
       .catch(handleError);
@@ -62,8 +72,8 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
     message={'Loading...'}
   />;
 
-  if (data && data.findTasks) {
-    const task = data.findTasks;
+  if (data && data.getTask) {
+    const task = data.getTask;
     return (
       <>
         <Header title="Update task" backHref="/tasks" match={match} />
