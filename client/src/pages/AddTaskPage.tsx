@@ -6,14 +6,16 @@ import { mutationOptions } from '../helpers';
 import { Header } from '../components/Header';
 import { createTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
+import { useSaveTask } from '../hooks';
 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {
 
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const [createTaskMutation] = useOfflineMutation(createTask, mutationOptions.createTask);
-
+  // const [createTaskMutation] = useOfflineMutation(createTask, mutationOptions.createTask);
+  const { error, isLoading, save } = useSaveTask();
+  console.log(error, isLoading);
   const handleError = (error: any) => {
     if (error.offline) {
       error.watchOfflineChange();
@@ -25,11 +27,10 @@ export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) =
   };
 
   const submit = (model: any) => {
-    createTaskMutation({
-      variables: { input: { ...model } }
-    })
-      .then(() => history.push('/'))
-      .catch(handleError);
+    // createTaskMutation({
+    //   variables: { input: { ...model } }
+    // })
+    save(model).then(() => history.push('/')).catch(handleError);
   };
 
   return (

@@ -20,15 +20,17 @@ import { RouteComponentProps } from 'react-router';
 import { findTasks } from '../graphql/generated';
 import { Link } from 'react-router-dom';
 import { useNetworkStatus } from 'react-offix-hooks';
+import { useFindTasks } from '../hooks';
 
 export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
 
-  const { loading, error, data, subscribeToMore } = useQuery(findTasks, {
-    fetchPolicy: 'cache-and-network'
-  });
-  
+  // const { loading, error, data, subscribeToMore } = useQuery(findTasks, {
+  //   fetchPolicy: 'cache-and-network'
+  // });
+  const { data, error, isLoading, query } = useFindTasks();
   const isOnline = useNetworkStatus();
-  useSubscribeToMore({ options: Object.values(subscriptionOptions), subscribeToMore});
+  const loading = isLoading;
+  // useSubscribeToMore({ options: Object.values(subscriptionOptions), subscribeToMore});
 
   if (error && !error.networkError) {
     return <pre>{ JSON.stringify(error) }</pre>
@@ -39,8 +41,8 @@ export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
     message={'Loading...'}
   />;
 
-  const content = (data && data.findTasks) 
-    ? <TaskList tasks={data.findTasks.items} />
+  const content = (data) 
+    ? <TaskList tasks={data} />
     : <Empty message={<p>No tasks available</p>} />;
 
   return (

@@ -24,6 +24,7 @@
     "keycloak-js": "10.0.2",
     "offix-cache": "0.15.1",
     "offix-client": "0.15.1",
+    "offix-datastore": "^0.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-offix-hooks": "0.15.1",
