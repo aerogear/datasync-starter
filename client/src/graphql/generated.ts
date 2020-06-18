@@ -207,11 +207,11 @@ export const deleteComment = gql`
 export const newTask = gql`
   subscription newTask($filter: TaskSubscriptionFilter) {
   newTask(filter: $filter) {
-      ...TaskFields
+      ...TaskExpandedFields
   }
 } 
 
-  ${TaskFragment}
+  ${TaskExpandedFragment}
 `
 
 
