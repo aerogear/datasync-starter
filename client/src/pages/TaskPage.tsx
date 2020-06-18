@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { add } from 'ionicons/icons';
 import { 
@@ -14,7 +14,6 @@ import {
   IonContent,
 } from '@ionic/react';
 import { subscriptionOptions,  } from '../helpers';
-import { useSubscribeToMore } from '../hooks';
 import { Empty, TaskList, NetworkBadge, OfflineQueueBadge, Header } from '../components';
 import { RouteComponentProps } from 'react-router';
 import { findTasks } from '../graphql/generated';
@@ -23,12 +22,20 @@ import { useNetworkStatus } from 'react-offix-hooks';
 
 export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
 
+  const [subscribed, setSubscribed] = useState<boolean>(false);
   const { loading, error, data, subscribeToMore } = useQuery(findTasks, {
     fetchPolicy: 'cache-and-network'
   });
   
   const isOnline = useNetworkStatus();
-  useSubscribeToMore({ options: Object.values(subscriptionOptions), subscribeToMore});
+
+  useEffect(() => {
+    if (!subscribed) {
+      subscribeToMore(subscriptionOptions.add);
+      subscribeToMore(subscriptionOptions.remove);
+      setSubscribed(true);
+    }
+  }, [subscribed, setSubscribed, subscribeToMore])
 
   if (error && !error.networkError) {
     return <pre>{ JSON.stringify(error) }</pre>
