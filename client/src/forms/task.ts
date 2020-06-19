@@ -132,16 +132,16 @@ const taskView = {
 
 
 const commentForm = {
-  message: {
-    type: String,
-    uniforms: {
-      component: LongTextField,
-    }
-  },
   author: {
     type: String,
     uniforms: {
       readonly: true
+    }
+  },
+  message: {
+    type: String,
+    uniforms: {
+      component: LongTextField,
     }
   }
 } as any

@@ -1,14 +1,12 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/react';
+import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItemGroup, IonItem, IonLabel, IonAvatar } from '@ionic/react';
 import { Header } from '../components/Header';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Empty } from '../components';
-import { createComment } from '../graphql/generated';
-import { commentViewSchema } from '../forms/task';
-import { AutoForm } from "uniforms-ionic";
-import { TaskView } from '../forms/TaskForm';
-import { findTasks } from '../graphql/generated';
+import { createComment, getTask, findTasks } from '../graphql/generated';
+import { commentViewSchema, taskViewSchema } from '../forms/task';
+import { AutoForm, TextField } from "uniforms-ionic";
 
 export interface ViewMatchParams {
   id: string
@@ -31,8 +29,8 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
     })
   }
 
-  const { loading, error, data } = useQuery(findTasks, {
-    variables: { fields: { id } },
+  const { loading, error, data } = useQuery(getTask, {
+    variables: { id },
     fetchPolicy: 'cache-only',
   });
 
@@ -42,8 +40,10 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
     isOpen={loading}
     message={'Loading...'}
   />;
-  if (data && data.findTasks) {
-    const task = data.findTasks;
+
+  if (data && data.getTask) {
+    const task = data.getTask;
+    const Text = TextField as any;
     return (
       <>
         <Header title="Task" backHref="/tasks" match={match} />
@@ -52,15 +52,41 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
             <IonCardHeader>
               <IonCardTitle>Current Task</IonCardTitle>
             </IonCardHeader>
-            <TaskView model={task} />
+            <AutoForm schema={taskViewSchema} model={task} >
+              <Text name="title" readonly />
+              <Text name="description" readonly />
+            </AutoForm>
           </IonCard>
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Create comment</IonCardTitle>
             </IonCardHeader>
-
             <IonCardContent>
               <AutoForm schema={commentViewSchema} onSubmit={submit} model={{ author: "Starter User" }} />
+            </IonCardContent>
+            <IonCardHeader>
+              <IonCardTitle>Comments</IonCardTitle>
+            </IonCardHeader>
+            <IonCardContent>
+              <IonList>
+                <IonItemGroup>
+                  {
+                    task.comments && task.comments.map((comment: any, key: number) => {
+                      return (
+                        <IonItem key={key} style={{ padding: '1em 0' }}>
+                          <IonAvatar slot="start">
+                            <img src="assets/icon/avatar.svg" alt="" />
+                          </IonAvatar>
+                          <IonLabel>
+                            <h3>{ comment.author }</h3>
+                            <p>{ comment.message }</p>
+                          </IonLabel>
+                        </IonItem>
+                      );
+                    })
+                  }
+                </IonItemGroup>
+              </IonList>
             </IonCardContent>
           </IonCard>
         </IonContent>
