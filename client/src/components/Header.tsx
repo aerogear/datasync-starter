@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { IonHeader, IonToolbar, IonButtons, IonTitle, IonToast, IonButton, IonIcon } from '@ionic/react';
 import { person, exit, arrowBack } from 'ionicons/icons';
-import { AppContext } from '../AppContext';
+import { AuthContext } from '../AuthContext';
 import { logout } from '../auth/keycloakAuth';
 import { useApolloOfflineClient } from 'react-offix-hooks';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ export const Header : React.FC<{ title: string, backHref?: string, match: any, i
   const { url } = match;
 
   const client = useApolloOfflineClient();
-  const { keycloak } = useContext(AppContext);
+  const { keycloak } = useContext(AuthContext);
   const [ showToast, setShowToast ] = useState(false);
 
   const handleLogout = async () => {
