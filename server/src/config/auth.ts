@@ -4,7 +4,7 @@ export const authConfig: CrudServicesAuthConfig = {
   Task: {
     create: { roles: [] },
     read: { roles: [] },
-    update: { roles: ['admin'] },
+    update: { roles: [] },
     delete: { roles: ['admin'] },
   }
 }

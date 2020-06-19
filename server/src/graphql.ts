@@ -7,9 +7,6 @@ import { Express } from "express";
 import scalars from './resolvers/scalars';
 import customResolvers from './resolvers/custom';
 import { buildKeycloakApolloConfig } from './auth';
-import { createKeycloakRuntimeContext } from '@graphback/keycloak-authz';
-import { authConfig } from './config/auth';
-import { createMongoDbProvider, createCRUDService } from '@graphback/runtime-mongo';
 import { AMQCRUDService } from './AMQCrudService'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'

@@ -7,8 +7,9 @@
     "startMQTT": "MQTT_HOST=127.0.0.1:1883 ts-node src/index.ts",
     "build": "tsc",
     "keycloak": "docker-compose -f ./integrations/keycloak/docker-compose.yml up",
+    "keycloak:init": "node ./integrations/keycloak/initKeycloak.js",
     "mqtt": "docker-compose -f ./integrations/mqtt/docker-compose.yml up",
-    "keycloak:init": "node ./integrations/keycloak/initKeycloak.js"
+    "amq:config": "node ./integrations/mqtt/configureAMQ.js"
   },
   "license": "MIT",
   "devDependencies": {

@@ -13,19 +13,20 @@
 
 const axios = require("axios");
 const realmToImport = require("./realm-export.json");
+const { fstat, writeFileSync } = require("fs");
 
 // the keycloak server we're working against
-const KEYCLOAK_URL = "http://localhost:8080/auth";
+const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "http://localhost:8080/auth";
 
 // name of the realm
-const APP_REALM = "datasync-starter";
+const APP_REALM = process.env.KEYCLOAK_REALM || "datasync-starter";
 
 // name of the admin realm
 const ADMIN_REALM = "master";
 
 const RESOURCE = "admin-cli";
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin";
+const ADMIN_USERNAME = process.env.KEYCLOAK_ADMIN_USERNAME || "admin";
+const ADMIN_PASSWORD = process.env.KEYCLOAK_ADMIN_PASSWORD || "admin";
 let token = "";
 
 // The keycloak client used by the sample app
@@ -56,6 +57,8 @@ const users = [
     clientRoles: ["developer"],
   },
 ];
+
+const writeConfig = false;
 
 // This is called by an immediately invoked function expression
 // at the bottom of the file
@@ -123,6 +126,17 @@ async function prepareKeycloak() {
 
     const publicInstallation = await getClientInstallation(PUBLIC_CLIENT);
 
+    const bearerInstallation = await getClientInstallation(BEARER_CLIENT);
+    if (writeConfig) {
+      writeFileSync(
+        `../client/public/keycloak.json`,
+        JSON.stringify(publicInstallation, null, 2)
+      );
+      writeFileSync(
+        `../server/src/config/keycloak.json`,
+        JSON.stringify(bearerInstallation, null, 2)
+      );
+    }
     console.log();
     console.log(
       "Your keycloak server is set up for local usage and development"
@@ -130,9 +144,12 @@ async function prepareKeycloak() {
     console.log();
     console.log("Copy the following app config into the following files:");
     console.log("- client/public/keycloak.json");
-    console.log("- server/src/config/keycloak.json");
     console.log();
     console.log(JSON.stringify(publicInstallation, null, 2));
+    console.log();
+    console.log("- server/src/config/keycloak.json");
+    console.log();
+    console.log(JSON.stringify(bearerInstallation, null, 2));
     console.log();
     console.log(
       "Done. Please follow the instructions printed above to ensure your environment is set up properly."
@@ -192,6 +209,9 @@ async function assignClientRolesToUser(user, client, clientRoles, userIdUrl) {
 }
 
 async function authenticateKeycloak() {
+  console.log(
+    `client_id=${RESOURCE}&username=${ADMIN_USERNAME}&password=${ADMIN_PASSWORD}&grant_type=password`
+  );
   const res = await axios({
     method: "POST",
     url: `${KEYCLOAK_URL}/realms/${ADMIN_REALM}/protocol/openid-connect/token`,
