@@ -101,6 +101,14 @@ const taskView = {
     }
   },
 
+  version: {
+    type: Number,
+    defaultValue: 1,
+    uniforms: {
+      readonly: true
+    }
+  },
+
   comments: {
     type: Array,
     required: false
