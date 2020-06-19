@@ -10,7 +10,6 @@ import { useOfflineMutation } from 'react-offix-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
-import { mutationOptions } from '../helpers';
 import { getTask, findTasks, updateTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 
