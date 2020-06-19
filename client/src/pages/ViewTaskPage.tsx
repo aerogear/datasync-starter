@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItemGroup, IonItem, IonLabel, IonAvatar } from '@ionic/react';
 import { Header } from '../components/Header';
@@ -7,6 +7,7 @@ import { Empty } from '../components';
 import { createComment, getTask, findTasks } from '../graphql/generated';
 import { commentViewSchema, taskViewSchema } from '../forms/task';
 import { AutoForm, TextField } from "uniforms-ionic";
+import { AuthContext } from '../AuthContext';
 
 export interface ViewMatchParams {
   id: string
@@ -14,10 +15,12 @@ export interface ViewMatchParams {
 
 export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ history, match }) => {
   const { id } = match.params;
-
+  const { profile } = useContext(AuthContext);
   const [createCommentMutation] = useMutation(
     createComment, { refetchQueries: [{ query: findTasks }] }
   );
+
+  const userName = profile?.username || "Anonymous User";
 
   const submit = (model: any) => {
     createCommentMutation({
@@ -62,7 +65,7 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
               <IonCardTitle>Create comment</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
-              <AutoForm schema={commentViewSchema} onSubmit={submit} model={{ author: "Starter User" }} />
+              <AutoForm schema={commentViewSchema} onSubmit={submit} model={{ author: userName}} />
             </IonCardContent>
             <IonCardHeader>
               <IonCardTitle>Comments</IonCardTitle>
@@ -78,8 +81,8 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
                             <img src="assets/icon/avatar.svg" alt="" />
                           </IonAvatar>
                           <IonLabel>
-                            <h3>{ comment.author }</h3>
-                            <p>{ comment.message }</p>
+                            <h3>{comment.author}</h3>
+                            <p>{comment.message}</p>
                           </IonLabel>
                         </IonItem>
                       );
