@@ -6,7 +6,7 @@
   "main": "index.js",
   "devDependencies": {
     "del-cli": "3.0.1",
-    "graphql": "15.1.0",
+    "graphql": "14.6.0",
     "graphback-cli": "0.14.0-alpha8"
   },
   "scripts": {
