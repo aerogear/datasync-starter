@@ -5,7 +5,6 @@ export const TaskFragment = gql`
    id
    title
    description
-   version
    status
    type
    priority
@@ -22,7 +21,6 @@ export const TaskExpandedFragment = gql`
    id
    title
    description
-   version
    status
    type
    priority
@@ -32,7 +30,6 @@ export const TaskExpandedFragment = gql`
    comments {
       id
       message
-      version
       author
    }
 } 
@@ -45,7 +42,6 @@ export const CommentFragment = gql`
   fragment CommentFields on Comment {
    id
    message
-   version
    author
 
 } 
@@ -56,13 +52,11 @@ export const CommentExpandedFragment = gql`
   fragment CommentExpandedFields on Comment {
    id
    message
-   version
    author
    note {
       id
       title
       description
-      version
       status
       type
       priority

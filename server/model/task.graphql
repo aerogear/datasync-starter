@@ -7,7 +7,6 @@ type Task {
   id: ObjectID!
   title: String!
   description: String!
-  version: Int
   status: TaskStatus
   type: String
   priority: Int
@@ -30,7 +29,6 @@ type Comment {
   """@id"""
   id: ObjectID!
   message: String!
-  version: Int
   author: String!
 }
 
