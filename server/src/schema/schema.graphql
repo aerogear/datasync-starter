@@ -7,8 +7,8 @@ input BooleanInput {
 
 """
 @model
-@crud.delete: false
-@crud.update: false
+@crud(delete: false)
+@crud(update: false)
 """
 type Comment {
   """@id"""
@@ -17,7 +17,7 @@ type Comment {
   version: Int
   author: String!
 
-  """@manyToOne field: 'comments', key: 'noteId'"""
+  """@manyToOne(field: 'comments', key: 'noteId')"""
   note: Task
 }
 
@@ -193,8 +193,7 @@ type Subscription {
 
 """
 @model
-@versioned
-@delta
+@datasync
 """
 type Task {
   """@id"""
@@ -209,20 +208,8 @@ type Task {
   startDate: DateTime
   payload: JSON
 
-  """@oneToMany field: 'note', key: 'noteId'"""
+  """@oneToMany(field: 'note', key: 'noteId')"""
   comments(filter: CommentFilter): [Comment]!
-
-  """
-  @createdAt
-              @db.type: 'timestamp'
-  """
-  createdAt: String
-
-  """
-  @updatedAt
-              @db.type: 'timestamp'
-  """
-  updatedAt: String
 }
 
 input TaskFilter {
@@ -239,8 +226,6 @@ input TaskFilter {
   and: [TaskFilter]
   or: [TaskFilter]
   not: TaskFilter
-  createdAt: StringInput
-  updatedAt: StringInput
 }
 
 type TaskResultList {

@@ -1,7 +1,6 @@
 """
 @model
-@versioned
-@delta
+@datasync
 """
 type Task {
   """@id"""
@@ -17,15 +16,15 @@ type Task {
   payload: JSON
 
   """
-  @oneToMany field: 'note'
+  @oneToMany(field: 'note')
   """
   comments: [Comment]!
 }
 
 """
 @model
-@crud.delete: false
-@crud.update: false
+@crud(delete: false)
+@crud(update: false)
 """
 type Comment {
   """@id"""

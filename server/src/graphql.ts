@@ -1,23 +1,23 @@
 import { resolve } from 'path';
 import { connect } from './db';
-import { getPubSub } from './pubsub'
 import { Config } from './config/config';
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, ApolloServerExpressConfig } from "apollo-server-express";
 import { Express } from "express";
 import scalars from './resolvers/scalars';
 import customResolvers from './resolvers/custom';
 import { buildKeycloakApolloConfig } from './auth';
-import { AMQCRUDService } from './AMQCrudService'
+import { createKeycloakAndAMQCRUDService } from './AMQCrudService'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
 import { DataSyncPlugin, createDataSyncMongoDbProvider, createDataSyncCRUDService } from "@graphback/datasync"
+import { authConfig } from './config/auth';
+
 /**
  * Creates Apollo server
  */
 export const createApolloServer = async function (app: Express, config: Config) {
     const db = await connect(config);
-    const pubSub = getPubSub();
 
     const modelDefs = loadSchemaSync(resolve(__dirname, '../model/task.graphql'), {
         loaders: [
@@ -26,18 +26,17 @@ export const createApolloServer = async function (app: Express, config: Config) 
     })
 
     const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
-        serviceCreator: createDataSyncCRUDService({
-            pubSub: getPubSub()
-        }),
+        serviceCreator: createKeycloakAndAMQCRUDService(authConfig),
         dataProviderCreator: createDataSyncMongoDbProvider(db),
         plugins: [
             new DataSyncPlugin()
         ]
     });
 
-    let apolloConfig = {
-        typeDefs: [typeDefs],
-        resolvers,
+    let apolloConfig: ApolloServerExpressConfig = {
+        typeDefs: typeDefs,
+        // See https://github.com/aerogear/graphback/issues/1546
+        resolvers: [resolvers[0], customResolvers, scalars],
         playground: true,
         context: contextCreator
     }
@@ -45,7 +44,6 @@ export const createApolloServer = async function (app: Express, config: Config) 
     if (config.keycloakConfig) {
         apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
     }
-
 
     apolloConfig.resolvers = { ...apolloConfig.resolvers, ...scalars, ...customResolvers };
 

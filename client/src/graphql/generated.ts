@@ -12,8 +12,6 @@ export const TaskFragment = gql`
    public
    startDate
    payload
-   createdAt
-   updatedAt
 
 } 
 `
@@ -36,9 +34,7 @@ export const TaskExpandedFragment = gql`
       message
       version
       author
-   }   createdAt
-   updatedAt
-
+   }
 } 
 `
 
@@ -73,8 +69,6 @@ export const CommentExpandedFragment = gql`
       public
       startDate
       payload
-      createdAt
-      updatedAt
    }
 } 
 `
@@ -88,6 +82,7 @@ export const findTasks = gql`
       }
       offset
       limit
+      count
     }
   }
 
@@ -114,6 +109,7 @@ export const findComments = gql`
       }
       offset
       limit
+      count
     }
   }
 
@@ -207,11 +203,11 @@ export const deleteComment = gql`
 export const newTask = gql`
   subscription newTask($filter: TaskSubscriptionFilter) {
   newTask(filter: $filter) {
-      ...TaskExpandedFields
+      ...TaskFields
   }
 } 
 
-  ${TaskExpandedFragment}
+  ${TaskFragment}
 `
 
 
