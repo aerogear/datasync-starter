@@ -6,7 +6,7 @@
   "main": "index.js",
   "devDependencies": {
     "del-cli": "3.0.1",
-    "@graphback/datasync": "0.14.0-alpha8",
+    "graphql": "15.1.0",
     "graphback-cli": "0.14.0-alpha8"
   },
   "scripts": {
