@@ -6,6 +6,7 @@ export const createTask = {
   returnType: 'Task',
   mutationName: 'createTask',
   operationType: CacheOperation.ADD,
+  returnField: 'items'
 };
 
 export const updateTask = {
@@ -13,6 +14,7 @@ export const updateTask = {
   returnType: 'Task',
   mutationName: 'updateTask',
   operationType: CacheOperation.REFRESH,
+  returnField: 'items'
 };
 
 export const deleteTask = {
@@ -20,6 +22,7 @@ export const deleteTask = {
   returnType: 'Task',
   mutationName: 'deleteTask',
   operationType: CacheOperation.DELETE,
+  returnField: 'items'
 };
 
 export const globalCacheUpdates = {
