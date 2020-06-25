@@ -5,6 +5,7 @@ import { useOfflineMutation } from 'react-offix-hooks';
 import { Header } from '../components/Header';
 import { createTask, findTasks } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
+import { mutationOptions } from '../helpers';
 
 type PaginatedTasks = {
   findTasks: {
@@ -17,14 +18,7 @@ export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) =
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const [createTaskMutation] = useOfflineMutation(createTask, {
-    update: (store, { data: op }) => {
-      const data: PaginatedTasks | null = store.readQuery({ query: findTasks });
-      // @ts-ignore
-      data?.findTasks.items.push(op.createTask);
-      store.writeQuery({ query: findTasks, data });
-    }
-  });
+  const [createTaskMutation] = useOfflineMutation(createTask, mutationOptions.createTask);
 
   const handleError = (error: any) => {
     if (error.offline) {

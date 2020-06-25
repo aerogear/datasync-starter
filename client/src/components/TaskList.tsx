@@ -10,16 +10,7 @@ import { findTasks, updateTask, deleteTask } from '../graphql/generated';
 export const TaskList: React.FC<any> = ({ tasks }) => {
 
   const [updateTaskMutation] = useOfflineMutation(updateTask, mutationOptions.updateTask);
-  const [deleteTaskMutation] = useOfflineMutation(deleteTask, {
-    update: (store, { data: op }) => {
-      let data = store.readQuery({ query: findTasks });
-      // @ts-ignore
-      const items = data.findTasks.items.filter((item) => item.id !== op.deleteTask.id);
-      // @ts-ignore
-      data.findTasks.items = items;
-      store.writeQuery({ query: findTasks, data});
-    }
-  });
+  const [deleteTaskMutation] = useOfflineMutation(deleteTask, mutationOptions.deleteTask);
 
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -36,14 +27,14 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
   }
 
   const handleDelete = (task: ITask) => {
-    const { comments, __typename, createdAt, updatedAt, ...input } = task as any;
+    const { comments, __typename, createdAt, ...input } = task as any;
     deleteTaskMutation({
       variables: { input }
     }).catch(handleError);
   };
 
   const handleUpdate = (task: ITask) => {
-    const { comments, __typename, createdAt, updatedAt, ...input } = task as any;
+    const { comments, __typename, updatedAt, ...input } = task as any;
     updateTaskMutation({
       variables: { input }
     })

@@ -32,6 +32,7 @@ export const TaskPage: React.FC<RouteComponentProps> = ({match}) => {
   useEffect(() => {
     if (!subscribed) {
       subscribeToMore(subscriptionOptions.add);
+      subscribeToMore(subscriptionOptions.edit);
       subscribeToMore(subscriptionOptions.remove);
       setSubscribed(true);
     }
