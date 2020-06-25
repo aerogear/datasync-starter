@@ -1,4 +1,4 @@
-import { CacheItem, createSubscriptionOptions, CacheOperation } from 'offix-cache';
+import { createSubscriptionOptions, CacheOperation } from 'offix-cache';
 import { newTask, updatedTask, deletedTask, findTasks, getTask, newComment } from '../graphql/generated';
 
 export const add = createSubscriptionOptions({

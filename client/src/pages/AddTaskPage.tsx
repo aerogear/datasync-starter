@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import { IonContent, IonToast, IonCard } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { Header } from '../components/Header';
-import { createTask, findTasks } from '../graphql/generated';
+import { createTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 import { mutationOptions } from '../helpers';
 
