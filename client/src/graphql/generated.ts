@@ -11,7 +11,7 @@ export const TaskFragment = gql`
    public
    startDate
    payload
-
+   updatedAt
 } 
 `
 
@@ -32,6 +32,7 @@ export const TaskExpandedFragment = gql`
       message
       author
    }
+   updatedAt
 } 
 `
 
@@ -64,6 +65,7 @@ export const CommentExpandedFragment = gql`
       startDate
       payload
    }
+   updatedAt
 } 
 `
 
@@ -197,11 +199,11 @@ export const deleteComment = gql`
 export const newTask = gql`
   subscription newTask($filter: TaskSubscriptionFilter) {
   newTask(filter: $filter) {
-      ...TaskFields
+      ...TaskExpandedFields
   }
 } 
 
-  ${TaskFragment}
+  ${TaskExpandedFragment}
 `
 
 
