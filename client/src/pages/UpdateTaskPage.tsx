@@ -53,9 +53,9 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
   }
 
   const submit = (model: any) => {
-    const { __typename, comments, createdAt, updatedAt, ...input } = model;
+    const { __typename, comments, createdAt, ...input } = model;
     updateTaskMutation({
-      variables: { input: {...input, version: model.version + 1} }
+      variables: { input }
     })
       .then(() => history.push('/'))
       .catch(handleError);
