@@ -1,6 +1,6 @@
 import { SimpleSchema2Bridge } from "uniforms-bridge-simple-schema-2";
-import SimpleSchema from "simpl-schema";
 import { LongTextField } from "uniforms-ionic";
+import SimpleSchema from "../config/SimpleSchema";
 
 const taskForm = {
   title: {
@@ -40,6 +40,7 @@ const taskForm = {
     allowedValues: [1, 2, 3, 4, 5],
     required: false
   },
+
 } as any
 
 const taskView = {

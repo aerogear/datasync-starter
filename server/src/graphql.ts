@@ -35,8 +35,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
 
     let apolloConfig: ApolloServerExpressConfig = {
         typeDefs: typeDefs,
-        // See https://github.com/aerogear/graphback/issues/1546
-        resolvers: Object.assign(resolvers[0], customResolvers, scalars),
+        resolvers: Object.assign(resolvers, customResolvers, scalars),
         playground: true,
         context: contextCreator
     }

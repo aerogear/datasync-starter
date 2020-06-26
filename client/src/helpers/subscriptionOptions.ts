@@ -1,42 +1,30 @@
-import { CacheItem } from 'offix-cache';
-import { newTask, updatedTask, deletedTask } from '../graphql/generated';
+import { createSubscriptionOptions, CacheOperation } from 'offix-cache';
+import { newTask, updatedTask, deletedTask, findTasks, getTask, newComment } from '../graphql/generated';
 
-export const add = {
-  document: newTask,
-  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
-    if (!subscriptionData.data) return prev;
-    const op = subscriptionData.data;
-    return {
-      findTasks: {
-        ...prev.findTasks,
-        items: [
-          ...prev.findTasks.items.filter((item: CacheItem) => {
-          return item.id !== op.newTask.id;
-        }), op.newTask]
-      }
-    };
-  }
-}
+export const add = createSubscriptionOptions({
+  subscriptionQuery: newTask,
+  cacheUpdateQuery: findTasks,
+  operationType: CacheOperation.ADD,
+  returnField: 'items'
+});
 
-export const edit = {
-  document: updatedTask,
-  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
-    if (!subscriptionData.data) return prev;
-    // TODO
-  }
-};
+export const edit = createSubscriptionOptions({
+  subscriptionQuery: updatedTask,
+  cacheUpdateQuery: findTasks,
+  operationType: CacheOperation.REFRESH,
+  returnField: 'items'
+});
 
-export const remove = {
-  document: deletedTask,
-  updateQuery: (prev: CacheItem, { subscriptionData } : { subscriptionData: CacheItem }) => {
-    if (!subscriptionData.data) return prev;
-    const op = subscriptionData.data;
-    const items = prev.findTasks.items.filter((item: CacheItem) => item.id !== op.deletedTask.id);
-    return {
-      findTasks: {
-        ...prev.findTasks,
-        items
-      }
-    };
-  }
-}
+export const remove = createSubscriptionOptions({
+  subscriptionQuery: deletedTask,
+  cacheUpdateQuery: findTasks,
+  operationType: CacheOperation.DELETE,
+  returnField: 'items'
+});
+
+export const addComment = createSubscriptionOptions({
+  subscriptionQuery: newComment,
+  cacheUpdateQuery: getTask,
+  operationType: CacheOperation.ADD,
+  returnField: 'comments'
+});

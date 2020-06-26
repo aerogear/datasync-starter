@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
   IonContent,
@@ -10,8 +10,9 @@ import { useOfflineMutation } from 'react-offix-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
-import { getTask, findTasks, updateTask } from '../graphql/generated';
+import { getTask, updateTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
+import { subscriptionOptions, mutationOptions } from '../helpers';
 
 export interface IUpdateMatchParams {
   id: string
@@ -20,28 +21,24 @@ export interface IUpdateMatchParams {
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
   const { id } = match.params;
+  const [mounted, setMounted] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { loading, error, data } = useQuery(getTask, {
+  const { loading, error, data, subscribeToMore } = useQuery(getTask, {
     variables: { id },
     fetchPolicy: 'cache-only',
   });
 
+  useEffect(() => {
+    if (mounted) {
+      subscribeToMore(subscriptionOptions.addComment)
+    }
+    setMounted(true);
+    return () => setMounted(false);
+  }, [mounted, setMounted, subscribeToMore]);
+
   const [updateTaskMutation] = useOfflineMutation(
-    updateTask, {
-      update: (store, { data: op }) => {
-        const data = store.readQuery({ query: findTasks });
-        const items = [
-          // @ts-ignore
-          ...data.findTasks.items,
-          // @ts-ignore
-          op.updateTask,
-        ];
-        // @ts-ignore
-        data.findTasks.items = items;
-        store.writeQuery({ query: findTasks, data});
-      }
-    },
+    updateTask, mutationOptions.updateTask,
   );
 
   const handleError = (error: any) => {

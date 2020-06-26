@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItemGroup, IonItem, IonLabel, IonAvatar } from '@ionic/react';
 import { Header } from '../components/Header';
@@ -8,6 +8,7 @@ import { createComment, getTask, findTasks } from '../graphql/generated';
 import { commentViewSchema, taskViewSchema } from '../forms/task';
 import { AutoForm, TextField } from "uniforms-ionic";
 import { AuthContext } from '../AuthContext';
+import { subscriptionOptions } from '../helpers';
 
 export interface ViewMatchParams {
   id: string
@@ -15,6 +16,7 @@ export interface ViewMatchParams {
 
 export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ history, match }) => {
   const { id } = match.params;
+  const [mounted, setMounted] = useState<boolean>(false);
   const { profile } = useContext(AuthContext);
   const [createCommentMutation] = useMutation(
     createComment, { refetchQueries: [{ query: findTasks }] }
@@ -32,10 +34,18 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
     })
   }
 
-  const { loading, error, data } = useQuery(getTask, {
+  const { loading, error, data, subscribeToMore } = useQuery(getTask, {
     variables: { id },
     fetchPolicy: 'cache-only',
   });
+
+  useEffect(() => {
+    if (mounted) {
+      subscribeToMore(subscriptionOptions.addComment)
+    }
+    setMounted(true);
+    return () => setMounted(false);
+  }, [mounted, setMounted, subscribeToMore]);
 
   if (error) return <pre>{JSON.stringify(error)}</pre>;
 
