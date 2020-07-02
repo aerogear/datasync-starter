@@ -52,7 +52,7 @@ export const Task: React.FC<any> = ({ task, updateTask, deleteTask }) => {
         <br />
         <IonNote>
           <IonBadge color='primary'>
-            Server version: {task.version}
+            Server version: {new Date(Number.parseInt(task.updatedAt)).toUTCString()}
           </IonBadge>
         </IonNote>
       </IonLabel>
