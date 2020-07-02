@@ -13,7 +13,7 @@ import { getPubSub } from './pubsub';
  * 
  * @param authConfig 
  */
-export function createKeycloakAndAMQCRUDService(authConfig: CrudServiceAuthConfig) {
+export function createKeycloakAndAMQCRUDService(authConfig: Map<string,CrudServiceAuthConfig>) {
     const pubSub = getPubSub();
     return (model: ModelDefinition, dataProvider: DataSyncProvider): GraphbackCRUDService => {
         const service = createDataSyncCRUDService({
