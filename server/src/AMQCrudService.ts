@@ -19,7 +19,8 @@ export function createKeycloakAndAMQCRUDService(authConfig: CrudServiceAuthConfi
         const service = createDataSyncCRUDService({
             pubSub
         })(model, dataProvider);
-        const keycloakService = new AMQCRUDService({ service, authConfig });
+        const objConfig = authConfig[model.graphqlType.name];
+        const keycloakService = new AMQCRUDService({ service, authConfig: objConfig });
 
         return keycloakService;
     }
