@@ -1,5 +1,5 @@
 import { GraphbackOperationType } from '@graphback/core'
-import { KeycloakCrudService, CrudServiceAuthConfig, KeycloakCrudServiceOptions } from '@graphback/keycloak-authz'
+import { KeycloakCrudService, CrudServiceAuthConfig, KeycloakCrudServiceOptions, CrudServicesAuthConfig } from '@graphback/keycloak-authz'
 import { ModelDefinition, GraphbackDataProvider, GraphbackCRUDService } from 'graphback';
 import { createDataSyncCRUDService, DataSyncProvider } from '@graphback/datasync';
 import { getPubSub } from './pubsub';
@@ -13,7 +13,7 @@ import { getPubSub } from './pubsub';
  * 
  * @param authConfig 
  */
-export function createKeycloakAndAMQCRUDService(authConfig: Map<string,CrudServiceAuthConfig>) {
+export function createKeycloakAndAMQCRUDService(authConfig: CrudServicesAuthConfig) {
     const pubSub = getPubSub();
     return (model: ModelDefinition, dataProvider: DataSyncProvider): GraphbackCRUDService => {
         const service = createDataSyncCRUDService({
