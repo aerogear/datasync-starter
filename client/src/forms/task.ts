@@ -102,9 +102,9 @@ const taskView = {
     }
   },
 
-  version: {
-    type: Number,
-    defaultValue: 1,
+  lastUpdated: {
+    type: String,
+    defaultValue: "0",
     uniforms: {
       readonly: true
     }
