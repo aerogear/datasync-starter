@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItemGroup, IonItem, IonLabel, IonAvatar } from '@ionic/react';
+import { IonContent, IonLoading, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItemGroup, IonItem, IonLabel, IonAvatar, IonToast } from '@ionic/react';
 import { Header } from '../components/Header';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Empty } from '../components';
@@ -9,29 +9,38 @@ import { commentViewSchema, taskViewSchema } from '../forms/task';
 import { AutoForm, TextField } from "uniforms-ionic";
 import { AuthContext } from '../AuthContext';
 import { subscriptionOptions } from '../helpers';
+import { useApolloOfflineClient, useNetworkStatus } from 'react-offix-hooks';
 
 export interface ViewMatchParams {
   id: string
 }
 
 export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ history, match }) => {
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const offline = !useNetworkStatus()
+  const client = useApolloOfflineClient();
   const { id } = match.params;
   const [mounted, setMounted] = useState<boolean>(false);
   const { profile } = useContext(AuthContext);
   const [createCommentMutation] = useMutation(
     createComment, { refetchQueries: [{ query: findTasks }] }
   );
-
   const userName = profile?.username || "Anonymous User";
 
   const submit = (model: any) => {
-    createCommentMutation({
-      variables: { input: { ...model, noteId: id } }
-    }).then((comment) => {
-      console.log("comment created")
-    }).catch((error) => {
-      console.log(error)
-    })
+
+    if (offline) {
+      setShowToast(offline)
+    } else {
+      createCommentMutation({
+        variables: { input: { ...model, noteId: id } }
+      }).then((comment) => {
+        console.log("comment created")
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
+
   }
 
   const { loading, error, data, subscribeToMore } = useQuery(getTask, {
@@ -75,7 +84,7 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
               <IonCardTitle>Create comment</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
-              <AutoForm schema={commentViewSchema} onSubmit={submit} model={{ author: userName}} />
+              <AutoForm schema={commentViewSchema} onSubmit={submit} model={{ author: userName }} disabled={offline} />
             </IonCardContent>
             <IonCardHeader>
               <IonCardTitle>Comments</IonCardTitle>
@@ -102,6 +111,14 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
               </IonList>
             </IonCardContent>
           </IonCard>
+          <IonToast
+            isOpen={showToast}
+            onDidDismiss={() => setShowToast(false)}
+            message="Cannot add comment when offline"
+            position="bottom"
+            color="danger"
+            duration={4000}
+          />
         </IonContent>
       </>
     )

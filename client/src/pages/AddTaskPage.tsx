@@ -7,12 +7,7 @@ import { createTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
 import { mutationOptions } from '../helpers';
 
-type PaginatedTasks = {
-  findTasks: {
-    items: [any]
-  }
-}
-
+ 
 export const AddTaskPage: React.FC<RouteComponentProps> = ({ history, match }) => {
 
   const [showToast, setShowToast] = useState<boolean>(false);
