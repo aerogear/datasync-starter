@@ -9,7 +9,7 @@ import { commentViewSchema, taskViewSchema } from '../forms/task';
 import { AutoForm, TextField } from "uniforms-ionic";
 import { AuthContext } from '../AuthContext';
 import { subscriptionOptions } from '../helpers';
-import { useApolloOfflineClient, useNetworkStatus } from 'react-offix-hooks';
+import { useNetworkStatus } from 'react-offix-hooks';
 
 export interface ViewMatchParams {
   id: string
@@ -18,7 +18,6 @@ export interface ViewMatchParams {
 export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ history, match }) => {
   const [showToast, setShowToast] = useState<boolean>(false);
   const offline = !useNetworkStatus()
-  const client = useApolloOfflineClient();
   const { id } = match.params;
   const [mounted, setMounted] = useState<boolean>(false);
   const { profile } = useContext(AuthContext);
@@ -28,7 +27,6 @@ export const ViewTaskPage: React.FC<RouteComponentProps<ViewMatchParams>> = ({ h
   const userName = profile?.username || "Anonymous User";
 
   const submit = (model: any) => {
-
     if (offline) {
       setShowToast(offline)
     } else {

@@ -4,10 +4,10 @@ import { ObjectState, ConflictResolutionData } from "offix-client";
 export class TimeStampState implements ObjectState {
 
   public assignServerState(client: any, server: any): void {
-    client.updatedAt = server.updatedAt;
+    client.updatedAt = server.updatedAt.toString();
   }
   public hasConflict(client: any, server: any): boolean {
-    return client.updatedAt =! server.updatedAt;
+    return client.updatedAt !== server.updatedAt;
   }
   public getStateFields(): string[] {
     return  ["updatedAt"];
