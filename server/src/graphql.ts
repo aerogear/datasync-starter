@@ -6,12 +6,11 @@ import { Express } from "express";
 import scalars from './resolvers/scalars';
 import customResolvers from './resolvers/custom';
 import { buildKeycloakApolloConfig } from './auth';
-import { createKeycloakAndAMQCRUDService } from './AMQCrudService'
+import { createCRUDService } from './crudServiceCreator'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
-import { DataSyncPlugin, createDataSyncMongoDbProvider, createDataSyncCRUDService } from "@graphback/datasync"
-import { authConfig } from './config/auth';
+import { DataSyncPlugin, createDataSyncMongoDbProvider } from "@graphback/datasync"
 
 /**
  * Creates Apollo server
@@ -26,7 +25,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
     })
 
     const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
-        serviceCreator: createKeycloakAndAMQCRUDService(authConfig),
+        serviceCreator: createCRUDService(),
         dataProviderCreator: createDataSyncMongoDbProvider(db),
         plugins: [
             new DataSyncPlugin()

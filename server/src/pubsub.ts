@@ -1,26 +1,15 @@
 import mqtt from 'mqtt'
 import { PubSub } from 'apollo-server-express'
 import { MQTTPubSub } from '@aerogear/graphql-mqtt-subscriptions'
+import { config } from "./config/config"
 
-export function getPubSub() {
-  const mqttHost = process.env.MQTT_HOST
-
-  if (mqttHost) {
-    console.log('Using MQTT PubSub')
-    const mqttOptions = {
-      host: mqttHost,
-      servername: mqttHost, // needed to work in OpenShift. Lookup SNI.
-      username: process.env.MQTT_USERNAME || '',
-      password: process.env.MQTT_PASSWORD || '',
-      port: process.env.MQTT_PORT || '1883',
-      protocol: process.env.MQTT_PROTOCOL || 'mqtt',
-      rejectUnauthorized: false
-    }
-
+export function connectToPubSub() {
+  if (config.mqttConfig) {
+    const mqttOptions = config.mqttConfig;
     // Types are broken
-    const client = mqtt.connect(mqttHost, mqttOptions as any)
+    const client = mqtt.connect(mqttOptions.mqttHost, mqttOptions as any)
 
-    console.log(`attempting to connect to messaging service ${mqttHost}`)
+    console.log(`attempting to connect to messaging service ${mqttOptions.mqttHost}`)
 
     client.on('connect', () => {
       console.log('connected to messaging service')
