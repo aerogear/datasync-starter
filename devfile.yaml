@@ -5,7 +5,7 @@ projects:
     source:
       location: 'https://github.com/aerogear/datasync-starter.git'
       type: git
-      branch: master
+      branch: walkthough
 components:
   - id: che-incubator/typescript/latest
     memoryLimit: 512Mi
