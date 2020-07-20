@@ -1,37 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import {
   IonContent,
-  IonCard,
-  IonLabel,
-  IonCardHeader,
-  IonCardContent,
-  IonNote,
-  IonBadge,
   IonLoading,
   IonToast,
+  IonCard,
 } from '@ionic/react';
 import { useOfflineMutation } from 'react-offix-hooks';
 import { useQuery } from '@apollo/react-hooks';
 import { Header } from '../components/Header';
 import { Empty } from '../components/Empty';
-import { mutationOptions } from '../helpers';
-import { IUpdateMatchParams } from '../declarations';
-import { updateTask } from '../graphql/mutations/updateTask';
-import { findTasks } from '../graphql/queries/findTasks';
+import { getTask, updateTask } from '../graphql/generated';
 import { TaskForm } from '../forms/TaskForm';
+import { subscriptionOptions, mutationOptions } from '../helpers';
+
+export interface IUpdateMatchParams {
+  id: string
+}
 
 export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> = ({ history, match }) => {
 
   const { id } = match.params;
-  const [ showToast, setShowToast ] = useState<boolean>(false);
-  const [ errorMessage, setErrorMessage ] = useState<string>('');
-  const { loading, error, data } = useQuery(findTasks, { 
-    variables: { fields: { id } },
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { loading, error, data, subscribeToMore } = useQuery(getTask, {
+    variables: { id },
     fetchPolicy: 'cache-only',
   });
 
-  const [updateTaskMutation ] = useOfflineMutation(
+  useEffect(() => {
+    if (mounted) {
+      subscribeToMore(subscriptionOptions.addComment)
+    }
+    setMounted(true);
+    return () => setMounted(false);
+  }, [mounted, setMounted, subscribeToMore]);
+
+  const [updateTaskMutation] = useOfflineMutation(
     updateTask, mutationOptions.updateTask,
   );
 
@@ -47,11 +53,9 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
   }
 
   const submit = (model: any) => {
-    // remove `__typename` property without
-    // deleting from the model object (as this may be a state reference)
-    const { __typename, ...no__typename } = model;
+    const { __typename, comments, createdAt, ...input } = model;
     updateTaskMutation({
-      variables: { input: no__typename }
+      variables: { input }
     })
       .then(() => history.push('/'))
       .catch(handleError);
@@ -64,30 +68,15 @@ export const UpdateTaskPage: React.FC<RouteComponentProps<IUpdateMatchParams>> =
     message={'Loading...'}
   />;
 
-  if (data && data.findTasks) {
-    const task = data.findTasks;
+  if (data && data.getTask) {
+    const task = data.getTask;
     return (
       <>
         <Header title="Update task" backHref="/tasks" match={match} />
         <IonContent>
           <IonCard>
-            <IonCardHeader>Task</IonCardHeader>
-            <IonCardContent>
-              <IonLabel>
-                <h2>Title: {task.title}</h2>
-                <IonNote>
-                  Description: {task.description}
-                </IonNote>
-                <br />
-                <IonNote>
-                  <IonBadge color="primary">
-                    Version: {task.version}
-                  </IonBadge>
-                </IonNote>
-              </IonLabel>
-            </IonCardContent>
+            <TaskForm handleSubmit={submit} model={task} />
           </IonCard>
-          <TaskForm handleSubmit={submit} model={task} />
           <IonToast
             isOpen={showToast}
             onDidDismiss={() => setShowToast(false)}

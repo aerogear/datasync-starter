@@ -1,31 +1,37 @@
-fragment TaskFields on Task {
-  id
-  version
-  title
-  description
-  status
-}
-
-mutation createTask {
-  createTask(input: { title: "Task1", description: "test", status: OPEN }) {
-    ...TaskFields
-  }
-}
-
-mutation updateTask {
-  updateTask(input: { id: "1", title: "Task2", version: 1 }) {
-    ...TaskFields
-  }
-}
-
-mutation deleteTask {
- deleteTask(input: { id: "1" }){
+mutation create {
+  createTask(input: { title: "test", 
+    description: "" }) {
     id
   }
 }
 
-query allTasks {
-  findAllTasks {
-    ...TaskFields
+
+mutation update {
+  updateTask(input:{id:"5ee7a3e5e1479c83e4f1748f",  
+    title: "test", description: ""}){
+    id
+    type
+  }
+}
+
+
+
+query syncTasks{
+  syncTasks(lastSync: "1592239061067"){
+    items{
+      id
+      title
+    }
+    lastSync
+  }
+}
+
+
+query find {
+  findTasks{
+    items{
+      id
+      title
+    }
   }
 }

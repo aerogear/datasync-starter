@@ -56,14 +56,6 @@ export interface ILoadingProps {
   loading: boolean
 };
 
-export interface IUpdateMatchParams {
-  id: string
-}
-
-export interface IAppContext {
-  keycloak: KeycloakInstance | undefined
-}
-
 export interface IAuthHeaders {
   headers: {
     Authorization: String

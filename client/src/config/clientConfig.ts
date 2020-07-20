@@ -9,6 +9,7 @@ import { getAuthHeader } from '../auth/keycloakAuth';
 import { ApolloOfflineClientOptions } from 'offix-client';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorNetworkStatus } from '../helpers/CapacitorNetworkStatus';
+import { TimeStampState } from './conflictStrategy';
 
 
 let httpUri = 'http://localhost:4000/graphql';
@@ -84,7 +85,7 @@ const cache = new InMemoryCache({
   // to query the cache for individual Task item
   cacheRedirects: {
     Query: {
-      findTasks: (_, { fields }, { getCacheKey }) => getCacheKey({ __typename: 'Task', id: fields.id }),
+      getTask: (_, { id }, { getCacheKey }) => getCacheKey({ __typename: 'Task', id }),
     },
   },
 });
@@ -95,6 +96,7 @@ export const clientConfig: ApolloOfflineClientOptions = {
   conflictListener: new ConflictLogger(),
   mutationCacheUpdates: globalCacheUpdates,
   networkStatus: new CapacitorNetworkStatus(),
+  conflictProvider: new TimeStampState(),
   inputMapper: {
     deserialize: (variables: any) => {
       return (variables && variables.input) ? variables.input : variables;

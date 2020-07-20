@@ -1,28 +1,30 @@
-import { createSubscriptionOptions } from 'offix-client';
-import { CacheOperation } from 'offix-cache';
-import { findAllTasks } from '../graphql/queries/findAllTasks';
-import { newTask } from '../graphql/subscriptions/newTask';
-import { updatedTask } from '../graphql/subscriptions/updatedTask';
-import { deletedTask } from '../graphql/subscriptions/deletedTask';
+import { createSubscriptionOptions, CacheOperation } from 'offix-cache';
+import { newTask, updatedTask, deletedTask, findTasks, getTask, newComment } from '../graphql/generated';
 
-// use offix-client helpers to create the required
-// subscription options for an `add` event
 export const add = createSubscriptionOptions({
   subscriptionQuery: newTask,
-  cacheUpdateQuery: findAllTasks,
+  cacheUpdateQuery: findTasks,
   operationType: CacheOperation.ADD,
+  returnField: 'items'
 });
 
-// use offix-client helpers to create the required
-// subscription options for an `update` event
 export const edit = createSubscriptionOptions({
   subscriptionQuery: updatedTask,
-  cacheUpdateQuery: findAllTasks,
+  cacheUpdateQuery: findTasks,
   operationType: CacheOperation.REFRESH,
+  returnField: 'items'
 });
 
 export const remove = createSubscriptionOptions({
   subscriptionQuery: deletedTask,
-  cacheUpdateQuery: findAllTasks,
+  cacheUpdateQuery: findTasks,
   operationType: CacheOperation.DELETE,
+  returnField: 'items'
+});
+
+export const addComment = createSubscriptionOptions({
+  subscriptionQuery: newComment,
+  cacheUpdateQuery: getTask,
+  operationType: CacheOperation.ADD,
+  returnField: 'comments'
 });

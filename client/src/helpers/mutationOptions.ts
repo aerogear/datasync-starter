@@ -1,25 +1,28 @@
 import { getUpdateFunction, CacheOperation } from 'offix-cache';
-import { findAllTasks } from '../graphql/queries/findAllTasks';
+import { findTasks } from '../graphql/generated';
 
 export const createTask = {
-  updateQuery: findAllTasks,
+  updateQuery: findTasks,
   returnType: 'Task',
   mutationName: 'createTask',
   operationType: CacheOperation.ADD,
+  returnField: 'items'
 };
 
 export const updateTask = {
-  updateQuery: findAllTasks,
+  updateQuery: findTasks,
   returnType: 'Task',
   mutationName: 'updateTask',
   operationType: CacheOperation.REFRESH,
+  returnField: 'items'
 };
 
 export const deleteTask = {
-  updateQuery: findAllTasks,
+  updateQuery: findTasks,
   returnType: 'Task',
   mutationName: 'deleteTask',
   operationType: CacheOperation.DELETE,
+  returnField: 'items'
 };
 
 export const globalCacheUpdates = {

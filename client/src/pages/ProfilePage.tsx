@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { 
+import React, { useContext } from 'react';
+import {
   IonContent,
-  IonCard, 
+  IonCard,
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
@@ -13,7 +13,7 @@ import {
   IonLabel
 } from '@ionic/react';
 import { Header } from '../components';
-import { AppContext } from '../AppContext';
+import { AuthContext } from '../AuthContext';
 import { RouteComponentProps } from 'react-router';
 
 const userInit = {
@@ -25,21 +25,9 @@ const userInit = {
 }
 
 export const ProfilePage: React.FC<RouteComponentProps> = ({ match }) => {
-  const { keycloak } = useContext(AppContext);
-  const [user, setUser] = useState<Keycloak.KeycloakProfile>(userInit);
+  const { keycloak, profile } = useContext(AuthContext);
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      await keycloak?.loadUserProfile();
-      setUser({
-        ...userInit,
-        ...keycloak?.profile
-      });
-    }
-    if (keycloak) loadProfile()
-  }, [keycloak]);
-
-  if (!keycloak) return (
+  if (!keycloak || !profile) return (
     <IonCard>
       <IonCardHeader>
         <IonCardTitle>Authentication not configured</IonCardTitle>
@@ -52,12 +40,14 @@ export const ProfilePage: React.FC<RouteComponentProps> = ({ match }) => {
     </IonCard>
   );
 
-  const fullName = (user.firstName !== 'unknown' && user.lastName !== 'unknown') 
-    ? `${user.firstName} ${user.lastName}` 
+  const user = Object.assign(userInit, profile);
+
+  const fullName = (user.firstName !== 'unknown' && user.lastName !== 'unknown')
+    ? `${user.firstName} ${user.lastName}`
     : 'unknown';
 
   const roles = keycloak.realmAccess?.roles.map((role, index) => {
-    return <IonItem key={index}>{ role }</IonItem>
+    return <IonItem key={index}>{role}</IonItem>
   });
 
   return (
@@ -70,19 +60,19 @@ export const ProfilePage: React.FC<RouteComponentProps> = ({ match }) => {
               <h2>Provider</h2>
             </IonItemDivider>
             <IonItem>
-              <div className="identity-header">Full Name: { fullName }</div>
+              <div className="identity-header">Full Name: {fullName}</div>
               <div id="e2e-profile-full-name" className="identity-text"></div>
             </IonItem>
             <IonItem>
-              <div className="identity-header">Email: { user.email }</div>
+              <div className="identity-header">Email: {user.email}</div>
               <div id="e2e-profile-email" className="identity-text"></div>
             </IonItem>
             <IonItem>
-              <div className="identity-header"> Username: { user.username }</div>
+              <div className="identity-header"> Username: {user.username}</div>
               <div id="e2e-profile-username" className="identity-text"></div>
             </IonItem>
             <IonItem>
-              <IonLabel>Email Verified: { user.emailVerified ? 'Yes' : 'No'}</IonLabel>
+              <IonLabel>Email Verified: {user.emailVerified ? 'Yes' : 'No'}</IonLabel>
             </IonItem>
           </IonCard>
           <IonCard>
@@ -90,7 +80,7 @@ export const ProfilePage: React.FC<RouteComponentProps> = ({ match }) => {
               <IonItemDivider color="light">
                 <h2>Assigned Roles</h2>
               </IonItemDivider>
-              { roles }
+              {roles}
             </IonItemGroup>
           </IonCard>
         </IonList>

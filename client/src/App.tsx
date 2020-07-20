@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     const conflictListener: ConflictListener = {
       mergeOccurred() {
-        setShowConflict(true);
+        console.log("Merge occured! ")
       },
       conflictOccurred() {
         setShowConflict(true);

@@ -1,0 +1,45 @@
+"""
+@model
+@datasync
+"""
+type Task {
+  """@id"""
+  id: ObjectID!
+  title: String!
+  description: String!
+  status: TaskStatus
+  type: String
+  priority: Int
+  public: Boolean
+  startDate: DateTime
+  payload: JSON
+
+  """
+  @oneToMany(field: 'note')
+  """
+  comments: [Comment]!
+}
+
+"""
+@model
+@crud(delete: false)
+@crud(update: false)
+"""
+type Comment {
+  """@id"""
+  id: ObjectID!
+  message: String!
+  author: String!
+}
+
+enum TaskStatus {
+  OPEN
+  ASSIGNED
+  COMPLETE
+}
+
+### Custom types used by model
+
+scalar DateTime
+scalar JSON
+scalar ObjectID

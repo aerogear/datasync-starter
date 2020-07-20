@@ -7,6 +7,7 @@ export class Config {
   public keycloakConfigPath: string
   public keycloakConfig: any
   public playgroundConfig: { tabs: { endpoint: string; variables: {}; query: string }[] }
+  public mqttConfig: any;
 
   constructor() {
     this.port = process.env.PORT || 4000
@@ -17,6 +18,21 @@ export class Config {
       user: process.env.MONGO_USER,
       password: process.env.MONGO_PASSWORD,
       port: process.env.MONGO_PORT || 27017
+    }
+
+    const mqttHost = process.env.MQTT_HOST
+
+    if (mqttHost) {
+      console.log('Using MQTT PubSub')
+      this.mqttConfig = {
+        host: mqttHost,
+        servername: mqttHost, // needed to work in OpenShift. Lookup SNI.
+        username: process.env.MQTT_USERNAME || '',
+        password: process.env.MQTT_PASSWORD || '',
+        port: process.env.MQTT_PORT || '1883',
+        protocol: process.env.MQTT_PROTOCOL || 'mqtt',
+        rejectUnauthorized: false
+      }
     }
 
     this.keycloakConfigPath = process.env.KEYCLOAK_CONFIG || path.resolve(__dirname, './keycloak.json')

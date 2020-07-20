@@ -1,50 +1,49 @@
-import { loadSchemaFiles } from '@graphql-toolkit/file-loading';
-import { buildSchema } from 'graphql';
-import { join } from 'path';
+import { resolve } from 'path';
 import { connect } from './db';
-import resolvers from './resolvers/resolvers';
-import { models } from './resolvers/models'
-import { getPubSub } from './pubsub'
 import { Config } from './config/config';
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, ApolloServerExpressConfig } from "apollo-server-express";
 import { Express } from "express";
+import scalars from './resolvers/scalars';
+import customResolvers from './resolvers/custom';
 import { buildKeycloakApolloConfig } from './auth';
-import { createKeycloakRuntimeContext, KeycloakCrudService } from '@graphback/keycloak-authz';
-import { authConfig } from './config/auth';
-import { OffixMongoDBDataProvider, createOffixMongoCRUDRuntimeContext, CRUDService } from '@graphback/runtime-mongo';
-import { AMQCRUDService } from './AMQCrudService'
+import { createCRUDService } from './crudServiceCreator'
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
+import { loadSchemaSync } from '@graphql-tools/load'
+import { buildGraphbackAPI } from "graphback"
+import { DataSyncPlugin, createDataSyncMongoDbProvider } from "@graphback/datasync"
 
 /**
  * Creates Apollo server
  */
 export const createApolloServer = async function (app: Express, config: Config) {
     const db = await connect(config);
-    const pubSub = getPubSub();
 
-    const typeDefs = loadSchemaFiles(join(__dirname, '/schema/')).join('\n');
-    const schema = buildSchema(typeDefs, { assumeValid: true });
+    const modelDefs = loadSchemaSync(resolve(__dirname, '../model/task.graphql'), {
+        loaders: [
+            new GraphQLFileLoader()
+        ]
+    })
 
-    let apolloConfig: any = {
+    const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
+        serviceCreator: createCRUDService(),
+        dataProviderCreator: createDataSyncMongoDbProvider(db),
+        plugins: [
+            new DataSyncPlugin()
+        ]
+    });
+
+    let apolloConfig: ApolloServerExpressConfig = {
         typeDefs: typeDefs,
-        resolvers,
+        resolvers: Object.assign(resolvers, customResolvers, scalars),
         playground: true,
-    };
+        context: contextCreator
+    }
 
     if (config.keycloakConfig) {
-        apolloConfig.context = createKeycloakRuntimeContext({
-            models,
-            schema,
-            db,
-            pubSub,
-            authConfig,
-            dataProvider: OffixMongoDBDataProvider,
-            crudService: AMQCRUDService
-        })
-
         apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
-    } else {
-        apolloConfig.context = createOffixMongoCRUDRuntimeContext(models, schema, db, pubSub);
     }
+
+    apolloConfig.resolvers = { ...apolloConfig.resolvers, ...scalars, ...customResolvers };
 
     const apolloServer = new ApolloServer(apolloConfig)
     apolloServer.applyMiddleware({ app });
