@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "2.3.0",
-    "@types/simpl-schema": "^0.2.7"
+    "@types/simpl-schema": "0.2.7"
   },
   "description": "An Ionic project"
 }
