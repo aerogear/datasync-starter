@@ -9,9 +9,9 @@ docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 #use TAG env. variable to create the container with the given tag
 TAG="${TAG:-latest}"
 
-NAMESPACE="aerogear"
-CONTAINER="$NAMESPACE/datasync-starter:$TAG"
-CONTAINER_LATEST="$NAMESPACE/datasync-starter:latest"
+NAMESPACE="graphql"
+CONTAINER="quay.io/$NAMESPACE/graphback-runtime:$TAG"
+CONTAINER_LATEST="quay.io/$NAMESPACE/graphback-runtime:latest"
 
 echo "Building docker container $CONTAINER"
 docker build -f Dockerfile -t "$CONTAINER" . && docker push "$CONTAINER" && \

@@ -1,5 +1,8 @@
 = AeroGear DataSync Starter
 
+image:https://quay.io/repository/graphql/graphback-runtime/status["Docker Repository on Quay", link="https://quay.io/repository/graphql/graphback-runtime"]
+
+
 AeroGear DataSync GraphQL based server and React Client
 
 == DataSync Starter
