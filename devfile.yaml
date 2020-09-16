@@ -5,7 +5,7 @@ projects:
     source:
       location: 'https://github.com/aerogear/datasync-starter.git'
       type: git
-      branch: walkthrough
+      branch: master
 components:
   - id: che-incubator/typescript/latest
     memoryLimit: 512Mi
@@ -51,7 +51,7 @@ commands:
     actions:
       - workdir: '${CHE_PROJECTS_ROOT}/datasync-starter'
         type: exec
-        command: git checkout walkthrough && npm install -g yarn && yarn install
+        command: npm install -g yarn && yarn install
         component: nodejs
   - name: generate source code
     actions:
