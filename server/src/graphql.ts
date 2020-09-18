@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { resolve } from 'path';
 import { connect } from './db';
 import { Config } from './config/config';
@@ -9,8 +10,8 @@ import { createCRUDService } from './crudServiceCreator'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
-import { DataSyncPlugin, createDataSyncMongoDbProvider } from "@graphback/datasync"
-
+import { DataSyncPlugin, createDataSyncMongoDbProvider, ThrowOnConflict, ServerSideWins} from "@graphback/datasync"
+import { SchemaCRUDPlugin } from "@graphback/codegen-schema"
 /**
  * Creates Apollo server
  */
@@ -27,7 +28,14 @@ export const createApolloServer = async function (app: Express, config: Config) 
         serviceCreator: createCRUDService(),
         dataProviderCreator: createDataSyncMongoDbProvider(db),
         plugins: [
-            new DataSyncPlugin()
+            new SchemaCRUDPlugin({ outputPath: path.join(__dirname, "./schema/schema.graphql") }),
+            new DataSyncPlugin({
+                conflictConfig: {
+                    enabled: true,
+                    // Let's client side to deal with conflict
+                    conflictResolution: ThrowOnConflict,
+                }
+            })
         ]
     });
 

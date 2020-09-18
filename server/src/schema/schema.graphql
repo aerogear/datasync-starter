@@ -98,6 +98,11 @@ input GraphbackObjectIDInput {
   between: [GraphbackObjectID!]
 }
 
+"""
+The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar GraphbackTimestamp
+
 input IntInput {
   ne: Int
   eq: Int
@@ -126,6 +131,7 @@ input MutateTaskInput {
   public: Boolean
   startDate: GraphbackDateTime
   payload: GraphbackJSON
+  _version: Int!
 }
 
 type Mutation {
@@ -152,6 +158,7 @@ type Query {
   findTasks(filter: TaskFilter, page: PageRequest, orderBy: OrderByInput): TaskResultList!
   getComment(id: GraphbackObjectID!): Comment
   findComments(filter: CommentFilter, page: PageRequest, orderBy: OrderByInput): CommentResultList!
+  syncTasks(lastSync: GraphbackTimestamp!, filter: TaskFilter, limit: Int): TaskDeltaList!
 }
 
 enum SortDirectionEnum {
@@ -201,6 +208,33 @@ type Task {
   @oneToMany(field: 'note')
   """
   comments(filter: CommentFilter): [Comment]!
+
+  """@index(name: 'Datasync_lastUpdatedAt')"""
+  _lastUpdatedAt: GraphbackTimestamp
+  _version: Int
+}
+
+type TaskDelta {
+  _id: GraphbackObjectID!
+  title: String!
+  description: String!
+  status: TaskStatus
+  type: String
+  priority: Int
+  public: Boolean
+  startDate: GraphbackDateTime
+  payload: GraphbackJSON
+
+  """@index(name: 'Datasync_lastUpdatedAt')"""
+  _lastUpdatedAt: GraphbackTimestamp
+  _version: Int
+  _deleted: Boolean
+}
+
+type TaskDeltaList {
+  items: [TaskDelta]!
+  lastSync: GraphbackTimestamp!
+  limit: Int
 }
 
 input TaskFilter {
