@@ -11,6 +11,7 @@ export const TaskFragment = gql`
    public
    startDate
    payload
+   _version
 
 } 
 `
@@ -27,6 +28,7 @@ export const TaskExpandedFragment = gql`
    public
    startDate
    payload
+   _version
    comments {
       _id
       message
@@ -43,7 +45,6 @@ export const CommentFragment = gql`
    _id
    message
    author
-
 } 
 `
 

@@ -10,7 +10,7 @@ import { createCRUDService } from './crudServiceCreator'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
-import { DataSyncPlugin, createDataSyncMongoDbProvider, ThrowOnConflict, ServerSideWins} from "@graphback/datasync"
+import { DataSyncPlugin, createDataSyncConflictProviderCreator, ThrowOnConflict } from "@graphback/datasync"
 import { SchemaCRUDPlugin } from "@graphback/codegen-schema"
 /**
  * Creates Apollo server
@@ -23,18 +23,18 @@ export const createApolloServer = async function (app: Express, config: Config) 
             new GraphQLFileLoader()
         ]
     })
-
+    const conflictConfig = {
+        enabled: true,
+        // Let's client side to deal with conflict
+        conflictResolution: ThrowOnConflict,
+    };
     const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
         serviceCreator: createCRUDService(),
-        dataProviderCreator: createDataSyncMongoDbProvider(db),
+        dataProviderCreator: createDataSyncConflictProviderCreator(db, conflictConfig),
         plugins: [
             new SchemaCRUDPlugin({ outputPath: path.join(__dirname, "./schema/schema.graphql") }),
             new DataSyncPlugin({
-                conflictConfig: {
-                    enabled: true,
-                    // Let's client side to deal with conflict
-                    conflictResolution: ThrowOnConflict,
-                }
+                conflictConfig
             })
         ]
     });
