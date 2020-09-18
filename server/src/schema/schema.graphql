@@ -17,8 +17,7 @@ input BooleanInput {
 @crud(update: false)
 """
 type Comment {
-  """@id"""
-  id: ObjectID!
+  _id: GraphbackObjectID!
   message: String!
   author: String!
 
@@ -27,12 +26,12 @@ type Comment {
 }
 
 input CommentFilter {
-  id: ObjectIDInput
+  _id: GraphbackObjectIDInput
   message: StringInput
   author: StringInput
-  noteId: ObjectIDInput
-  and: [CommentFilter]
-  or: [CommentFilter]
+  noteId: GraphbackObjectIDInput
+  and: [CommentFilter!]
+  or: [CommentFilter!]
   not: CommentFilter
 }
 
@@ -44,41 +43,59 @@ type CommentResultList {
 }
 
 input CommentSubscriptionFilter {
-  id: ObjectID
-  message: String
-  author: String
+  and: [CommentSubscriptionFilter!]
+  or: [CommentSubscriptionFilter!]
+  not: CommentSubscriptionFilter
+  _id: GraphbackObjectIDInput
+  message: StringInput
+  author: StringInput
 }
 
 input CreateCommentInput {
-  id: ObjectID
+  _id: GraphbackObjectID
   message: String!
   author: String!
-  noteId: ObjectID
+  noteId: GraphbackObjectID
 }
 
 input CreateTaskInput {
-  id: ObjectID
+  _id: GraphbackObjectID
   title: String!
   description: String!
   status: TaskStatus
   type: String
   priority: Int
   public: Boolean
-  startDate: DateTime
-  payload: JSON
+  startDate: GraphbackDateTime
+  payload: GraphbackJSON
 }
 
-scalar DateTime
+scalar GraphbackDateTime
 
-input DateTimeInput {
-  ne: DateTime
-  eq: DateTime
-  le: DateTime
-  lt: DateTime
-  ge: DateTime
-  gt: DateTime
-  in: [DateTime]
-  between: [DateTime]
+input GraphbackDateTimeInput {
+  ne: GraphbackDateTime
+  eq: GraphbackDateTime
+  le: GraphbackDateTime
+  lt: GraphbackDateTime
+  ge: GraphbackDateTime
+  gt: GraphbackDateTime
+  in: [GraphbackDateTime!]
+  between: [GraphbackDateTime!]
+}
+
+scalar GraphbackJSON
+
+scalar GraphbackObjectID
+
+input GraphbackObjectIDInput {
+  ne: GraphbackObjectID
+  eq: GraphbackObjectID
+  le: GraphbackObjectID
+  lt: GraphbackObjectID
+  ge: GraphbackObjectID
+  gt: GraphbackObjectID
+  in: [GraphbackObjectID!]
+  between: [GraphbackObjectID!]
 }
 
 input IntInput {
@@ -88,62 +105,36 @@ input IntInput {
   lt: Int
   ge: Int
   gt: Int
-  in: [Int]
-  between: [Int]
-}
-
-scalar JSON
-
-input JSONInput {
-  ne: JSON
-  eq: JSON
-  le: JSON
-  lt: JSON
-  ge: JSON
-  gt: JSON
-  in: [JSON]
-  between: [JSON]
+  in: [Int!]
+  between: [Int!]
 }
 
 input MutateCommentInput {
-  id: ObjectID!
+  _id: GraphbackObjectID!
   message: String
   author: String
-  noteId: ObjectID
+  noteId: GraphbackObjectID
 }
 
 input MutateTaskInput {
-  id: ObjectID!
+  _id: GraphbackObjectID!
   title: String
   description: String
   status: TaskStatus
   type: String
   priority: Int
   public: Boolean
-  startDate: DateTime
-  payload: JSON
+  startDate: GraphbackDateTime
+  payload: GraphbackJSON
 }
 
 type Mutation {
-  createTask(input: CreateTaskInput!): Task!
-  updateTask(input: MutateTaskInput!): Task!
-  deleteTask(input: MutateTaskInput!): Task!
-  createComment(input: CreateCommentInput!): Comment!
-  updateComment(input: MutateCommentInput!): Comment!
-  deleteComment(input: MutateCommentInput!): Comment!
-}
-
-scalar ObjectID
-
-input ObjectIDInput {
-  ne: ObjectID
-  eq: ObjectID
-  le: ObjectID
-  lt: ObjectID
-  ge: ObjectID
-  gt: ObjectID
-  in: [ObjectID]
-  between: [ObjectID]
+  createTask(input: CreateTaskInput!): Task
+  updateTask(input: MutateTaskInput!): Task
+  deleteTask(input: MutateTaskInput!): Task
+  createComment(input: CreateCommentInput!): Comment
+  updateComment(input: MutateCommentInput!): Comment
+  deleteComment(input: MutateCommentInput!): Comment
 }
 
 input OrderByInput {
@@ -157,9 +148,9 @@ input PageRequest {
 }
 
 type Query {
-  getTask(id: ID!): Task
+  getTask(id: GraphbackObjectID!): Task
   findTasks(filter: TaskFilter, page: PageRequest, orderBy: OrderByInput): TaskResultList!
-  getComment(id: ID!): Comment
+  getComment(id: GraphbackObjectID!): Comment
   findComments(filter: CommentFilter, page: PageRequest, orderBy: OrderByInput): CommentResultList!
 }
 
@@ -175,7 +166,7 @@ input StringInput {
   lt: String
   ge: String
   gt: String
-  in: [String]
+  in: [String!]
   contains: String
   startsWith: String
   endsWith: String
@@ -195,33 +186,34 @@ type Subscription {
 @datasync
 """
 type Task {
-  """@id"""
-  id: ObjectID!
+  _id: GraphbackObjectID!
   title: String!
   description: String!
   status: TaskStatus
   type: String
   priority: Int
   public: Boolean
-  startDate: DateTime
-  payload: JSON
+  startDate: GraphbackDateTime
+  payload: GraphbackJSON
 
-  """@oneToMany(field: 'note', key: 'noteId')"""
+  """
+  @oneToMany(field: 'note', key: 'noteId')
+  @oneToMany(field: 'note')
+  """
   comments(filter: CommentFilter): [Comment]!
 }
 
 input TaskFilter {
-  id: ObjectIDInput
+  _id: GraphbackObjectIDInput
   title: StringInput
   description: StringInput
   status: StringInput
   type: StringInput
   priority: IntInput
   public: BooleanInput
-  startDate: DateTimeInput
-  payload: JSONInput
-  and: [TaskFilter]
-  or: [TaskFilter]
+  startDate: GraphbackDateTimeInput
+  and: [TaskFilter!]
+  or: [TaskFilter!]
   not: TaskFilter
 }
 
@@ -239,13 +231,15 @@ enum TaskStatus {
 }
 
 input TaskSubscriptionFilter {
-  id: ObjectID
-  title: String
-  description: String
-  status: TaskStatus
-  type: String
-  priority: Int
-  public: Boolean
-  startDate: DateTime
-  payload: JSON
+  and: [TaskSubscriptionFilter!]
+  or: [TaskSubscriptionFilter!]
+  not: TaskSubscriptionFilter
+  _id: GraphbackObjectIDInput
+  title: StringInput
+  description: StringInput
+  status: StringInput
+  type: StringInput
+  priority: IntInput
+  public: BooleanInput
+  startDate: GraphbackDateTimeInput
 }
