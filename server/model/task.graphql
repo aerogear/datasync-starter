@@ -3,16 +3,15 @@
 @datasync
 """
 type Task {
-  """@id"""
-  id: ObjectID!
+  _id: GraphbackObjectID!
   title: String!
   description: String!
   status: TaskStatus
   type: String
   priority: Int
   public: Boolean
-  startDate: DateTime
-  payload: JSON
+  startDate: GraphbackDateTime
+  payload: GraphbackJSON
 
   """
   @oneToMany(field: 'note')
@@ -26,8 +25,7 @@ type Task {
 @crud(update: false)
 """
 type Comment {
-  """@id"""
-  id: ObjectID!
+  _id: GraphbackObjectID!
   message: String!
   author: String!
 }
@@ -40,6 +38,6 @@ enum TaskStatus {
 
 ### Custom types used by model
 
-scalar DateTime
-scalar JSON
-scalar ObjectID
+scalar GraphbackDateTime
+scalar GraphbackJSON
+scalar GraphbackObjectID

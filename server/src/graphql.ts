@@ -3,7 +3,6 @@ import { connect } from './db';
 import { Config } from './config/config';
 import { ApolloServer, ApolloServerExpressConfig } from "apollo-server-express";
 import { Express } from "express";
-import scalars from './resolvers/scalars';
 import customResolvers from './resolvers/custom';
 import { buildKeycloakApolloConfig } from './auth';
 import { createCRUDService } from './crudServiceCreator'
@@ -34,7 +33,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
 
     let apolloConfig: ApolloServerExpressConfig = {
         typeDefs: typeDefs,
-        resolvers: Object.assign(resolvers, customResolvers, scalars),
+        resolvers: { ...resolvers, ...customResolvers },
         playground: true,
         context: contextCreator
     }
@@ -43,7 +42,7 @@ export const createApolloServer = async function (app: Express, config: Config) 
         apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
     }
 
-    apolloConfig.resolvers = { ...apolloConfig.resolvers, ...scalars, ...customResolvers };
+    apolloConfig.resolvers = { ...apolloConfig.resolvers, ...customResolvers };
 
     const apolloServer = new ApolloServer(apolloConfig)
     apolloServer.applyMiddleware({ app });
