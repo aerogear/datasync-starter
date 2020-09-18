@@ -164,7 +164,7 @@ objects:
               secretKeyRef:
                 key: database-name
                 name:  mongodb-credentials
-          image: " "
+          image: mongo:4.2.9
           imagePullPolicy: IfNotPresent
           name: mongodb
           ports:
@@ -186,18 +186,6 @@ objects:
         - name: "mongodb-data"
           persistentVolumeClaim:
             claimName: mongodb
-    triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - mongodb
-        from:
-          kind: ImageStreamTag
-          name: mongo:4.2.9
-          namespace: openshift
-        lastTriggeredImage: ''
-      type: ImageChange
-    - type: ConfigChange
   status: {}    
 
 - apiVersion: v1
