@@ -23,6 +23,19 @@ metadata:
 objects:
 
 - apiVersion: v1
+  kind: Secret
+  metadata:
+    annotations:
+      template.openshift.io/expose-database_name: "{.data['database-name']}"
+      template.openshift.io/expose-password: "{.data['database-password']}"
+      template.openshift.io/expose-username: "{.data['database-user']}"
+    name: mongodb-credentials
+  stringData:
+    database-name: "${DATABASE_NAME}"
+    database-password: "${DATABASE_PASSWORD}"
+    database-user: "${DATABASE_USER}"  
+
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     annotations:
@@ -50,11 +63,13 @@ objects:
         containers:
         - env:
             - name: MONGO_HOST
-              value: "${DATABASE_HOST}"
+              value: mongodb
             - name: MONGO_USER
               value: "${DATABASE_USER}"
             - name: MONGO_PASSWORD
               value: "${DATABASE_PASSWORD}"
+            - name: MONGO_DATABASE
+              value: "${DATABASE_NAME}"  
             - name: MQTT_HOST
               value: mosquitto-mqtt-broker
           image: quay.io/graphql/graphback-runtime:latest
@@ -85,6 +100,118 @@ objects:
       app: datasync-starter-server
       deploymentconfig: datasync-starter-server
 
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    annotations:
+      template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongodb")].port}
+    name: mongodb
+  spec:
+    ports:
+    - name: mongodb
+      nodePort: 0
+      port: 27017
+      protocol: TCP
+      targetPort: 27017
+    selector:
+      name: mongodb
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    annotations:
+      template.alpha.openshift.io/wait-for-ready: 'true'
+    name: mongodb
+  spec:
+    replicas: 1
+    selector:
+      name: mongodb
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          name: mongodb
+      spec:
+        containers:
+        - capabilities: {}
+          env:
+          - name: MONGODB_USER
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name:  mongodb-credentials
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name:  mongodb-credentials
+          - name: MONGODB_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name:  mongodb-credentials        
+          - name: MONGODB_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: database-name
+                name:  mongodb-credentials
+          image: " "
+          imagePullPolicy: IfNotPresent
+          name: mongodb
+          ports:
+          - containerPort: 27017
+            protocol: TCP
+          resources:
+            limits:
+              memory: 512Mi
+          securityContext:
+            capabilities: {}
+            privileged: false
+          terminationMessagePath: "/dev/termination-log"
+          volumeMounts:
+          - mountPath: "/data/db"
+            name: "mongodb-data"
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: "mongodb-data"
+          persistentVolumeClaim:
+            claimName: mongodb
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - mongodb
+        from:
+          kind: ImageStreamTag
+          name: centos/mongodb-34-centos7
+          namespace: openshift
+        lastTriggeredImage: ''
+      type: ImageChange
+    - type: ConfigChange
+  status: {}    
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: mongodb
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${VOLUME_CAPACITY}"      
 
 - apiVersion: v1
   kind: Route
@@ -168,10 +295,6 @@ parameters:
   displayName: Namespace
   name: NAMESPACE
   value: openshift
-- description: The name of the OpenShift Service exposed for the database.
-  displayName: Database Service Name
-  name: DATABASE_HOST
-  value: mongodb
 - description: Username for MongoDB user that will be used for accessing the database.
   displayName: Mongo Connection Username
   name: DATABASE_USER
@@ -179,8 +302,16 @@ parameters:
 - description: Password for the MongoDB connection user.
   displayName: MongoDB Connection Password
   name: DATABASE_PASSWORD
-  value: postgres
+  value: password
+- description: Name of the MongoDB database accessed.
+  displayName: MongoDB Database Name
+  name: DATABASE_NAME
+  value: showcase
 - description: The name of the OpenShift Service exposed for the Server.
   displayName: Server Service name
   name: SERVER_SERVICE_NAME
   value: datasync-starter-server
+- description: Volume space available for data, e.g. 512Mi, 2Gi.
+  displayName: Volume Capacity
+  name: VOLUME_CAPACITY
+  value: 1Gi
