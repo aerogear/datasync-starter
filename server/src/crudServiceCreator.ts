@@ -33,14 +33,14 @@ export function createCRUDService(globalServiceConfig?: CRUDServiceConfig) {
         }
         let service
         if (config.mqttConfig) {
-            service = new AMQCRUDDataSyncService(model.graphqlType.name, dataProvider, serviceConfig);
+            service = new AMQCRUDDataSyncService(model, dataProvider, serviceConfig);
         } else {
-            service = new DataSyncCRUDService(model.graphqlType.name, dataProvider, serviceConfig);
+            service = new DataSyncCRUDService(model, dataProvider, serviceConfig);
         }
 
         if (config.keycloakConfig) {
             const objConfig = authConfig[model.graphqlType.name];
-            const keycloakService = new KeycloakCrudService({ service, authConfig: objConfig });
+            const keycloakService = new KeycloakCrudService(model, { service, authConfig: objConfig });
 
             return keycloakService;
         }
@@ -53,8 +53,8 @@ export function createCRUDService(globalServiceConfig?: CRUDServiceConfig) {
  * Service that allows you to configure how AMQ topics are build
  */
 export class AMQCRUDDataSyncService extends DataSyncCRUDService {
-    constructor(modelName: string, db: DataSyncProvider, config: CRUDServiceConfig) {
-        super(modelName, db, config);
+    constructor(model: ModelDefinition, db: DataSyncProvider, config: CRUDServiceConfig) {
+        super(model, db, config);
     }
     protected subscriptionTopicMapping(triggerType: GraphbackOperationType, objectName: string) {
         // Support AMQ topic creation format
