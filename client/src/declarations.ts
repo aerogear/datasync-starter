@@ -1,8 +1,7 @@
-import { KeycloakInstance } from "keycloak-js";
 import { ApolloOfflineClient } from "offix-client";
 
 export interface ITask {
-  id: string;
+  _id: string;
   version: number;
   title: string;
   description: string;

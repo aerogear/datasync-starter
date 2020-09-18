@@ -2,7 +2,7 @@ import gql from "graphql-tag"
 
 export const TaskFragment = gql`
   fragment TaskFields on Task {
-   id
+   _id
    title
    description
    status
@@ -11,14 +11,14 @@ export const TaskFragment = gql`
    public
    startDate
    payload
-   updatedAt
+
 } 
 `
 
 
 export const TaskExpandedFragment = gql`
   fragment TaskExpandedFields on Task {
-   id
+   _id
    title
    description
    status
@@ -28,11 +28,10 @@ export const TaskExpandedFragment = gql`
    startDate
    payload
    comments {
-      id
+      _id
       message
       author
    }
-   updatedAt
 } 
 `
 
@@ -41,7 +40,7 @@ export const TaskExpandedFragment = gql`
 
 export const CommentFragment = gql`
   fragment CommentFields on Comment {
-   id
+   _id
    message
    author
 
@@ -51,11 +50,11 @@ export const CommentFragment = gql`
 
 export const CommentExpandedFragment = gql`
   fragment CommentExpandedFields on Comment {
-   id
+   _id
    message
    author
    note {
-      id
+      _id
       title
       description
       status
@@ -65,7 +64,6 @@ export const CommentExpandedFragment = gql`
       startDate
       payload
    }
-   updatedAt
 } 
 `
 
@@ -87,7 +85,7 @@ export const findTasks = gql`
 
 
 export const getTask = gql`
-  query getTask($id: ID!) {
+  query getTask($id: GraphbackObjectID!) {
     getTask(id: $id) {
       ...TaskExpandedFields
     }
@@ -114,7 +112,7 @@ export const findComments = gql`
 
 
 export const getComment = gql`
-  query getComment($id: ID!) {
+  query getComment($id: GraphbackObjectID!) {
     getComment(id: $id) {
       ...CommentExpandedFields
     }
@@ -199,11 +197,11 @@ export const deleteComment = gql`
 export const newTask = gql`
   subscription newTask($filter: TaskSubscriptionFilter) {
   newTask(filter: $filter) {
-      ...TaskExpandedFields
+      ...TaskFields
   }
 } 
 
-  ${TaskExpandedFragment}
+  ${TaskFragment}
 `
 
 

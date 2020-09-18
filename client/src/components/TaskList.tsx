@@ -51,7 +51,7 @@ export const TaskList: React.FC<any> = ({ tasks }) => {
       <IonList>
         {
           tasks.map((task: ITask) => {
-            return <Task key={task.id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
+            return <Task key={task._id} task={task} updateTask={handleUpdate} deleteTask={handleDelete} />;
           })
         }
       </IonList>

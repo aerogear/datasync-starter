@@ -22,7 +22,7 @@ export const Task: React.FC<any> = ({ task, updateTask, deleteTask }) => {
 
   const onViewClick = (event: MouseEvent) => {
     event.preventDefault();
-    history.push(`/viewTask/${task.id}`);
+    history.push(`/viewTask/${task._id}`);
   };
 
   const check = (event: SyntheticEvent) => {
@@ -60,7 +60,7 @@ export const Task: React.FC<any> = ({ task, updateTask, deleteTask }) => {
         <IonButton onClick={onViewClick} item-start className='view-button' color='primary' fill="outline">
           <IonIcon icon={navigate} />
         </IonButton>
-        <Link to={`updateTask/${task.id}`}>
+        <Link to={`updateTask/${task._id}`}>
           <IonButton item-start color='primary' fill="outline">
             <IonIcon icon={create} />
           </IonButton>
