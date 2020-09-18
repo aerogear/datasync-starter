@@ -104,7 +104,7 @@ objects:
   kind: Service
   metadata:
     labels:
-      app: ${APPLICATION_NAME}
+      app: datasync-starter-server
     annotations:
       template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongodb")].port}
     name: mongodb
@@ -126,7 +126,7 @@ objects:
   kind: DeploymentConfig
   metadata:
     labels:
-      app: ${APPLICATION_NAME}
+      app: datasync-starter-server
     annotations:
       template.alpha.openshift.io/wait-for-ready: 'true'
     name: mongodb
@@ -193,7 +193,7 @@ objects:
         - mongodb
         from:
           kind: ImageStreamTag
-          name: centos/mongodb-34-centos7
+          name: mongo:4.2.9
           namespace: openshift
         lastTriggeredImage: ''
       type: ImageChange
@@ -204,7 +204,7 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     labels:
-      app: ${APPLICATION_NAME}
+      app: datasync-starter-server
     name: mongodb
   spec:
     accessModes:
