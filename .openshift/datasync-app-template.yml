@@ -87,6 +87,18 @@ objects:
               value: mosquitto-mqtt-broker
           image: quay.io/graphql/graphback-runtime:latest
           name: datasync-starter-server
+          readinessProbe:
+            httpGet:
+              path: /.well-known/apollo/server-health
+              port: 4000
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /.well-known/apollo/server-health
+              port: 4000
+            initialDelaySeconds: 1
+            timeoutSeconds: 1  
           ports:
           - containerPort: 4000
             protocol: TCP
