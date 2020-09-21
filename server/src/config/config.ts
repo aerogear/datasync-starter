@@ -8,10 +8,18 @@ export class Config {
   public keycloakConfig: any
   public playgroundConfig: { tabs: { endpoint: string; variables: {}; query: string }[] }
   public mqttConfig: any;
+  public kafka: any;
 
   constructor() {
     this.port = process.env.PORT || 4000
-
+    this.kafka = {
+      enabled: !!process.env.KAFKA_HOST || false,
+      topic: process.env.KAFKA_TOPIC || "pubsub",
+      host: process.env.KAFKA_HOST || '127.0.0.1',
+      port: process.env.KAFKA_PORT || 2181,
+      globalConfig: {
+      }
+    }
     this.db = {
       database: process.env.MONGO_COLLECTION || 'showcase',
       host: process.env.MONGO_HOST || '127.0.0.1',

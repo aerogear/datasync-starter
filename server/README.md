@@ -37,3 +37,13 @@ yarn graphback generate
 ```sh
 yarn start:server
 ```
+
+### Running kafka
+
+1. `yarn kafka`
+2. `KAFKA_HOST=127.0.0.1 yarn start`
+
+##### Flags for problems with building kafka client for MacOS
+
+export CPPFLAGS=-I/usr/local/opt/openssl/include
+export LDFLAGS=-L/usr/local/opt/openssl/lib

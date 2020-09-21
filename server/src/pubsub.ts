@@ -2,9 +2,15 @@ import mqtt from 'mqtt'
 import { PubSub } from 'apollo-server-express'
 import { MQTTPubSub } from '@aerogear/graphql-mqtt-subscriptions'
 import { config } from "./config/config"
+import { KafkaPubSub } from 'graphql-kafka-subscriptions'
 
 export function connectToPubSub() {
-  if (config.mqttConfig) {
+  if (config.kafka.enabled) {
+    const pubsub = new KafkaPubSub({
+      ...config.kafka
+    });
+    return pubsub;
+  } else if (config.mqttConfig) {
     const mqttOptions = config.mqttConfig;
     // Types are broken
     const client = mqtt.connect(mqttOptions.mqttHost, mqttOptions as any)
