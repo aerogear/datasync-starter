@@ -23,50 +23,7 @@ metadata:
 objects:
 - apiVersion: v1
   data:
-    model: |
-      """
-      @model
-      @datasync
-      """
-      type Task {
-        _id: GraphbackObjectID!
-        title: String!
-        description: String!
-        status: TaskStatus
-        type: String
-        priority: Int
-        public: Boolean
-        startDate: GraphbackDateTime
-        payload: GraphbackJSON
-  
-        """
-        @oneToMany(field: 'note')
-        """
-        comments: [Comment]!
-      }
-  
-      """
-      @model
-      @crud(delete: false)
-      @crud(update: false)
-      """
-      type Comment {
-        _id: GraphbackObjectID!
-        message: String!
-        author: String!
-      }
-  
-      enum TaskStatus {
-        OPEN
-        ASSIGNED
-        COMPLETE
-      }
-  
-      ### Custom types used by model
-  
-      scalar GraphbackDateTime
-      scalar GraphbackJSON
-      scalar GraphbackObjectID
+    model: "${MODEL}"
   kind: ConfigMap
   metadata:
     name: datasync-model
@@ -347,7 +304,7 @@ parameters:
 - description: Username for MongoDB user that will be used for accessing the database.
   displayName: Mongo Connection Username
   name: DATABASE_USER
-  value: 
+  value: user
 - description: Password for the MongoDB connection user.
   displayName: MongoDB Connection Password
   name: DATABASE_PASSWORD
@@ -364,3 +321,8 @@ parameters:
   displayName: Volume Capacity
   name: VOLUME_CAPACITY
   value: 1Gi
+- description: A GraphQL Schema representing the business model
+  displayName: Business Model
+  name: MODEL
+  value: ''
+  
