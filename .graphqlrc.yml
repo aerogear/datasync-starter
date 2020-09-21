@@ -4,7 +4,7 @@ schema: ./server/src/schema/schema.graphql
 documents: ./client/src/graphql/**/*.graphql
 extensions:
   graphback:
-    model: ./server/model/task.graphql
+    model: ./server/model/model.grahql
     crud:
       create: true
       update: true

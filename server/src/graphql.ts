@@ -18,7 +18,7 @@ import { SchemaCRUDPlugin } from "@graphback/codegen-schema"
 export const createApolloServer = async function (app: Express, config: Config) {
     const db = await connect(config);
 
-    const modelDefs = loadSchemaSync(resolve(__dirname, '../model/task.graphql'), {
+    const modelDefs = loadSchemaSync(resolve(__dirname, '../model/model.grahql'), {
         loaders: [
             new GraphQLFileLoader()
         ]

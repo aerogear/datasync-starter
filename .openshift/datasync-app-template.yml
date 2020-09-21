@@ -21,7 +21,56 @@ metadata:
     template.openshift.io/bindable: 'false'
     aerogear.org/datasync-template-version: '0.9.3'
 objects:
-
+- apiVersion: v1
+  data:
+    model: |
+      """
+      @model
+      @datasync
+      """
+      type Task {
+        _id: GraphbackObjectID!
+        title: String!
+        description: String!
+        status: TaskStatus
+        type: String
+        priority: Int
+        public: Boolean
+        startDate: GraphbackDateTime
+        payload: GraphbackJSON
+  
+        """
+        @oneToMany(field: 'note')
+        """
+        comments: [Comment]!
+      }
+  
+      """
+      @model
+      @crud(delete: false)
+      @crud(update: false)
+      """
+      type Comment {
+        _id: GraphbackObjectID!
+        message: String!
+        author: String!
+      }
+  
+      enum TaskStatus {
+        OPEN
+        ASSIGNED
+        COMPLETE
+      }
+  
+      ### Custom types used by model
+  
+      scalar GraphbackDateTime
+      scalar GraphbackJSON
+      scalar GraphbackObjectID
+  kind: ConfigMap
+  metadata:
+    name: datasync-model
+  
 - apiVersion: v1
   kind: Secret
   metadata:
@@ -60,6 +109,13 @@ objects:
           app: datasync-starter-server
           deploymentconfig: datasync-starter-server
       spec:
+        volumes:
+          - name: config
+            configMap:
+              name: datasync-model
+              items:
+              - key: "model"
+                path: "model.graphql"
         containers:
         - env:
             - name: MONGO_HOST
@@ -78,8 +134,13 @@ objects:
           - containerPort: 4000
             protocol: TCP
           resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: "/usr/src/model"
+              readOnly: true
     triggers:
     - type: ConfigChange
+    
 
 - apiVersion: v1
   kind: Service
