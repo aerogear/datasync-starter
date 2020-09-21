@@ -21,7 +21,13 @@ metadata:
     template.openshift.io/bindable: 'false'
     aerogear.org/datasync-template-version: '0.9.3'
 objects:
-
+- apiVersion: v1
+  data:
+    model: "${MODEL}"
+  kind: ConfigMap
+  metadata:
+    name: datasync-model
+  
 - apiVersion: v1
   kind: Secret
   metadata:
@@ -60,6 +66,13 @@ objects:
           app: datasync-starter-server
           deploymentconfig: datasync-starter-server
       spec:
+        volumes:
+          - name: config
+            configMap:
+              name: datasync-model
+              items:
+              - key: "model"
+                path: "model.graphql"
         containers:
         - env:
             - name: MONGO_HOST
@@ -74,12 +87,29 @@ objects:
               value: mosquitto-mqtt-broker
           image: quay.io/graphql/graphback-runtime:latest
           name: datasync-starter-server
+          readinessProbe:
+            httpGet:
+              path: /.well-known/apollo/server-health
+              port: 4000
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /.well-known/apollo/server-health
+              port: 4000
+            initialDelaySeconds: 1
+            timeoutSeconds: 1  
           ports:
           - containerPort: 4000
             protocol: TCP
           resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: "/usr/src/model"
+              readOnly: true
     triggers:
     - type: ConfigChange
+    
 
 - apiVersion: v1
   kind: Service
@@ -167,6 +197,16 @@ objects:
           image: mongo:4.2.9
           imagePullPolicy: IfNotPresent
           name: mongodb
+          readinessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 5
+            periodSeconds: 20
           ports:
           - containerPort: 27017
             protocol: TCP
@@ -286,7 +326,7 @@ parameters:
 - description: Username for MongoDB user that will be used for accessing the database.
   displayName: Mongo Connection Username
   name: DATABASE_USER
-  value: 
+  value: user
 - description: Password for the MongoDB connection user.
   displayName: MongoDB Connection Password
   name: DATABASE_PASSWORD
@@ -303,3 +343,8 @@ parameters:
   displayName: Volume Capacity
   name: VOLUME_CAPACITY
   value: 1Gi
+- description: A GraphQL Schema representing the business model
+  displayName: Business Model
+  name: MODEL
+  value: ''
+  
