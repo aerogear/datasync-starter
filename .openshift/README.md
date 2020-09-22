@@ -6,59 +6,41 @@ Name: `datasync-app-template.yml`
 
 This template starts datasync container on top of the mongodb instances:
 
-#### Prerequisites
-
-1. Running MongoDB instance 
-2. Connection details to MongoDB server
-
 #### Steps
 
-1. Add template to your openshift 
-2. Provide MongoDB connection details
-3. Wait for the pods to start
+1. Create a new project
+2. Add template to your openshift 
 
-# Deploying Server with AMQ
+> NOTE: All the commands needs to be run on the project root.
+> All make sure that you've logged in to your OpenShift cluster.
 
-Prerequisites
+# Create a new Project
 
-* AMQ Online is installed in the cluster
+To create a new project in OpenShift run the following command:
 
-
-This section describes how to deploy the application in an OpenShift cluster by using the supplied `amq-topics.yml` template file.
-* The template is already prefilled with all of the necessary values that can be inspected
-* The only field you might want to change is `AMQ Messaging User Password`.
-  * The default value is `Password1` in base64 encoding
-  * The value *must* be base64 encoded
-  * A custom value can be created in the terminal using `$ echo <password> | base64` 
-* Execute template on your openshift instance by `oc process -f amq-topics.yml | oc create -f -`
-
-The hostname for the AMQ Online Broker is only made available after the resources from the the template have been provisioned. One more step is needed to supply extra environment variables to running server.
-
-* From the terminal, ensure you have the correct namespace selected.
-
-```
-oc project <project where template was provisioned>
+```bash
+yarn openshift:init my-new-project
 ```
 
-* Update the deployment to add the `MQTT_HOST` variable. 
+# Deploying Server
 
-```
-oc get addressspace datasync -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].serviceHost}'
-```
+Execute template on your openshift instance by: 
 
-If you want to use service outside the OpenShift cluster please request external URL:
-```
-oc get addressspace datasync -o jsonpath='{.status.endpointStatuses[?(@.name=="messaging")].externalHost}'
+```bash
+yarn openshift:deploy 
 ```
 
-Provide set of the environment variables required to connect to the running AMQ
+You should see the following messages if all went well.
 
+```log
+configmap/datasync-model created
+secret/mongodb-credentials created
+deploymentconfig.apps.openshift.io/datasync-starter-server created
+service/datasync-starter-server created
+service/mongodb created
+deploymentconfig.apps.openshift.io/mongodb created
+persistentvolumeclaim/mongodb created
+route.route.openshift.io/datasync-starter-server created
+deploymentconfig.apps.openshift.io/mosquitto-mqtt-broker created
+service/mosquitto-mqtt-broker created
 ```
-MQTT_HOST=messaging-nj2y0929dk-redhat-rhmi-amq-online.apps.youropenshift.io 
-MQTT_PORT=443 
-MQTT_PASSWORD=Password1 
-MQTT_USERNAME=messaging-user 
-MQTT_PROTOCOL=tls 
-```
-
-Check `../server/.env` file for all available variables
