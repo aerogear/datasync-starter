@@ -10,8 +10,8 @@ docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 TAG="${TAG:-latest}"
 
 NAMESPACE="graphql"
-CONTAINER="quay.io/$NAMESPACE/graphback-runtime:$TAG"
-CONTAINER_LATEST="quay.io/$NAMESPACE/graphback-runtime:latest"
+CONTAINER="quay.io/$NAMESPACE/datasync-runtime-ts-function:$TAG"
+CONTAINER_LATEST="quay.io/$NAMESPACE/datasync-runtime-ts-function:latest"
 
 echo "Building docker container $CONTAINER"
 docker build -f Dockerfile -t "$CONTAINER" . && docker push "$CONTAINER" && \
