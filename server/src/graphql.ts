@@ -12,45 +12,28 @@ import { loadSchemaSync } from '@graphql-tools/load'
 import { buildGraphbackAPI } from "graphback"
 import { DataSyncPlugin, createDataSyncConflictProviderCreator, ThrowOnConflict } from "@graphback/datasync"
 import { SchemaCRUDPlugin } from "@graphback/codegen-schema"
+import { printSchema } from 'graphql';
 /**
  * Creates Apollo server
  */
 export const createApolloServer = async function (app: Express, config: Config) {
-    const db = await connect(config);
 
-    const modelDefs = loadSchemaSync(resolve(__dirname, '../model/model.grahql'), {
+    const modelDefs = loadSchemaSync(resolve(__dirname, '../model/model.graphql'), {
         loaders: [
             new GraphQLFileLoader()
         ]
     })
-    const conflictConfig = {
-        enabled: true,
-        // Let's client side to deal with conflict
-        conflictResolution: ThrowOnConflict,
-    };
-    const { typeDefs, resolvers, contextCreator } = buildGraphbackAPI(modelDefs, {
-        serviceCreator: createCRUDService(),
-        dataProviderCreator: createDataSyncConflictProviderCreator(db, conflictConfig),
-        plugins: [
-            new SchemaCRUDPlugin({ outputPath: path.join(__dirname, "./schema/schema.graphql") }),
-            new DataSyncPlugin({
-                conflictConfig
-            })
-        ]
-    });
+ 
+    let resolversToLoad = customResolvers
+    if (process.env.RESOLVERS) {
+        resolversToLoad = eval(process.env.RESOLVERS);
+    }
 
     let apolloConfig: ApolloServerExpressConfig = {
-        typeDefs: typeDefs,
-        resolvers: { ...resolvers, ...customResolvers },
-        playground: true,
-        context: contextCreator
+        typeDefs: printSchema(modelDefs),
+        resolvers: resolversToLoad,
+        playground: true
     }
-
-    if (config.keycloakConfig) {
-        apolloConfig = buildKeycloakApolloConfig(app, apolloConfig)
-    }
-
-    apolloConfig.resolvers = { ...apolloConfig.resolvers, ...customResolvers };
 
     const apolloServer = new ApolloServer(apolloConfig)
     apolloServer.applyMiddleware({ app });

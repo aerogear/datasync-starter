@@ -21,6 +21,7 @@ type Task {
 
 """
 @model
+@datasync
 @crud(delete: false)
 @crud(update: false)
 """
@@ -41,3 +42,7 @@ enum TaskStatus {
 scalar GraphbackDateTime
 scalar GraphbackJSON
 scalar GraphbackObjectID
+
+type Query {
+  getDraftTasks: [Task]
+}
