@@ -1,12 +1,11 @@
-import { GraphbackOperationType, CRUDService } from '@graphback/core'
-import { KeycloakCrudService, CrudServicesAuthConfig } from '@graphback/keycloak-authz'
-import { ModelDefinition, GraphbackCRUDService, CRUDServiceConfig, GraphbackDataProvider } from 'graphback';
+import { GraphbackOperationType } from '@graphback/core'
+import { KeycloakCrudService } from '@graphback/keycloak-authz'
+import { ModelDefinition, GraphbackCRUDService, CRUDServiceConfig } from 'graphback';
 import { DataSyncProvider, DataSyncCRUDService } from '@graphback/datasync';
 import { connectToPubSub } from './pubsub';
 import { config } from "./config/config"
 import { authConfig } from "./config/auth"
 import { PubSub } from 'graphql-subscriptions';
-import e from 'express';
 
 /**
  * Creates Graphback service with following capabilities:

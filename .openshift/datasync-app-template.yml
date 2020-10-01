@@ -194,7 +194,7 @@ objects:
               secretKeyRef:
                 key: database-name
                 name:  mongodb-credentials
-          image: mongo:4.2.9
+          image: centos/mongodb-34-centos7:latest
           imagePullPolicy: IfNotPresent
           name: mongodb
           readinessProbe:

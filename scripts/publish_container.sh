@@ -4,7 +4,7 @@
 [ -z "$DOCKERHUB_USERNAME" ] && echo "Undefined DOCKERHUB_USERNAME, skipping publish" && exit 1;
 [ -z "$DOCKERHUB_PASSWORD" ] && echo "Undefined DOCKERHUB_PASSWORD, skipping publish" && exit 1;
 
-docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+docker login quay.io -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 
 #use TAG env. variable to create the container with the given tag
 TAG="${TAG:-latest}"
