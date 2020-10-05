@@ -79,11 +79,6 @@
         "key": "author",
         "isRequired": true
       },
-      "noteId": {
-        "type": "string",
-        "key": "noteId",
-        "isRequired": false
-      },
       "_version": {
         "type": "string",
         "key": "_version",
