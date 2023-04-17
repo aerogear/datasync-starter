@@ -26,6 +26,6 @@
     "server"
   ],
   "resolutions": {
-    "@types/react": "16.9.36"
+    "@types/react": "18.0.35"
   }
 }
